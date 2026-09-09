@@ -1,0 +1,19 @@
+text,sentiment
+"The product quality is exceptional and exceeded all my expectations.",Positive
+"Customer support was quick, friendly, and resolved my issue in minutes.",Positive
+"I really love the clean design and smooth user experience of this app.",Positive
+"This laptop has great battery life and delivers outstanding performance.",Positive
+"The delivery arrived ahead of schedule and the packaging was in perfect condition.",Positive
+"Highly recommend this service to anyone looking for reliable and fast solutions.",Positive
+"The item arrived completely damaged and the outer packaging was torn.",Negative
+"Very disappointing customer service, they took four days to reply to my email.",Negative
+"The application crashes constantly and has too many frustrating bugs.",Negative
+"The battery drains within an hour of light usage, completely unacceptable.",Negative
+"I regret buying this phone, it is noticeably slow and overpriced.",Negative
+"Terrible experience overall, the food was cold and the order was incorrect.",Negative
+"The package was delivered yesterday afternoon as scheduled.",Neutral
+"The device comes with a standard USB-C charging cable inside the box.",Neutral
+"The retail store is open from 9 AM to 8 PM Monday through Saturday.",Neutral
+"The product dimensions are 15 cm by 10 cm and it weighs approximately 300 grams.",Neutral
+"I received an automated confirmation email regarding my recent account update.",Neutral
+"The scheduled software update was released on Tuesday morning.",Neutral

@@ -1,0 +1,41 @@
+# ==============================================================================
+# AI Sentiment Intelligence - Git Ignore Rules
+# ==============================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+
+# Python Virtual Environments
+.venv/
+venv/
+env/
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Build, Distribution & Packaging Artifacts
+*.egg-info/
+dist/
+build/
+
+# Local Environment Variables & Secrets
+.env
+
+# IDE and Code Editor Settings
+.idea/
+.vscode/
+
+# Log Files
+*.log
+
+# Pickle files - ignore general pickle files, but keep trained model artifacts in models/
+*.pkl
+!models/*.pkl
+
+# Note: Source code, notebooks, documentation, README, requirements.txt, and dataset files are tracked.
