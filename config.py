@@ -69,6 +69,15 @@ WORD_FREQ_PLOT: Path = RESULTS_PATH / "word_frequency_analysis.png"
 WORD_FREQ_JSON: Path = RESULTS_PATH / "word_frequencies.json"
 
 # ==============================================================================
+# Model Artifact File Paths (Stage 3)
+# ==============================================================================
+LOGISTIC_REGRESSION_FILE: Path = MODEL_PATH / "logistic_regression.pkl"
+NAIVE_BAYES_FILE: Path = MODEL_PATH / "naive_bayes.pkl"
+LINEAR_SVM_FILE: Path = MODEL_PATH / "linear_svm.pkl"
+TFIDF_VECTORIZER_FILE: Path = MODEL_PATH / "tfidf_vectorizer.pkl"
+MODEL_METADATA_FILE: Path = MODEL_PATH / "model_metadata.json"
+
+# ==============================================================================
 # Machine Learning Hyperparameters & Settings (Stage 3+)
 # ==============================================================================
 # Seed for reproducibility across data splits and model training
@@ -77,8 +86,11 @@ RANDOM_STATE: int = 42
 # Train/Test split proportion
 TEST_SIZE: float = 0.2
 
-# Maximum number of features extracted by TF-IDF Vectorizer
+# TF-IDF Vectorizer Hyperparameters
 MAX_FEATURES: int = 5000
+NGRAM_RANGE: tuple = (1, 2)
+SUBLINEAR_TF: bool = True
+MIN_DF: int = 1
 
 
 # ==============================================================================

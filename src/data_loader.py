@@ -7,9 +7,10 @@ and generating quality reports for sentiment analysis datasets.
 import json
 from pathlib import Path
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 # Import project configuration constants
 try:
@@ -17,10 +18,12 @@ try:
         DATA_QUALITY_REPORT_JSON,
         DATA_QUALITY_REPORT_TXT,
         DEFAULT_RAW_FILE,
+        RANDOM_STATE,
         RAW_DATA_PATH,
         SAMPLE_DATA_FILE,
         SENTIMENT_COLUMN,
         SUPPORTED_LABELS,
+        TEST_SIZE,
         TEXT_COLUMN,
     )
 except ImportError:
@@ -29,10 +32,12 @@ except ImportError:
             DATA_QUALITY_REPORT_JSON,
             DATA_QUALITY_REPORT_TXT,
             DEFAULT_RAW_FILE,
+            RANDOM_STATE,
             RAW_DATA_PATH,
             SAMPLE_DATA_FILE,
             SENTIMENT_COLUMN,
             SUPPORTED_LABELS,
+            TEST_SIZE,
             TEXT_COLUMN,
         )
     except ImportError:
@@ -42,6 +47,8 @@ except ImportError:
         TEXT_COLUMN = "text"
         SENTIMENT_COLUMN = "sentiment"
         SUPPORTED_LABELS = ["Positive", "Negative", "Neutral"]
+        RANDOM_STATE = 42
+        TEST_SIZE = 0.2
         DATA_QUALITY_REPORT_JSON = Path("results/data_quality_report.json")
         DATA_QUALITY_REPORT_TXT = Path("results/data_quality_report.txt")
 
@@ -637,6 +644,71 @@ def plot_text_length_distribution(
     plt.close(fig)
     print(f"[INFO] Text length distribution plot saved to: {output_path}")
     return output_path
+
+
+def split_dataset(
+    df: pd.DataFrame,
+    text_column: str = "clean_text",
+    sentiment_column: str = "sentiment",
+    test_size: float = TEST_SIZE,
+    random_state: int = RANDOM_STATE,
+    stratify: bool = True,
+) -> Tuple[pd.Series, pd.Series, pd.Series, pd.Series]:
+    """Split dataset into training and testing subsets with optional class stratification.
+
+    Viva Note:
+        Stratified splitting preserves the identical percentage of each sentiment class
+        (Positive, Negative, Neutral) in both training and test sets. This prevents class
+        imbalance issues from skewing model evaluation. The split MUST be executed
+        BEFORE fitting any TF-IDF vectorizer to strictly eliminate data leakage.
+
+    Args:
+        df: Input DataFrame containing cleaned text and sentiment labels.
+        text_column: Name of the text feature column (e.g., 'clean_text' or 'text').
+        sentiment_column: Name of the target sentiment column.
+        test_size: Proportion of the dataset to include in the test split (default 0.2).
+        random_state: Seed for random number generator to guarantee reproducibility.
+        stratify: Whether to perform stratified sampling based on sentiment class.
+
+    Returns:
+        Tuple of (X_train, X_test, y_train, y_test) as pandas Series.
+
+    Raises:
+        ValueError: If specified columns are missing from the DataFrame.
+    """
+    if text_column not in df.columns:
+        if "text" in df.columns:
+            print(f"[WARNING] '{text_column}' not found. Falling back to 'text' column.")
+            text_column = "text"
+        else:
+            raise ValueError(f"Text column '{text_column}' not found in DataFrame.")
+
+    if sentiment_column not in df.columns:
+        raise ValueError(f"Sentiment column '{sentiment_column}' not found in DataFrame.")
+
+    X = df[text_column]
+    y = df[sentiment_column]
+
+    stratify_target = y if stratify else None
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=test_size,
+        random_state=random_state,
+        stratify=stratify_target,
+    )
+
+    print(f"[INFO] Train/Test Split Completed (test_size={test_size}, random_state={random_state}):")
+    print(f"       - Training samples : {len(X_train)} ({len(X_train)/len(df)*100:.1f}%)")
+    print(f"       - Testing samples  : {len(X_test)} ({len(X_test)/len(df)*100:.1f}%)")
+    print("       - Stratified Class Breakdown:")
+    train_dist = y_train.value_counts(normalize=True).to_dict()
+    test_dist = y_test.value_counts(normalize=True).to_dict()
+    for label in y.unique():
+        print(f"         * {label}: Train = {train_dist.get(label, 0)*100:.1f}%, Test = {test_dist.get(label, 0)*100:.1f}%")
+
+    return X_train, X_test, y_train, y_test
 
 
 if __name__ == "__main__":
