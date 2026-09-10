@@ -1,0 +1,26 @@
+==================================================
+DATASET VALIDATION SUMMARY
+==================================================
+Status: VALID
+Dataset Shape: 60 rows, 2 columns
+Columns: ['text', 'sentiment']
+
+Missing Values:
+  Text: 0
+  Sentiment: 0
+
+Duplicate Rows: 0
+Empty / Whitespace-only Strings: 0
+Invalid Sentiment Label Rows: 0
+
+Sentiment Classes:
+  Positive: 20
+  Negative: 20
+  Neutral: 20
+
+Text Length Statistics:
+  Char Length: min=59, avg=71.6, max=82
+  Word Count:  min=8, avg=11.5, max=16
+
+Quality Check: No data integrity issues detected.
+==================================================

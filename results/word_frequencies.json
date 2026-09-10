@@ -1,0 +1,18 @@
+{
+    "Positive": {
+        "fast": 2,
+        "delivery": 1,
+        "service": 1
+    },
+    "Negative": {
+        "slow": 1,
+        "delivery": 1,
+        "broken": 1,
+        "item": 1
+    },
+    "Neutral": {
+        "package": 1,
+        "arrive": 1,
+        "Tuesday": 1
+    }
+}

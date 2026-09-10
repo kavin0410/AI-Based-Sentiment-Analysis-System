@@ -1,0 +1,61 @@
+text,sentiment,clean_text
+The product quality is exceptional and exceeded all my expectations.,Positive,product quality exceptional exceed expectation
+"Customer support was quick, friendly, and resolved my issue in minutes.",Positive,customer support quick friendly resolve issue minute
+I really love the clean design and smooth user experience of this app.,Positive,really love clean design smooth user experience app
+This laptop has great battery life and delivers outstanding performance.,Positive,laptop great battery life deliver outstanding performance
+The delivery arrived ahead of schedule and the packaging was in perfect condition.,Positive,delivery arrive ahead schedule package perfect condition
+Highly recommend this service to anyone looking for reliable and fast solutions.,Positive,highly recommend service anyone look reliable fast solution
+I couldn't be happier with this purchase; it's absolutely fantastic!,Positive,could not happier purchase absolutely fantastic
+The sound clarity on these headphones is truly mind-blowing and crystal clear.,Positive,sound clarity headphone truly mind blow crystal clear
+"An absolute masterpiece of software engineering, runs like a dream!",Positive,absolute masterpiece software engineer run like dream
+The customer care team went above and beyond to help me out. Thank you!,Positive,customer care team go beyond help thank
+Brilliant feature set! Everything works seamlessly right out of the box.,Positive,brilliant feature set everything work seamlessly right box
+I've been using this tool every day for months and it has never let me down.,Positive,use tool every day month never let
+"Super fast shipping, top quality materials, and very reasonable pricing.",Positive,super fast ship top quality material reasonable price
+I'm genuinely impressed by how intuitive and user-friendly the interface is.,Positive,genuinely impress intuitive user friendly interface
+Definitely worth every single penny. Five stars without any hesitation!,Positive,definitely worth every single penny five star without hesitation
+The camera captures vibrant colors and stunning detail even in low light.,Positive,camera capture vibrant color stun detail even low light
+Very satisfied with the timely communication and excellent resolution provided.,Positive,satisfy timely communication excellent resolution provide
+This is by far the best investment I have made for my daily workflow.,Positive,far best investment make daily workflow
+"Great job by the developers, updates keep adding truly valuable features!",Positive,great job developer update keep add truly valuable feature
+The setup guide was straightforward and I had everything running in five minutes.,Positive,setup guide straightforward everything run five minute
+The item arrived completely damaged and the outer packaging was torn.,Negative,item arrive completely damage outer package tear
+"Very disappointing customer service, they took four days to reply to my email.",Negative,disappoint customer service take four day reply email
+The application crashes constantly and has too many frustrating bugs.,Negative,application crash constantly many frustrate bug
+"The battery drains within an hour of light usage, completely unacceptable.",Negative,battery drain within hour light usage completely unacceptable
+"I regret buying this phone, it is noticeably slow and overpriced.",Negative,regret buy phone noticeably slow overprice
+"Terrible experience overall, the food was cold and the order was incorrect.",Negative,terrible experience overall food cold order incorrect
+"This product is not good at all, it stopped working on the second day.",Negative,product not good stop work second day
+I don't recommend this service to anyone; they won't issue refunds.,Negative,not recommend service anyone not issue refund
+The screen flickering issue wasn't resolved even after two software updates.,Negative,screen flicker issue not resolve even two software update
+Horrible build quality! The plastic frame cracked after just one week.,Negative,horrible build quality plastic frame crack one week
+The website is full of spam ads and navigation is an absolute nightmare.,Negative,website full spam ad navigation absolute nightmare
+"I am not happy with the quality, it doesn't match the photos on the website.",Negative,not happy quality not match photo website
+Extremely noisy fan and the device overheats during even basic tasks.,Negative,extremely noisy fan device overheat even basic task
+Customer representative was rude and didn't solve my account problem.,Negative,customer representative rude not solve account problem
+"Save your money and avoid this brand, there is no value here whatsoever.",Negative,save money avoid brand no value whatsoever
+The software update broke several core features that I rely on daily.,Negative,software update break several core feature rely daily
+Delivery took three weeks longer than promised without any explanation.,Negative,delivery take three week longer promise without explanation
+I've never encountered such poor reliability in an enterprise product.,Negative,never encounter poor reliability enterprise product
+The fabric felt cheap and the zipper was stuck right out of the box.,Negative,fabric felt cheap zipper stick right box
+"Completely useless instructions, nothing worked as described in the manual.",Negative,completely useless instruction nothing work describe manual
+The package was delivered yesterday afternoon as scheduled.,Neutral,package deliver yesterday afternoon schedule
+The device comes with a standard USB-C charging cable inside the box.,Neutral,device come standard usb c charge cable inside box
+The retail store is open from 9 AM to 8 PM Monday through Saturday.,Neutral,retail store open pm monday saturday
+The product dimensions are 15 cm by 10 cm and it weighs approximately 300 grams.,Neutral,product dimension cm cm weigh approximately gram
+I received an automated confirmation email regarding my recent account update.,Neutral,receive automate confirmation email regard recent account update
+The scheduled software update was released on Tuesday morning.,Neutral,schedule software update release tuesday morning
+The user manual is available for download in PDF format on the official website.,Neutral,user manual available download pdf format official website
+The subscription automatically renews on the first day of each calendar month.,Neutral,subscription automatically renew first day calendar month
+The system requirements state that at least 8 GB of RAM is required.,Neutral,system requirement state least gb ram require
+The flight from New York to London takes approximately seven hours.,Neutral,flight new york london take approximately seven hour
+A notification was sent to all registered users regarding scheduled maintenance.,Neutral,notification send register user regard schedule maintenance
+The package contains two AA batteries and an instructional booklet.,Neutral,package contain two aa battery instructional booklet
+The conference will take place from October 15th to October 17th in Chicago.,Neutral,conference take place october th october th chicago
+The company announced its quarterly financial results during a press briefing.,Neutral,company announce quarterly financial result press brief
+Standard shipping typically takes between three to five business days.,Neutral,standard ship typically take three five business day
+The vehicle is equipped with four doors and front-wheel drive.,Neutral,vehicle equip four door front wheel drive
+The museum is closed on national holidays and Sunday afternoons.,Neutral,museum close national holiday sunday afternoon
+Your support ticket number has been generated and queued for review.,Neutral,support ticket number generate queue review
+The document has been saved to the designated shared directory.,Neutral,document save designate share directory
+The temperature sensor records readings once every fifteen minutes.,Neutral,temperature sensor record reading every fifteen minute
