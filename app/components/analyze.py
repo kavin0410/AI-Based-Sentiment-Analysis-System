@@ -22,13 +22,6 @@ except ImportError:
     HAS_PLOTLY = False
 
 
-@st.cache_resource
-def get_cached_prediction_artifacts():
-    model, model_name, metadata = load_best_model()
-    vectorizer = load_vectorizer()
-    return model, model_name, metadata, vectorizer
-
-
 def render_analyze_page():
     """Render the Analyze workspace."""
     st.markdown(
@@ -51,7 +44,8 @@ def render_analyze_page():
         return
 
     try:
-        model, model_name, meta, vectorizer = get_cached_prediction_artifacts()
+        model, model_name, meta = load_best_model()
+        vectorizer = load_vectorizer()
     except Exception as e:
         st.error(f"Error loading inference engine: {e}")
         return
@@ -66,11 +60,23 @@ def render_analyze_page():
         _render_batch(model, model_name, vectorizer)
 
 
+def _set_preset_callback(preset_text: str):
+    st.session_state["analyze_input_text"] = preset_text
+
+
+def _clear_callback():
+    st.session_state["analyze_input_text"] = ""
+    st.session_state.pop("last_single_result", None)
+
+
 def _render_single(model, model_name, vectorizer):
     """Single text analysis panel."""
     st.markdown("<div class='sl-spacer-sm'></div>", unsafe_allow_html=True)
 
-    # Presets
+    # Initialize default input text
+    if "analyze_input_text" not in st.session_state:
+        st.session_state["analyze_input_text"] = "The build quality is extraordinary, setup took less than two minutes, and customer support was outstanding!"
+
     presets = {
         "Positive": "The build quality is extraordinary, setup took less than two minutes, and customer support was outstanding!",
         "Negative": "Terrible customer service. The device arrived damaged and the company refused to issue a refund.",
@@ -78,28 +84,32 @@ def _render_single(model, model_name, vectorizer):
         "Mixed":    "The screen display is breathtakingly vibrant, but the battery drains in under three hours.",
         "Negation": "I didn't think the performance would be bad, but it isn't quite as fast as advertised.",
     }
+
     st.markdown('<div class="sl-text-label">Quick Presets</div>', unsafe_allow_html=True)
     p_cols = st.columns(5)
     for i, (p_name, p_text) in enumerate(presets.items()):
         with p_cols[i]:
-            if st.button(p_name, key=f"preset_{p_name}", use_container_width=True):
-                st.session_state["single_input_text"] = p_text
+            st.button(
+                p_name,
+                key=f"preset_btn_{p_name}",
+                use_container_width=True,
+                on_click=_set_preset_callback,
+                args=(p_text,),
+            )
 
     st.markdown("<div class='sl-spacer-sm'></div>", unsafe_allow_html=True)
 
     # Input card
     st.markdown('<div class="sl-card">', unsafe_allow_html=True)
-    current_val = st.session_state.get("single_input_text", "")
     input_text = st.text_area(
         "Input Text",
-        value=current_val,
-        height=165,
+        key="analyze_input_text",
+        height=140,
         max_chars=config.MAX_INPUT_LENGTH,
         placeholder="Paste a review, comment, feedback, message, or any text...",
-        key="analyze_textarea",
         label_visibility="collapsed",
     )
-    char_cnt = len(input_text)
+    char_cnt = len(st.session_state.get("analyze_input_text", ""))
     st.caption(f"{char_cnt} / {config.MAX_INPUT_LENGTH} characters")
 
     col_run, col_clear, _ = st.columns([3, 1, 3])
@@ -107,27 +117,26 @@ def _render_single(model, model_name, vectorizer):
         btn_analyze = st.button("Analyze Sentiment \u2192", type="primary",
                                 use_container_width=True, key="btn_single_run")
     with col_clear:
-        if st.button("Clear", key="btn_single_clear", use_container_width=True):
-            st.session_state["single_input_text"] = ""
-            st.session_state.pop("last_single_result", None)
-            st.rerun()
+        st.button("Clear", key="btn_single_clear", use_container_width=True, on_click=_clear_callback)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # Run prediction
-    result = None
-    if btn_analyze and input_text.strip():
-        with st.spinner("Processing text through NLP pipeline..."):
-            result = predict_sentiment(input_text, model=model,
-                                      vectorizer=vectorizer, model_name=model_name)
-            st.session_state["last_single_result"] = result
-            hm = st.session_state.get("history_manager")
-            if hm and result.get("valid"):
-                hm.add_prediction(result)
-            st.toast("Analysis complete!", icon="\u2705")
-    elif "last_single_result" in st.session_state:
-        result = st.session_state["last_single_result"]
+    # Execute Prediction
+    if btn_analyze:
+        raw_to_analyze = st.session_state.get("analyze_input_text", "").strip()
+        if not raw_to_analyze:
+            st.warning("Please enter text to analyze.")
+        else:
+            with st.spinner("Processing text through NLP pipeline..."):
+                result = predict_sentiment(raw_to_analyze, model=model,
+                                          vectorizer=vectorizer, model_name=model_name)
+                st.session_state["last_single_result"] = result
+                hm = st.session_state.get("history_manager")
+                if hm and result.get("valid"):
+                    hm.add_prediction(result)
+                st.toast("Analysis complete!", icon="\u2705")
 
-    # Results display
+    # Display Results
+    result = st.session_state.get("last_single_result")
     if result and result.get("valid"):
         st.markdown("<div class='sl-spacer-sm'></div>", unsafe_allow_html=True)
         sentiment = result["sentiment"]
@@ -164,15 +173,15 @@ def _render_single(model, model_name, vectorizer):
                     <div style="margin: 0.75rem 0 1.25rem 0;">
                         <span class="sl-badge {badge_cls} sl-badge-lg">{sentiment}</span>
                     </div>
-                    <div style="font-size:0.88rem; color:#64748B; line-height:2;">
-                        <span style="color:#94A3B8;">Confidence</span>&nbsp;
-                        <strong style="color:#0F172A; font-size:1.35rem; font-weight:800;">
+                    <div style="font-size:0.88rem; color:#475569; line-height:2;">
+                        <span style="color:#64748B;">Confidence</span>&nbsp;
+                        <strong style="color:#0F172A; font-size:1.4rem; font-weight:800;">
                             {score*100:.1f}%
                         </strong><br/>
-                        <span style="color:#94A3B8;">Model</span>&nbsp;
-                        <strong style="color:#6366F1;">{m_used}</strong><br/>
-                        <span style="color:#94A3B8;">Timestamp</span>&nbsp;
-                        <span style="color:#64748B; font-size:0.82rem;">
+                        <span style="color:#64748B;">Model Used</span>&nbsp;
+                        <strong style="color:#6366F1; font-weight:700;">{m_used}</strong><br/>
+                        <span style="color:#64748B;">Timestamp</span>&nbsp;
+                        <span style="color:#1E293B; font-size:0.82rem; font-weight:500;">
                             {timestamp[:19].replace('T', ' ')}
                         </span>
                     </div>
@@ -195,14 +204,14 @@ def _render_single(model, model_name, vectorizer):
                     marker_color=colors,
                     text=[f"{v*100:.1f}%" for v in values],
                     textposition="outside",
-                    textfont=dict(family="Inter", size=12, color="#334155"),
+                    textfont=dict(family="Plus Jakarta Sans", size=12, color="#0F172A"),
                     hovertemplate="%{y}: %{x:.1%}<extra></extra>",
                 ))
                 fig_h.update_layout(
                     xaxis=dict(range=[0, 1.15], tickformat=".0%",
-                               tickfont=dict(family="Inter", size=11, color="#94A3B8"),
+                               tickfont=dict(family="Plus Jakarta Sans", size=11, color="#64748B"),
                                gridcolor="rgba(99,102,241,0.08)"),
-                    yaxis=dict(tickfont=dict(family="Inter", size=13, color="#334155")),
+                    yaxis=dict(tickfont=dict(family="Plus Jakarta Sans", size=13, color="#1E293B")),
                     paper_bgcolor="rgba(0,0,0,0)",
                     plot_bgcolor="rgba(0,0,0,0)",
                     margin=dict(t=10, b=10, l=10, r=60),
@@ -224,9 +233,9 @@ def _render_single(model, model_name, vectorizer):
             f"""
             <div class="sl-meter">
                 <div class="sl-meter-labels">
-                    <span style="color:#DC2626;">Negative</span>
-                    <span style="color:#6366F1;">Neutral</span>
-                    <span style="color:#059669;">Positive</span>
+                    <span style="color:#B91C1C;">Negative</span>
+                    <span style="color:#4338CA;">Neutral</span>
+                    <span style="color:#047857;">Positive</span>
                 </div>
                 <div class="sl-meter-track">
                     <div class="sl-meter-marker" style="left:{marker_pct}%;"></div>
@@ -236,34 +245,10 @@ def _render_single(model, model_name, vectorizer):
             unsafe_allow_html=True,
         )
 
-        if st.button("Analyze Another Text", use_container_width=True, key="btn_another"):
-            st.session_state["single_input_text"] = ""
-            st.session_state.pop("last_single_result", None)
-            st.rerun()
-
-        # Explainability
+        # Explainability panel
         st.markdown("<div class='sl-spacer-sm'></div>", unsafe_allow_html=True)
-        with st.expander("How SentimentLab understood this", expanded=False):
-            st.markdown(
-                """
-                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;
-                            margin-bottom:1rem;font-size:0.82rem;color:#64748B;">
-                    <span>Your Text</span>
-                    <span style="color:#6366F1;">\u2192</span>
-                    <span>Clean</span>
-                    <span style="color:#6366F1;">\u2192</span>
-                    <span>Understand Language</span>
-                    <span style="color:#6366F1;">\u2192</span>
-                    <span>Extract Features</span>
-                    <span style="color:#6366F1;">\u2192</span>
-                    <span>Predict</span>
-                    <span style="color:#6366F1;">\u2192</span>
-                    <strong style="color:#0F172A;">Sentiment</strong>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            raw_t    = result.get("text", input_text)
+        with st.expander("How SentimentLab reached this result (NLP Trace)", expanded=False):
+            raw_t    = result.get("text", st.session_state.get("analyze_input_text", ""))
             s1_exp   = expand_contractions(raw_t)
             s2_clean = clean_text_basic(s1_exp)
             s3_tok   = tokenize_text(s2_clean)
@@ -273,18 +258,18 @@ def _render_single(model, model_name, vectorizer):
 
             c_e1, c_e2 = st.columns(2)
             with c_e1:
-                st.markdown("**Original Text**")
+                st.markdown("**1. Original Text**")
                 st.code(raw_t, language="text")
-                st.markdown("**Cleaned & Normalized**")
+                st.markdown("**2. Cleaned & Normalized**")
                 st.code(s2_clean, language="text")
-                st.markdown("**Tokens**")
+                st.markdown("**3. Tokens**")
                 st.write(s3_tok)
             with c_e2:
-                st.markdown("**Stopword Filtering (Negations Preserved)**")
+                st.markdown("**4. Stopword Filtering (Negations Retained)**")
                 st.write(s4_stop)
-                st.markdown("**Lemmatized Tokens**")
+                st.markdown("**5. Lemmatized Tokens**")
                 st.write(s5_lem)
-                st.markdown("**Final Processed Text (TF-IDF Input)**")
+                st.markdown("**6. Final Vectorizer Input**")
                 st.code(s6_final, language="text")
             st.caption(f"Vectorized into {result.get('vocab_size', 570)} TF-IDF features \u00b7 classified by {m_used}.")
 
@@ -340,8 +325,8 @@ def _render_comparison(model, model_name, vectorizer):
                         <div style="margin:0.6rem 0;">
                             <span class="sl-badge {badge_map.get(sent,'sl-badge-neutral')} sl-badge-lg">{sent}</span>
                         </div>
-                        <div style="font-size:0.85rem;color:#64748B;">
-                            Confidence: <strong style="color:#0F172A;font-size:1.1rem;">{score*100:.1f}%</strong>
+                        <div style="font-size:0.85rem;color:#475569;">
+                            Confidence: <strong style="color:#0F172A;font-size:1.2rem;">{score*100:.1f}%</strong>
                         </div>
                     </div>
                     """,

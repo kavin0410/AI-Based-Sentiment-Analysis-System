@@ -11,13 +11,18 @@ from datetime import datetime
 import pandas as pd
 import streamlit as st
 import config
-from src.model_loader import validate_model_artifacts
+from src.model_loader import load_best_model, load_vectorizer, validate_model_artifacts
+from src.predict import predict_sentiment
 
 try:
     import plotly.graph_objects as go
     HAS_PLOTLY = True
 except ImportError:
     HAS_PLOTLY = False
+
+
+def _set_quick_text(txt: str):
+    st.session_state["overview_quick_text"] = txt
 
 
 def render_overview_page():
@@ -43,7 +48,7 @@ def render_overview_page():
                           background-clip: text; margin: 0 0 0.9rem 0;">
                     \u201cUnderstand the emotion behind every word.\u201d
                 </p>
-                <p style="font-size: 0.98rem; color: #64748B; line-height: 1.65;
+                <p style="font-size: 0.98rem; color: #475569; line-height: 1.65;
                           margin: 0 0 1.75rem 0; max-width: 520px;">
                     Analyze text, uncover sentiment, and transform conversations
                     into meaningful insights using machine learning.
@@ -56,7 +61,7 @@ def render_overview_page():
         # CTA Buttons
         col_b1, col_b2 = st.columns([1, 1])
         with col_b1:
-            if st.button("Analyze Text", type="primary",
+            if st.button("Analyze Text \u2192", type="primary",
                          use_container_width=True, key="hero_cta_analyze"):
                 st.session_state["target_page"] = "Analyze"
                 st.rerun()
@@ -115,9 +120,6 @@ def render_overview_page():
         prob_rows = h_df[h_df["score_type"] == "probability"]
         avg_conf = (prob_rows["score"].mean() * 100) if not prob_rows.empty else 0.0
     else:
-        pos_pct = 33.3
-        neg_pct = 33.3
-        neu_pct = 33.3
         avg_conf = 35.6
 
     st.markdown(
@@ -177,14 +179,14 @@ def render_overview_page():
                     colors=["#10B981", "#6366F1", "#EF4444"],
                     line=dict(color="white", width=2)
                 ),
-                textfont=dict(family="Inter", size=12),
+                textfont=dict(family="Plus Jakarta Sans", size=12),
                 hovertemplate="%{label}: %{value} records (%{percent})<extra></extra>",
             )])
             fig_donut.update_layout(
                 showlegend=True,
                 legend=dict(
                     orientation="h", yanchor="bottom", y=-0.2,
-                    xanchor="center", x=0.5, font=dict(size=12, family="Inter")
+                    xanchor="center", x=0.5, font=dict(size=12, family="Plus Jakarta Sans", color="#1E293B")
                 ),
                 margin=dict(t=10, b=30, l=10, r=10),
                 height=240,
@@ -193,7 +195,7 @@ def render_overview_page():
                 annotations=[dict(
                     text="<b>60</b><br>records",
                     x=0.5, y=0.5, font_size=14, showarrow=False,
-                    font=dict(family="Inter", color="#0F172A")
+                    font=dict(family="Plus Jakarta Sans", color="#0F172A")
                 )],
             )
             st.plotly_chart(fig_donut, use_container_width=True, config={"displayModeBar": False})
@@ -236,19 +238,19 @@ def render_overview_page():
                     ),
                     text=[f"{v:.1f}%" for v in accuracies],
                     textposition="outside",
-                    textfont=dict(family="Inter", size=12, color="#334155"),
+                    textfont=dict(family="Plus Jakarta Sans", size=12, color="#0F172A"),
                     hovertemplate="%{x}: %{y:.1f}%<extra></extra>",
                 )
             ])
             fig_bar.update_layout(
                 xaxis=dict(
-                    tickfont=dict(family="Inter", size=11, color="#64748B"),
+                    tickfont=dict(family="Plus Jakarta Sans", size=11, color="#1E293B"),
                     gridcolor="rgba(0,0,0,0)",
                 ),
                 yaxis=dict(
                     range=[0, max(accuracies) * 1.35 + 5],
                     tickformat=".0f", ticksuffix="%",
-                    tickfont=dict(family="Inter", size=11, color="#64748B"),
+                    tickfont=dict(family="Plus Jakarta Sans", size=11, color="#64748B"),
                     gridcolor="rgba(99,102,241,0.08)",
                 ),
                 paper_bgcolor="rgba(0,0,0,0)",
@@ -309,8 +311,8 @@ def render_overview_page():
                 )
         else:
             st.markdown(
-                '<div style="color:#94A3B8;font-size:0.88rem;padding:1.5rem 0;text-align:center;">'
-                'No predictions yet. Use <strong>Analyze</strong> to get started.'
+                '<div style="color:#64748B;font-size:0.88rem;padding:1.5rem 0;text-align:center;">'
+                'No predictions yet. Enter text in Quick Analyze or open <strong>Analyze</strong>.'
                 '</div>',
                 unsafe_allow_html=True,
             )
@@ -320,19 +322,40 @@ def render_overview_page():
         st.markdown(
             '<div class="sl-quick-analyze-card">'
             '<div class="sl-section-title">Quick Analyze</div>'
-            '<div class="sl-text-muted" style="margin-bottom:0.85rem;">Get instant sentiment predictions.</div>',
+            '<div class="sl-text-muted" style="margin-bottom:0.75rem;">Instant sentiment prediction right from the dashboard.</div>',
             unsafe_allow_html=True,
         )
 
+        if "overview_quick_text" not in st.session_state:
+            st.session_state["overview_quick_text"] = "The product quality is exceptional and exceeded all my expectations."
+
+        # Quick preset chips
+        st.markdown(
+            """
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0.5rem;">
+            """,
+            unsafe_allow_html=True,
+        )
+        q_p1, q_p2, q_p3 = st.columns(3)
+        with q_p1:
+            st.button("Positive sample", key="qp_pos", on_click=_set_quick_text,
+                      args=("The product quality is exceptional and exceeded all my expectations.",), use_container_width=True)
+        with q_p2:
+            st.button("Negative sample", key="qp_neg", on_click=_set_quick_text,
+                      args=("Terrible customer service and device arrived broken.",), use_container_width=True)
+        with q_p3:
+            st.button("Neutral sample", key="qp_neu", on_click=_set_quick_text,
+                      args=("The shipment arrived on Wednesday with two cables.",), use_container_width=True)
+
         quick_text = st.text_area(
             "Quick input",
-            height=110,
-            placeholder="Paste a review, comment, or message...",
             key="overview_quick_text",
+            height=90,
+            placeholder="Paste a review, comment, or message...",
             label_visibility="collapsed",
         )
-        char_cnt = len(quick_text)
-        st.caption(f"{char_cnt} / 5000")
+        char_cnt = len(st.session_state.get("overview_quick_text", ""))
+        st.caption(f"{char_cnt} / 5000 characters")
 
         col_q1, col_q2 = st.columns([3, 1])
         with col_q1:
@@ -343,47 +366,49 @@ def render_overview_page():
                 st.session_state["target_page"] = "Analyze"
                 st.rerun()
 
-        if run_quick and quick_text.strip():
-            try:
-                from src.model_loader import load_best_model, load_vectorizer
-                from src.predict import predict_sentiment
+        if run_quick:
+            raw_q = st.session_state.get("overview_quick_text", "").strip()
+            if not raw_q:
+                st.warning("Please enter some text to analyze.")
+            else:
+                try:
+                    qm, qmn, _ = load_best_model()
+                    qv = load_vectorizer()
+                    with st.spinner("Analyzing..."):
+                        qres = predict_sentiment(raw_q, model=qm, vectorizer=qv, model_name=qmn)
+                        st.session_state["overview_last_res"] = qres
+                        hm = st.session_state.get("history_manager")
+                        if hm and qres.get("valid"):
+                            hm.add_prediction(qres)
+                except Exception as e:
+                    st.error(f"Prediction failed: {e}")
 
-                @st.cache_resource
-                def _quick_load():
-                    m, mn, meta = load_best_model()
-                    v = load_vectorizer()
-                    return m, mn, v
-
-                qm, qmn, qv = _quick_load()
-                with st.spinner("Analyzing..."):
-                    qres = predict_sentiment(quick_text, model=qm,
-                                             vectorizer=qv, model_name=qmn)
-                if qres.get("valid"):
-                    sent = qres["sentiment"]
-                    score = qres["score"]
-                    bmap = {"Positive": "sl-badge-positive",
-                            "Negative": "sl-badge-negative",
-                            "Neutral":  "sl-badge-neutral"}
-                    hm = st.session_state.get("history_manager")
-                    if hm:
-                        hm.add_prediction(qres)
-                    st.markdown(
-                        f"""
-                        <div style="margin-top:0.75rem;padding:0.85rem 1rem;
-                                    background:rgba(255,255,255,0.75);
-                                    border:1px solid rgba(255,255,255,0.9);
-                                    border-radius:12px;
-                                    box-shadow:0 2px 8px rgba(15,23,42,0.06);">
-                            <span class="sl-badge {bmap.get(sent,'sl-badge-neutral')} sl-badge-lg">{sent}</span>
-                            <span style="margin-left:12px;color:#64748B;font-size:0.88rem;">
-                                Confidence: <strong style="color:#0F172A;">{score*100:.1f}%</strong>
-                            </span>
-                        </div>
-                        """,
-                        unsafe_allow_html=True,
-                    )
-            except Exception as e:
-                st.error(f"Quick analyze error: {e}")
+        last_qres = st.session_state.get("overview_last_res")
+        if last_qres and last_qres.get("valid"):
+            sent = last_qres["sentiment"]
+            score = last_qres["score"]
+            bmap = {"Positive": "sl-badge-positive",
+                    "Negative": "sl-badge-negative",
+                    "Neutral":  "sl-badge-neutral"}
+            st.markdown(
+                f"""
+                <div style="margin-top:0.75rem;padding:0.85rem 1rem;
+                            background:#FFFFFF;
+                            border:1px solid rgba(99,102,241,0.22);
+                            border-radius:12px;
+                            box-shadow:0 4px 14px rgba(15,23,42,0.06);
+                            display:flex;align-items:center;justify-content:space-between;">
+                    <div>
+                        <span class="sl-badge {bmap.get(sent,'sl-badge-neutral')} sl-badge-lg">{sent}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="color:#64748B;font-size:0.82rem;">Confidence</span><br/>
+                        <strong style="color:#0F172A;font-size:1.3rem;">{score*100:.1f}%</strong>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
         st.markdown("</div>", unsafe_allow_html=True)
 

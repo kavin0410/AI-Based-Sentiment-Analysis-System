@@ -266,25 +266,28 @@ def render_model_lab_page():
                 with st.spinner(f"Evaluating with {p_name}..."):
                     play_res = predict_sentiment(play_text, model=p_model,
                                                 vectorizer=vectorizer, model_name=p_name)
+                    st.session_state["playground_last_res"] = (play_res, p_name)
 
-                p_sent = play_res["sentiment"]
-                p_score = play_res["score"]
-                p_type = play_res["score_type"]
-                badge_map = {"Positive": "sl-badge-positive", "Negative": "sl-badge-negative",
-                             "Neutral": "sl-badge-neutral"}
+        if "playground_last_res" in st.session_state:
+            play_res, p_name = st.session_state["playground_last_res"]
+            p_sent = play_res["sentiment"]
+            p_score = play_res["score"]
+            p_type = play_res["score_type"]
+            badge_map = {"Positive": "sl-badge-positive", "Negative": "sl-badge-negative",
+                         "Neutral": "sl-badge-neutral"}
 
-                st.markdown(
-                    f"""
-                    <div class="sl-card" style="margin-top:1rem;">
-                        <div class="sl-text-label">Evaluated by: {p_name}</div>
-                        <div style="margin:0.6rem 0;">
-                            <span class="sl-badge {badge_map.get(p_sent,'sl-badge-neutral')} sl-badge-lg">{p_sent}</span>
-                        </div>
-                        <div style="font-size:0.88rem;color:#64748B;">
-                            Score: <strong style="color:#0F172A;font-size:1.1rem;">{p_score*100:.1f}%</strong>
-                            <span style="color:#94A3B8;">({p_type})</span>
-                        </div>
+            st.markdown(
+                f"""
+                <div class="sl-card" style="margin-top:1rem;">
+                    <div class="sl-text-label">Evaluated by: {p_name}</div>
+                    <div style="margin:0.6rem 0;">
+                        <span class="sl-badge {badge_map.get(p_sent,'sl-badge-neutral')} sl-badge-lg">{p_sent}</span>
                     </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+                    <div style="font-size:0.88rem;color:#475569;">
+                        Confidence / Decision Score: <strong style="color:#0F172A;font-size:1.15rem;">{p_score*100:.1f}%</strong>
+                        <span style="color:#64748B;">({p_type})</span>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
