@@ -1,179 +1,291 @@
 ﻿/* ==========================================================================
-   AI Sentiment Intelligence — Premium Dark Design System
+   SentimentAI (SentimentLab) — Ultra-Premium Dark AI Product Design System
    ========================================================================== */
 
-/* Global Background and Defaults */
-.stApp {
-    background-color: #0d1117;
-    color: #e6edf3;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+/* Base Theme */
+html, body, [class*="css"] {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Sidebar Styling */
+.stApp {
+    background-color: #090a0f;
+    color: #e2e8f0;
+}
+
+/* Hide default streamlit clutter */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #090a0f;
+}
+::-webkit-scrollbar-thumb {
+    background: #1e2433;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #2d3748;
+}
+
+/* Sidebar Customization */
 [data-testid="stSidebar"] {
-    background-color: #161b22;
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: #0d1017;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 1.5rem;
 }
 
 [data-testid="stSidebar"] hr {
-    border-color: rgba(255, 255, 255, 0.08);
-    margin: 1rem 0;
+    border-color: rgba(255, 255, 255, 0.05);
+    margin: 1.25rem 0;
 }
 
-/* Glassmorphic Cards */
-.asi-card {
-    background: rgba(22, 27, 34, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-    transition: all 0.2s ease-in-out;
+/* Sidebar Brand Block */
+.brand-container {
+    padding: 0 0.5rem 1rem 0.5rem;
 }
-
-.asi-card:hover {
-    border-color: rgba(255, 255, 255, 0.16);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
-}
-
-/* Metric Pill */
-.asi-metric-card {
-    background: #161b22;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 10px;
-    padding: 1rem;
-    text-align: center;
-    transition: transform 0.15s ease, border-color 0.15s ease;
-}
-
-.asi-metric-card:hover {
-    transform: translateY(-2px);
-    border-color: rgba(56, 139, 253, 0.4);
-}
-
-.asi-metric-value {
-    font-size: 1.85rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: #f0f6fc;
-}
-
-.asi-metric-label {
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #8b949e;
-    margin-top: 0.25rem;
-}
-
-/* Sentiment Badge Colors */
-.badge-positive {
-    background: rgba(46, 160, 67, 0.15);
-    color: #3fb950;
-    border: 1px solid rgba(46, 160, 67, 0.3);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-    display: inline-block;
-}
-
-.badge-negative {
-    background: rgba(248, 81, 73, 0.15);
-    color: #f85149;
-    border: 1px solid rgba(248, 81, 73, 0.3);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-    display: inline-block;
-}
-
-.badge-neutral {
-    background: rgba(139, 148, 158, 0.15);
-    color: #c9d1d9;
-    border: 1px solid rgba(139, 148, 158, 0.3);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-    display: inline-block;
-}
-
-/* System Pulse Dot */
-.pulse-dot {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #2ea043;
-    box-shadow: 0 0 8px #2ea043;
-    margin-right: 6px;
-    vertical-align: middle;
-}
-
-/* Clean Custom Headers */
-.asi-header-title {
-    font-size: 2rem;
+.brand-logo {
+    font-size: 1.35rem;
     font-weight: 700;
     letter-spacing: -0.03em;
-    color: #f0f6fc;
-    margin: 0;
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
-
-.asi-header-tagline {
-    font-size: 0.95rem;
-    color: #8b949e;
-    margin: 0.2rem 0 0 0;
-    font-weight: 400;
-}
-
-/* Streamlit Native Element Polishing */
-div[data-testid="stMetric"] {
-    background-color: #161b22;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-}
-
-div[data-testid="stMetricLabel"] {
-    color: #8b949e !important;
-    font-size: 0.8rem !important;
-}
-
-div[data-testid="stMetricValue"] {
-    color: #f0f6fc !important;
-    font-weight: 700 !important;
-}
-
-/* Buttons */
-.stButton > button {
-    border-radius: 8px;
+.brand-subtitle {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 2px;
     font-weight: 500;
-    transition: all 0.15s ease;
+    letter-spacing: 0.02em;
 }
 
-.stButton > button[kind="primary"] {
-    background: #238636;
-    border-color: rgba(240, 246, 252, 0.1);
+/* Compact System Online Status */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #34d399;
+    margin-top: 0.6rem;
+}
+.status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #10b981;
+    box-shadow: 0 0 8px #10b981;
 }
 
-.stButton > button[kind="primary"]:hover {
-    background: #2ea043;
-    border-color: rgba(240, 246, 252, 0.2);
-}
-
-/* Radio button nav in sidebar */
+/* Sidebar Radio Buttons (Clean continuous list) */
 div[data-testid="stRadio"] > div {
-    gap: 0.35rem;
+    gap: 0.2rem;
 }
 
 div[data-testid="stRadio"] label {
-    padding: 0.4rem 0.6rem;
-    border-radius: 6px;
-    transition: background 0.15s ease;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
 }
 
 div[data-testid="stRadio"] label:hover {
-    background: rgba(255, 255, 255, 0.04);
+    color: #f1f5f9;
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Top Navigation / Header */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.header-title-wrap h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #f8fafc;
+    margin: 0;
+}
+.header-title-wrap p {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 4px 0 0 0;
+}
+
+/* Cards & Surface Elements */
+.product-card {
+    background: #0d1017;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: border-color 0.2s ease;
+}
+.product-card:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* KPI Card */
+.kpi-card {
+    background: #0d1017;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.kpi-card:hover {
+    border-color: rgba(99, 102, 241, 0.3);
+    transform: translateY(-1px);
+}
+.kpi-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.35rem;
+}
+.kpi-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: -0.02em;
+}
+.kpi-sub {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
+}
+
+/* Sentiment Result Box */
+.sentiment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+.badge-positive {
+    background: rgba(16, 185, 129, 0.1);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+.badge-negative {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+.badge-neutral {
+    background: rgba(148, 163, 184, 0.1);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+/* Custom Text Area */
+.stTextArea textarea {
+    background-color: #0d1017 !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 10px !important;
+    font-size: 0.95rem !important;
+    padding: 1rem !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.stTextArea textarea:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Primary Button Styling */
+.stButton > button[kind="primary"] {
+    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.01em !important;
+    padding: 0.6rem 1.4rem !important;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3) !important;
+    transition: all 0.15s ease !important;
+}
+.stButton > button[kind="primary"]:hover {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4) !important;
+    transform: translateY(-1px);
+}
+
+/* Secondary Button */
+.stButton > button:not([kind="primary"]) {
+    background: #0d1017 !important;
+    color: #94a3b8 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    transition: all 0.15s ease !important;
+}
+.stButton > button:not([kind="primary"]):hover {
+    color: #f8fafc !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    background: #141923 !important;
+}
+
+/* Metrics overhaul */
+div[data-testid="stMetric"] {
+    background-color: #0d1017 !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 10px !important;
+    padding: 1rem !important;
+}
+div[data-testid="stMetricLabel"] {
+    color: #64748b !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+}
+div[data-testid="stMetricValue"] {
+    color: #f8fafc !important;
+    font-weight: 700 !important;
+    font-size: 1.6rem !important;
+}
+
+/* Expander custom styling */
+.streamlit-expanderHeader {
+    background-color: #0d1017 !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 8px !important;
+    color: #94a3b8 !important;
+    font-weight: 500 !important;
+}
+.streamlit-expanderContent {
+    background-color: #090a0f !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-top: none !important;
+    border-bottom-left-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
 }

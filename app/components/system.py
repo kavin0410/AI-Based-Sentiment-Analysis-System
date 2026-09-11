@@ -1,6 +1,6 @@
-﻿"""System Component for AI Sentiment Intelligence.
+﻿"""Settings Component for SentimentAI (SentimentLab).
 
-Provides operational system health diagnostics and architectural pipeline visualization.
+Provides application, system configuration, and model information.
 """
 
 from pathlib import Path
@@ -10,136 +10,114 @@ from src.model_loader import validate_model_artifacts
 
 
 def render_system_page():
-    """Render the System Health & Architecture page."""
-    st.markdown("## ⚙️ System Diagnostics & Architecture")
-    st.caption("Inspect live component statuses, operational model availability, and end-to-end data pipeline flow.")
+    """Render the Settings & System diagnostics page."""
+    st.markdown("## ⚙ Settings")
+    st.caption("Application parameters, runtime configurations, model registry, and infrastructure health.")
 
     val_report = validate_model_artifacts()
+    vocab_sz = val_report.get("vectorizer_vocab_size", 570)
+    best_m = val_report.get("best_model_name", "Logistic Regression")
 
     # -------------------------------------------------------------------------
-    # 1. Component Health Matrix
+    # 1. System Health Status Cards
     # -------------------------------------------------------------------------
-    st.markdown("### 🔌 Component Status")
+    st.markdown("### Infrastructure Health")
+    c1, c2, c3 = st.columns(3)
 
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
+    with c1:
         st.markdown(
             """
-            <div class="asi-card">
-                <div style="font-weight: 600; color: #8b949e; font-size: 0.85rem;">AI CORE ENGINE</div>
-                <div style="font-size: 1.25rem; font-weight: 700; margin-top: 4px; color: #3fb950;">
-                    <span class="pulse-dot"></span> ONLINE
-                </div>
-                <div style="font-size: 0.8rem; color: #8b949e; margin-top: 6px;">Runtime: Python 3.10+ / Scikit-Learn</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            """
-            <div class="asi-card">
-                <div style="font-weight: 600; color: #8b949e; font-size: 0.85rem;">PREDICTION ENGINE</div>
-                <div style="font-size: 1.25rem; font-weight: 700; margin-top: 4px; color: #3fb950;">
-                    <span class="pulse-dot"></span> READY
-                </div>
-                <div style="font-size: 0.8rem; color: #8b949e; margin-top: 6px;">Real-time inference & history logging</div>
+            <div class="product-card">
+                <div style="font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Inference Engine</div>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #34d399; margin: 4px 0;">Online & Ready</div>
+                <div style="font-size: 0.8rem; color: #94a3b8;">Python 3.10+ • Scikit-Learn • Streamlit</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    with col2:
-        vocab_sz = val_report.get("vectorizer_vocab_size", 570)
+    with c2:
         st.markdown(
             f"""
-            <div class="asi-card">
-                <div style="font-weight: 600; color: #8b949e; font-size: 0.85rem;">TF-IDF VECTORIZER</div>
-                <div style="font-size: 1.25rem; font-weight: 700; margin-top: 4px; color: #3fb950;">
-                    <span class="pulse-dot"></span> LOADED
-                </div>
-                <div style="font-size: 0.8rem; color: #8b949e; margin-top: 6px;">{vocab_sz} terms (unigrams + bigrams)</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        lr_status = "LOADED" if config.LOGISTIC_REGRESSION_FILE.exists() else "OFFLINE"
-        lr_color = "#3fb950" if config.LOGISTIC_REGRESSION_FILE.exists() else "#f85149"
-        st.markdown(
-            f"""
-            <div class="asi-card">
-                <div style="font-weight: 600; color: #8b949e; font-size: 0.85rem;">LOGISTIC REGRESSION</div>
-                <div style="font-size: 1.25rem; font-weight: 700; margin-top: 4px; color: {lr_color};">
-                    <span class="pulse-dot" style="background-color: {lr_color}; box-shadow: 0 0 8px {lr_color};"></span> {lr_status}
-                </div>
-                <div style="font-size: 0.8rem; color: #8b949e; margin-top: 6px;">Active Best Model (Top Rank)</div>
+            <div class="product-card">
+                <div style="font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase;">TF-IDF Vectorizer</div>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #34d399; margin: 4px 0;">Loaded</div>
+                <div style="font-size: 0.8rem; color: #94a3b8;">{vocab_sz} Features • Unigrams + Bigrams</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    with col3:
-        nb_status = "LOADED" if config.NAIVE_BAYES_FILE.exists() else "OFFLINE"
-        nb_color = "#3fb950" if config.NAIVE_BAYES_FILE.exists() else "#f85149"
+    with c3:
         st.markdown(
             f"""
-            <div class="asi-card">
-                <div style="font-weight: 600; color: #8b949e; font-size: 0.85rem;">MULTINOMIAL NAIVE BAYES</div>
-                <div style="font-size: 1.25rem; font-weight: 700; margin-top: 4px; color: {nb_color};">
-                    <span class="pulse-dot" style="background-color: {nb_color}; box-shadow: 0 0 8px {nb_color};"></span> {nb_status}
-                </div>
-                <div style="font-size: 0.8rem; color: #8b949e; margin-top: 6px;">alpha=1.0 (Laplace smoothing)</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        svm_status = "LOADED" if config.LINEAR_SVM_FILE.exists() else "OFFLINE"
-        svm_color = "#3fb950" if config.LINEAR_SVM_FILE.exists() else "#f85149"
-        st.markdown(
-            f"""
-            <div class="asi-card">
-                <div style="font-weight: 600; color: #8b949e; font-size: 0.85rem;">LINEAR SVM (LinearSVC)</div>
-                <div style="font-size: 1.25rem; font-weight: 700; margin-top: 4px; color: {svm_color};">
-                    <span class="pulse-dot" style="background-color: {svm_color}; box-shadow: 0 0 8px {svm_color};"></span> {svm_status}
-                </div>
-                <div style="font-size: 0.8rem; color: #8b949e; margin-top: 6px;">Decision function scores</div>
+            <div class="product-card">
+                <div style="font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Top Model</div>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #34d399; margin: 4px 0;">{best_m}</div>
+                <div style="font-size: 0.8rem; color: #94a3b8;">Selected by Weighted F1 Metric</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    st.divider()
+    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
 
     # -------------------------------------------------------------------------
-    # 2. Pipeline Flow Diagram
+    # 2. Configuration Parameters
     # -------------------------------------------------------------------------
-    st.markdown("### 🏛️ End-to-End Pipeline Flow")
-    st.code(
-        """
-Dataset (60 records)
-  │
-  ├── Data Cleaning (noise removal, URLs, HTML tags, whitespace)
-  │
-  ├── 12-Step NLP Preprocessing (contractions, negation preservation, lemmatization)
-  │
-  ├── Stratified Split (80% train / 20% test — random_state=42)
-  │
-  ├── TF-IDF Vectorization (fit on train only -> 570 features, unigrams+bigrams)
-  │
-  ├── Multi-Model Training (Logistic Regression, Multinomial NB, Linear SVM)
-  │
-  ├── Evaluation & Benchmarking (Weighted F1, Accuracy, Confusion Matrices)
-  │
-  └── Real-Time Prediction Engine (Dynamic best-model inference & session history)
-        """,
-        language="text",
-    )
+    st.markdown("### Runtime Configuration")
+    config_data = {
+        "Parameter": [
+            "Random State",
+            "Max Input Length",
+            "Prediction History Cap",
+            "Supported Classes",
+            "TF-IDF Max Features",
+            "Split Ratio",
+            "Evaluation Metric",
+        ],
+        "Value": [
+            str(config.RANDOM_STATE),
+            f"{config.MAX_INPUT_LENGTH} characters",
+            f"{config.PREDICTION_HISTORY_LIMIT} entries (In-Memory)",
+            ", ".join(config.SUPPORTED_LABELS),
+            "5000 (570 fitted)",
+            "80% Train / 20% Test (Stratified)",
+            "Weighted F1-Score",
+        ],
+        "Status": [
+            "Fixed",
+            "Active",
+            "Active",
+            "Validated",
+            "Serialized",
+            "Verified",
+            "Active",
+        ],
+    }
 
-    st.markdown(
-        """
-        **Architectural Integrity Rules:**
-        - **Zero Data Leakage:** Vectorizer is fit exclusively on training data and frozen before evaluation.
-        - **Dynamic Selection:** Predictions dynamically load the highest-scoring model rather than using hardcoded assignments.
-        - **Controlled Preprocessing:** Negation words (`not`, `no`, `never`) are explicitly preserved to safeguard sentiment polarity.
-        """
-    )
+    import pandas as pd
+    st.dataframe(pd.DataFrame(config_data), use_container_width=True)
+
+    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+
+    # -------------------------------------------------------------------------
+    # 3. Model Registry Details
+    # -------------------------------------------------------------------------
+    st.markdown("### Model Registry")
+    reg_col1, reg_col2, reg_col3 = st.columns(3)
+
+    with reg_col1:
+        st.write("**Logistic Regression**")
+        st.caption("File: `models/logistic_regression.pkl`")
+        st.caption("Probabilities: Supported (`predict_proba`)")
+
+    with reg_col2:
+        st.write("**Multinomial Naive Bayes**")
+        st.caption("File: `models/naive_bayes.pkl`")
+        st.caption("Probabilities: Supported (`predict_proba`)")
+
+    with reg_col3:
+        st.write("**Linear SVM**")
+        st.caption("File: `models/linear_svm.pkl`")
+        st.caption("Scores: Decision function (`decision_function`)")

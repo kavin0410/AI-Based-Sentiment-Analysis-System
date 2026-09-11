@@ -1,9 +1,18 @@
-﻿"""Streamlit Web Application for AI Sentiment Intelligence.
+﻿"""SentimentLab Web Application (SentimentAI).
 
-A premium dark AI SaaS interface for sentiment analysis:
-- Modern navigation grouped into: MAIN, AI, DATA, SYSTEM
-- Seamless real-time classification, deep explainability, and analytics
-- No development stages shown in the UI — capabilities-focused
+An ultra-premium AI SaaS platform for sentiment intelligence:
+- Brand: 🧠 SentimentAI / Intelligence Platform / ● System Online
+- Clean, continuous navigation without category labels:
+  ⌂ Overview
+  ✦ Analyze
+  ◈ Insights
+  ◷ History
+  ◎ NLP Explorer
+  ◉ Model Intelligence
+  ▣ Data
+  ▤ Reports
+  ⚙ Settings
+- Zero development stage mentions anywhere in the user interface.
 """
 
 from datetime import datetime
@@ -15,7 +24,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-# Setup python path
+# Ensure root directories in path
 BASE_DIR = Path(__file__).resolve().parent.parent
 APP_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR) not in sys.path:
@@ -40,13 +49,12 @@ from src.predict import PredictionHistoryManager
 def init_page():
     """Initialize page metadata, layout, and inject custom CSS."""
     st.set_page_config(
-        page_title="AI Sentiment Intelligence",
+        page_title="SentimentLab | Understand the emotion behind every word",
         page_icon="🧠",
         layout="wide",
         initial_sidebar_state="expanded",
     )
 
-    # Inject premium custom CSS
     css_path = APP_DIR / "static" / "custom.css"
     if css_path.exists():
         with open(css_path, "r", encoding="utf-8") as f:
@@ -54,137 +62,108 @@ def init_page():
 
 
 def init_session_state():
-    """Ensure session state structures are present."""
+    """Ensure session state structures exist."""
     if "history_manager" not in st.session_state:
         st.session_state["history_manager"] = PredictionHistoryManager(
             max_limit=config.PREDICTION_HISTORY_LIMIT
         )
-    if "current_page" not in st.session_state:
-        st.session_state["current_page"] = "🏠 Overview"
 
 
-def render_header():
-    """Render global top app header bar."""
-    val_report = validate_model_artifacts()
-    is_online = val_report.get("valid", True)
-    status_text = "AI ENGINE ONLINE" if is_online else "ENGINE DEGRADED"
-    status_color = "#3fb950" if is_online else "#f85149"
-    best_m = val_report.get("best_model_name", "Logistic Regression")
-
-    st.markdown(
-        f"""
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-            <div>
-                <h1 class="asi-header-title">🧠 AI Sentiment Intelligence</h1>
-                <p class="asi-header-tagline">Understand what people feel through machine learning.</p>
+def render_sidebar():
+    """Render the ultra-clean, continuous navigation sidebar without category headers."""
+    with st.sidebar:
+        # Branding
+        st.markdown(
+            """
+            <div class="brand-container">
+                <div class="brand-logo">
+                    <span>🧠</span> SentimentAI
+                </div>
+                <div class="brand-subtitle">Intelligence Platform</div>
+                <div class="status-pill">
+                    <span class="status-dot"></span> System Online
+                </div>
             </div>
-            <div style="text-align: right; background: rgba(22, 27, 34, 0.8); padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
-                <div style="font-size: 0.8rem; font-weight: 700; color: {status_color}; letter-spacing: 0.05em;">
-                    <span class="pulse-dot" style="background-color: {status_color}; box-shadow: 0 0 8px {status_color};"></span>● {status_text}
-                </div>
-                <div style="font-size: 0.75rem; color: #8b949e; margin-top: 3px;">
-                    Active Model: <span style="color: #f0f6fc;">{best_m}</span>
-                </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+
+        # One clean, continuous navigation list with clean icons
+        nav_options = [
+            "⌂ Overview",
+            "✦ Analyze",
+            "◈ Insights",
+            "◷ History",
+            "◎ NLP Explorer",
+            "◉ Model Intelligence",
+            "▣ Data",
+            "▤ Reports",
+            "⚙ Settings",
+        ]
+
+        selected = st.radio(
+            label="Navigation",
+            options=nav_options,
+            index=0,
+            key="sentimentlab_nav",
+            label_visibility="collapsed",
+        )
+
+        st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+        st.markdown(
+            """
+            <div style="padding: 0 0.5rem; font-size: 0.75rem; color: #475569; line-height: 1.6;">
+                “Understand the emotion behind every word.”
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    return selected
+
+
+def render_top_header():
+    """Render clean global page top banner."""
+    st.markdown(
+        """
+        <div class="top-header">
+            <div class="header-title-wrap">
+                <h1>SentimentLab</h1>
+                <p>Understand the emotion behind every word.</p>
             </div>
         </div>
-        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 0.5rem 0 1.25rem 0;" />
         """,
         unsafe_allow_html=True,
     )
 
 
-def render_sidebar():
-    """Render compact, grouped navigation sidebar."""
-    with st.sidebar:
-        st.markdown("### 🧠 AI Sentiment")
-        st.caption("Machine Learning Platform")
-
-        st.markdown(
-            """
-            <div style="display: inline-flex; align-items: center; background: rgba(46, 160, 67, 0.12); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; color: #3fb950; border: 1px solid rgba(46, 160, 67, 0.25);">
-                <span class="pulse-dot"></span> ● LIVE SYSTEM
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        st.markdown("---")
-
-        # Compact Grouped Navigation
-        nav_options = [
-            "🏠 Overview",
-            "✨ Analyzer",
-            "📊 Insights",
-            "🕘 History",
-            "🧠 NLP Explorer",
-            "🤖 Model Lab",
-            "🗄️ Data Center",
-            "📑 Reports",
-            "⚙️ System",
-        ]
-
-        st.caption("MAIN")
-        choice_main = [opt for opt in nav_options[:4]]
-        st.caption("AI & MODELS")
-        choice_ai = [opt for opt in nav_options[4:6]]
-        st.caption("DATA & REPORTS")
-        choice_data = [opt for opt in nav_options[6:8]]
-        st.caption("SYSTEM")
-        choice_sys = [nav_options[8]]
-
-        selected = st.radio(
-            label="Navigation",
-            options=nav_options,
-            key="asi_nav_selection",
-            label_visibility="collapsed",
-        )
-
-        st.markdown("---")
-
-        # Supported Polarity Legend
-        st.caption("SENTIMENT POLARITIES")
-        st.markdown(
-            """
-            <div style="font-size: 0.8rem; line-height: 1.8;">
-                <span style="color: #3fb950;">●</span> <strong>Positive</strong><br/>
-                <span style="color: #c9d1d9;">●</span> <strong>Neutral</strong><br/>
-                <span style="color: #f85149;">●</span> <strong>Negative</strong>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        st.markdown("---")
-        st.caption("AI Sentiment Intelligence v2.0")
-
-    return selected
-
-
 def main():
-    """Main application lifecycle controller."""
+    """Application entry controller."""
     init_page()
     init_session_state()
-    render_header()
     selected_page = render_sidebar()
+    render_top_header()
 
-    # Route to selected capability
-    if selected_page == "🏠 Overview":
+    # Route based on selected item
+    if selected_page == "⌂ Overview":
         render_overview_page()
-    elif selected_page == "✨ Analyzer":
+    elif selected_page == "✦ Analyze":
         render_analyze_page()
-    elif selected_page == "📊 Insights":
+    elif selected_page == "◈ Insights":
         render_insights_page()
-    elif selected_page == "🕘 History":
+    elif selected_page == "◷ History":
         render_history_page()
-    elif selected_page == "🧠 NLP Explorer":
+    elif selected_page == "◎ NLP Explorer":
         render_nlp_engine_page()
-    elif selected_page == "🤖 Model Lab":
+    elif selected_page == "◉ Model Intelligence":
         render_model_lab_page()
-    elif selected_page == "🗄️ Data Center":
+    elif selected_page == "▣ Data":
         render_data_quality_page()
-    elif selected_page == "📑 Reports":
+    elif selected_page == "▤ Reports":
         render_reports_page()
-    elif selected_page == "⚙️ System":
+    elif selected_page == "⚙ Settings":
         render_system_page()
 
 
