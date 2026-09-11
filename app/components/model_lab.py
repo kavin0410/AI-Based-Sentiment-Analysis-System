@@ -1,14 +1,10 @@
-﻿"""Model Intelligence & Playground Component for SentimentLab.
+"""Model Intelligence Component for SentimentLab — Premium Light UI.
 
-Professional ML model laboratory:
-1. Leaderboard & Metrics:
-   - Logistic Regression, Naive Bayes, Linear SVM
-   - Accuracy, Precision, Recall, F1 Score
-   - Dynamic best model identification from best_model.json
-2. Performance Comparison & Visual Confusion Matrices
-3. Model Playground:
-   - Model Selector: Best Model, Logistic Regression, Naive Bayes, Linear SVM
-   - Enter text and compare predictions between models
+ML laboratory:
+1. Model Leaderboard & Benchmarking
+2. Architecture Specification Cards
+3. Confusion Matrix Visualizer
+4. Model Playground
 """
 
 import json
@@ -24,17 +20,33 @@ from src.model_loader import (
 )
 from src.predict import predict_sentiment
 
+try:
+    import plotly.graph_objects as go
+    HAS_PLOTLY = True
+except ImportError:
+    HAS_PLOTLY = False
+
 
 def render_model_lab_page():
-    """Render the Model Intelligence laboratory & playground."""
-    st.markdown("## ◉ Model Intelligence")
-    st.caption("Benchmark, validate, and compare supervised machine learning classifiers on the held-out test split.")
+    """Render the Model Intelligence laboratory."""
+    st.markdown(
+        """
+        <div class="sl-page-header">
+            <div class="sl-page-eyebrow">ML LABORATORY</div>
+            <h1 class="sl-page-title">Model Intelligence</h1>
+            <p class="sl-page-subtitle">
+                Benchmark, validate, and compare supervised ML classifiers on the held-out test split.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-    tab_intel, tab_playground = st.tabs(["Model Benchmarking & Matrices", "Model Playground"])
+    tab_intel, tab_playground = st.tabs(["Benchmarking & Metrics", "Model Playground"])
 
-    # -------------------------------------------------------------------------
-    # TAB 1: Benchmarking & Matrices
-    # -------------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    # TAB 1: Benchmarking
+    # ------------------------------------------------------------------
     with tab_intel:
         best_meta = {}
         if config.BEST_MODEL_JSON.exists():
@@ -42,8 +54,15 @@ def render_model_lab_page():
                 best_meta = json.load(f)
         best_name = best_meta.get("model_name", "Logistic Regression")
 
-        st.markdown("### Model Leaderboard")
-        st.caption(f"Top Model: **{best_name}** | Ranked by Weighted F1-Score: **{best_meta.get('f1_score', 0.3276)*100:.2f}%**")
+        # Leaderboard
+        st.markdown(
+            '<div class="sl-card">'
+            '<div class="sl-section-title">Model Leaderboard</div>'
+            f'<div class="sl-text-muted" style="margin-bottom:1rem;">'
+            f'Top Model: <strong style="color:#6366F1;">{best_name}</strong> '
+            f'| Weighted F1: <strong>{best_meta.get("f1_score", 0.3276)*100:.2f}%</strong></div>',
+            unsafe_allow_html=True,
+        )
 
         if config.MODEL_COMPARISON_CSV.exists():
             comp_df = pd.read_csv(config.MODEL_COMPARISON_CSV, index_col=0)
@@ -51,77 +70,149 @@ def render_model_lab_page():
         elif config.EVALUATION_RESULTS_CSV.exists():
             st.dataframe(pd.read_csv(config.EVALUATION_RESULTS_CSV), use_container_width=True)
 
-        st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+        # Plotly grouped bar for metrics
+        if HAS_PLOTLY and config.EVALUATION_RESULTS_CSV.exists():
+            try:
+                eval_df = pd.read_csv(config.EVALUATION_RESULTS_CSV)
+                metric_cols = [c for c in eval_df.columns if c in ["accuracy", "precision", "recall", "f1_score"]]
+                if metric_cols and "model" in eval_df.columns:
+                    fig_g = go.Figure()
+                    colors = {"accuracy": "#6366F1", "precision": "#8B5CF6",
+                              "recall": "#A855F7", "f1_score": "#06B6D4"}
+                    for mc in metric_cols:
+                        vals = eval_df[mc].values
+                        vals = [v * 100 if v <= 1 else v for v in vals]
+                        fig_g.add_trace(go.Bar(
+                            name=mc.replace("_", " ").title(),
+                            x=eval_df["model"].values,
+                            y=vals,
+                            marker_color=colors.get(mc, "#6366F1"),
+                            text=[f"{v:.1f}" for v in vals],
+                            textposition="outside",
+                            textfont=dict(family="Inter", size=10, color="#334155"),
+                        ))
+                    fig_g.update_layout(
+                        barmode="group",
+                        xaxis=dict(tickfont=dict(family="Inter", size=11, color="#64748B"),
+                                   gridcolor="rgba(0,0,0,0)"),
+                        yaxis=dict(ticksuffix="%", tickformat=".0f",
+                                   gridcolor="rgba(99,102,241,0.08)",
+                                   tickfont=dict(family="Inter", size=11, color="#94A3B8")),
+                        paper_bgcolor="rgba(0,0,0,0)",
+                        plot_bgcolor="rgba(0,0,0,0)",
+                        margin=dict(t=20, b=10, l=10, r=10),
+                        height=260,
+                        legend=dict(orientation="h", yanchor="bottom", y=1.02,
+                                    xanchor="center", x=0.5,
+                                    font=dict(family="Inter", size=11)),
+                    )
+                    st.plotly_chart(fig_g, use_container_width=True, config={"displayModeBar": False})
+            except Exception:
+                pass
 
-        # Specifications Cards
-        st.markdown("### Model Architecture Specifications")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<div class='sl-spacer-md'></div>", unsafe_allow_html=True)
+
+        # Architecture Specs
+        st.markdown(
+            '<div class="sl-section-label">Model Architecture</div>',
+            unsafe_allow_html=True,
+        )
+
         col1, col2, col3 = st.columns(3)
-
         models_spec = [
-            (col1, "Logistic Regression", best_name == "Logistic Regression", "lbfgs", "C=1.0", "1000", "Yes (Softmax)"),
-            (col2, "Multinomial Naive Bayes", best_name == "Multinomial Naive Bayes", "Multinomial", "alpha=1.0", "< 0.01s", "Yes (Log-Likelihood)"),
-            (col3, "Linear SVM", best_name == "Linear SVM", "LinearSVC", "C=1.0, dual=auto", "2000", "Decision Score"),
+            (col1, "Logistic Regression", best_name == "Logistic Regression",
+             "lbfgs", "C=1.0", "1000", "Softmax"),
+            (col2, "Multinomial Naive Bayes", best_name == "Multinomial Naive Bayes",
+             "Multinomial", "alpha=1.0", "< 0.01s", "Log-Likelihood"),
+            (col3, "Linear SVM", best_name == "Linear SVM",
+             "LinearSVC", "C=1.0, dual=auto", "2000", "Decision Score"),
         ]
 
         for col, m_name, is_top, solver, reg, iters, prob_out in models_spec:
             with col:
-                badge = "⭐ RANK 1 (BEST)" if is_top else "BENCHMARKED"
-                badge_color = "#38bdf8" if is_top else "#64748b"
+                badge = "BEST MODEL" if is_top else "BENCHMARKED"
+                badge_cls = "sl-badge-positive" if is_top else "sl-badge-neutral"
+                card_cls = "sl-card-green" if is_top else ""
                 st.markdown(
                     f"""
-                    <div class="product-card">
-                        <div style="font-size: 0.72rem; font-weight: 700; color: {badge_color}; letter-spacing: 0.05em;">{badge}</div>
-                        <div style="font-size: 1.25rem; font-weight: 700; color: #ffffff; margin: 4px 0;">{m_name}</div>
-                        <div style="margin-top: 10px; font-size: 0.82rem; color: #94a3b8; line-height: 1.8;">
-                            • Algorithm: <code>{solver}</code><br/>
-                            • Parameter: <code>{reg}</code><br/>
-                            • Training: <code>{iters}</code><br/>
-                            • Output: <strong style="color: #bae6fd;">{prob_out}</strong>
+                    <div class="sl-card {card_cls}">
+                        <div style="margin-bottom:0.5rem;">
+                            <span class="sl-badge {badge_cls}" style="font-size:0.68rem;">{badge}</span>
+                        </div>
+                        <div style="font-size:1.15rem;font-weight:700;color:#0F172A;margin-bottom:0.75rem;">
+                            {m_name}
+                        </div>
+                        <div style="font-size:0.82rem;color:#64748B;line-height:1.9;">
+                            Algorithm: <code style="background:rgba(99,102,241,0.08);padding:2px 6px;border-radius:4px;">{solver}</code><br/>
+                            Parameter: <code style="background:rgba(99,102,241,0.08);padding:2px 6px;border-radius:4px;">{reg}</code><br/>
+                            Training: <code style="background:rgba(99,102,241,0.08);padding:2px 6px;border-radius:4px;">{iters}</code><br/>
+                            Output: <strong style="color:#6366F1;">{prob_out}</strong>
                         </div>
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
 
-        st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div class='sl-spacer-md'></div>", unsafe_allow_html=True)
 
         # Confusion Matrices
-        st.markdown("### Confusion Matrix Visualizer")
-        sel_matrix_model = st.selectbox(
-            "Select Model to Inspect Confusion Matrix:",
-            ["Logistic Regression", "Multinomial Naive Bayes", "Linear SVM"],
-            key="matrix_model_sel",
+        st.markdown(
+            '<div class="sl-section-label">Confusion Matrix</div>',
+            unsafe_allow_html=True,
         )
 
-        col_img, col_class = st.columns([1, 1])
+        sel_matrix = st.selectbox(
+            "Select Model:",
+            ["Logistic Regression", "Multinomial Naive Bayes", "Linear SVM"],
+            key="matrix_sel",
+        )
+
+        col_img, col_class = st.columns([1, 1], gap="medium")
         with col_img:
+            st.markdown('<div class="sl-card">', unsafe_allow_html=True)
             cm_map = {
                 "Logistic Regression": config.RESULTS_PATH / "confusion_matrices" / "logistic_regression_confusion_matrix.png",
                 "Multinomial Naive Bayes": config.RESULTS_PATH / "confusion_matrices" / "multinomial_naive_bayes_confusion_matrix.png",
                 "Linear SVM": config.RESULTS_PATH / "confusion_matrices" / "linear_svm_confusion_matrix.png",
             }
-            img_p = cm_map.get(sel_matrix_model)
+            img_p = cm_map.get(sel_matrix)
             if img_p and img_p.exists():
                 st.image(str(img_p), use_container_width=True)
             else:
-                st.info("Confusion matrix heatmap not found.")
+                st.info("Confusion matrix not found.")
+            st.markdown("</div>", unsafe_allow_html=True)
 
         with col_class:
-            st.markdown(f"##### Per-Class Performance: {sel_matrix_model}")
+            st.markdown(
+                f'<div class="sl-card">'
+                f'<div class="sl-section-title">Per-Class: {sel_matrix}</div>',
+                unsafe_allow_html=True,
+            )
             if config.PER_CLASS_METRICS_CSV.exists():
                 pc_df = pd.read_csv(config.PER_CLASS_METRICS_CSV)
-                filtered_pc = pc_df[pc_df["model"] == sel_matrix_model]
+                filtered_pc = pc_df[pc_df["model"] == sel_matrix]
                 if not filtered_pc.empty:
-                    st.dataframe(filtered_pc[["class", "precision", "recall", "f1_score", "support"]], use_container_width=True)
+                    st.dataframe(
+                        filtered_pc[["class", "precision", "recall", "f1_score", "support"]],
+                        use_container_width=True,
+                    )
                 else:
                     st.dataframe(pc_df, use_container_width=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
-    # -------------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # TAB 2: Model Playground
-    # -------------------------------------------------------------------------
+    # ------------------------------------------------------------------
     with tab_playground:
-        st.markdown("### Model Playground")
-        st.caption("Interact directly with specific trained model artifacts to test how each architecture classifies identical inputs.")
+        st.markdown(
+            '<div class="sl-card">'
+            '<div class="sl-section-title">Model Playground</div>'
+            '<div class="sl-text-muted" style="margin-bottom:1rem;">'
+            'Test how each trained model architecture classifies identical inputs.</div>',
+            unsafe_allow_html=True,
+        )
 
         vectorizer = load_vectorizer()
 
@@ -130,21 +221,22 @@ def render_model_lab_page():
             selected_choice = st.selectbox(
                 "Choose Model:",
                 ["Best Model", "Logistic Regression", "Multinomial Naive Bayes", "Linear SVM"],
-                key="playground_model_choice",
+                key="playground_model",
             )
 
         play_text = st.text_area(
-            "Input Text for Model Playground:",
+            "Input Text",
             value="I didn't expect the quality to be so stellar! Exceeded all expectations.",
             height=110,
-            key="playground_input_area",
+            key="playground_input",
+            label_visibility="collapsed",
         )
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        if st.button("Run Playground Analysis", type="primary", key="btn_play_run"):
+        if st.button("Run Analysis \u2192", type="primary", key="btn_play_run"):
             if not play_text.strip():
-                st.warning("Please enter some text to test.")
+                st.warning("Please enter text to test.")
             else:
-                # Load selected model
                 if selected_choice == "Best Model":
                     p_model, p_name, _ = load_best_model()
                 else:
@@ -153,24 +245,25 @@ def render_model_lab_page():
                     p_name = selected_choice
 
                 with st.spinner(f"Evaluating with {p_name}..."):
-                    play_res = predict_sentiment(play_text, model=p_model, vectorizer=vectorizer, model_name=p_name)
+                    play_res = predict_sentiment(play_text, model=p_model,
+                                                vectorizer=vectorizer, model_name=p_name)
 
                 p_sent = play_res["sentiment"]
                 p_score = play_res["score"]
                 p_type = play_res["score_type"]
+                badge_map = {"Positive": "sl-badge-positive", "Negative": "sl-badge-negative",
+                             "Neutral": "sl-badge-neutral"}
 
-                badge = "badge-positive" if p_sent == "Positive" else ("badge-negative" if p_sent == "Negative" else "badge-neutral")
-
-                st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
                 st.markdown(
                     f"""
-                    <div class="product-card">
-                        <div style="font-size: 0.8rem; color: #7dd3fc; font-weight: 600;">EVALUATED BY: {p_name}</div>
-                        <div style="margin: 0.5rem 0;">
-                            <span class="sentiment-badge {badge}">{p_sent}</span>
+                    <div class="sl-card" style="margin-top:1rem;">
+                        <div class="sl-text-label">Evaluated by: {p_name}</div>
+                        <div style="margin:0.6rem 0;">
+                            <span class="sl-badge {badge_map.get(p_sent,'sl-badge-neutral')} sl-badge-lg">{p_sent}</span>
                         </div>
-                        <div style="font-size: 0.9rem; color: #94a3b8;">
-                            Score / Confidence: <strong style="color: #ffffff;">{p_score*100:.1f}%</strong> ({p_type})
+                        <div style="font-size:0.88rem;color:#64748B;">
+                            Score: <strong style="color:#0F172A;font-size:1.1rem;">{p_score*100:.1f}%</strong>
+                            <span style="color:#94A3B8;">({p_type})</span>
                         </div>
                     </div>
                     """,

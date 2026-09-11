@@ -1,4 +1,4 @@
-﻿"""Settings Component for SentimentLab.
+"""Settings Component for SentimentLab — Premium Light UI.
 
 Provides:
 - Application version & runtime parameter matrix
@@ -9,9 +9,7 @@ Provides:
   * Models Loaded
   * Prediction Engine
   * Dataset Status
-- "About SentimentLab" section:
-  "SentimentLab is an AI-based sentiment analysis system that combines NLP preprocessing,
-   TF-IDF feature extraction, and machine-learning classification to identify Positive, Negative, and Neutral sentiment."
+- "About SentimentLab" section
 """
 
 from pathlib import Path
@@ -23,35 +21,46 @@ from src.model_loader import validate_model_artifacts
 
 def render_system_page():
     """Render the Settings & Infrastructure page."""
-    st.markdown("## ⚙ Settings")
-    st.caption("Application environment, runtime parameters, model metadata, and architecture overview.")
+    st.markdown(
+        """
+        <div class="sl-page-header">
+            <div class="sl-page-eyebrow">SYSTEM & INFRASTRUCTURE</div>
+            <h1 class="sl-page-title">Settings</h1>
+            <p class="sl-page-subtitle">
+                Application environment, runtime parameters, model metadata, and platform architecture overview.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     # -------------------------------------------------------------------------
     # 1. About SentimentLab Section
     # -------------------------------------------------------------------------
-    st.markdown("### About SentimentLab")
     st.markdown(
         """
-        <div class="product-card">
-            <p style="font-size: 1.05rem; color: #bae6fd; font-weight: 500; line-height: 1.6; margin: 0;">
-                SentimentLab is an AI-based sentiment analysis system that combines NLP preprocessing, 
-                TF-IDF feature extraction, and machine-learning classification to identify Positive, Negative, and Neutral sentiment.
+        <div class="sl-card sl-card-hero" style="margin-bottom: 1.5rem;">
+            <div class="sl-section-title" style="font-size: 1.4rem; color: #0F172A;">About SentimentLab</div>
+            <p style="font-size: 1.05rem; color: #475569; font-weight: 500; line-height: 1.6; margin: 0.5rem 0 0.75rem 0;">
+                SentimentLab is an AI-based sentiment intelligence platform that seamlessly unifies advanced NLP preprocessing, 
+                TF-IDF linguistic feature extraction, and machine learning classifiers to determine Positive, Negative, and Neutral polarity.
             </p>
-            <div style="margin-top: 12px; font-size: 0.85rem; color: #94a3b8;">
-                Built on Python 3.10+, Scikit-Learn, NLTK, and Streamlit. Designed with zero data leakage principles, 
-                controlled negation preservation, and dynamic top-model resolution.
+            <div style="font-size: 0.88rem; color: #64748B; line-height: 1.6;">
+                Engineered with Scikit-Learn, NLTK, and modern Web UI primitives. Adheres to zero data-leakage standards, 
+                intelligent negation retention, and dynamic top-model resolution.
             </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
-
     # -------------------------------------------------------------------------
     # 2. Technical System Status
     # -------------------------------------------------------------------------
-    st.markdown("### System Component Status")
+    st.markdown(
+        '<div class="sl-section-label" style="margin-bottom:0.75rem">System Component Status</div>',
+        unsafe_allow_html=True,
+    )
 
     val_report = validate_model_artifacts()
     vocab_sz = val_report.get("vectorizer_vocab_size", 570)
@@ -61,10 +70,10 @@ def render_system_page():
     with c1:
         st.markdown(
             """
-            <div class="kpi-card">
-                <div class="kpi-title">Application Version</div>
-                <div class="kpi-value" style="font-size: 1.35rem; color: #ffffff;">v2.5.0 SaaS</div>
-                <div class="kpi-sub">Production UI Engine</div>
+            <div class="sl-metric sl-card-blue">
+                <div class="sl-metric-label">Application Version</div>
+                <div class="sl-metric-value" style="font-size: 1.5rem; color: #0F172A;">v3.0 SaaS</div>
+                <div class="sl-metric-sub">Production UI Engine</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -72,10 +81,10 @@ def render_system_page():
     with c2:
         st.markdown(
             """
-            <div class="kpi-card">
-                <div class="kpi-title">NLP Engine Status</div>
-                <div class="kpi-value" style="font-size: 1.35rem; color: #34d399;">ONLINE</div>
-                <div class="kpi-sub">NLTK Tokenizer & WordNet</div>
+            <div class="sl-metric sl-card-green">
+                <div class="sl-metric-label">NLP Engine Status</div>
+                <div class="sl-metric-value" style="font-size: 1.5rem; color: #059669;">ONLINE</div>
+                <div class="sl-metric-sub">NLTK Tokenizer & WordNet</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -83,25 +92,25 @@ def render_system_page():
     with c3:
         st.markdown(
             f"""
-            <div class="kpi-card">
-                <div class="kpi-title">TF-IDF Status</div>
-                <div class="kpi-value" style="font-size: 1.35rem; color: #34d399;">LOADED</div>
-                <div class="kpi-sub">{vocab_sz} N-gram Features</div>
+            <div class="sl-metric sl-card-violet">
+                <div class="sl-metric-label">TF-IDF Status</div>
+                <div class="sl-metric-value" style="font-size: 1.5rem; color: #6366F1;">LOADED</div>
+                <div class="sl-metric-sub">{vocab_sz} N-gram Features</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div class='sl-spacer-sm'></div>", unsafe_allow_html=True)
 
     c4, c5, c6 = st.columns(3)
     with c4:
         st.markdown(
             """
-            <div class="kpi-card">
-                <div class="kpi-title">Models Loaded</div>
-                <div class="kpi-value" style="font-size: 1.35rem; color: #34d399;">3 / 3 Active</div>
-                <div class="kpi-sub">LR, Naive Bayes, Linear SVM</div>
+            <div class="sl-metric sl-card-cyan">
+                <div class="sl-metric-label">Models Loaded</div>
+                <div class="sl-metric-value" style="font-size: 1.5rem; color: #0284C7;">3 / 3 Active</div>
+                <div class="sl-metric-sub">LR, Naive Bayes, Linear SVM</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -109,10 +118,10 @@ def render_system_page():
     with c5:
         st.markdown(
             """
-            <div class="kpi-card">
-                <div class="kpi-title">Prediction Engine</div>
-                <div class="kpi-value" style="font-size: 1.35rem; color: #34d399;">READY</div>
-                <div class="kpi-sub">Real-Time + Batch CSV</div>
+            <div class="sl-metric sl-card-green">
+                <div class="sl-metric-label">Prediction Engine</div>
+                <div class="sl-metric-value" style="font-size: 1.5rem; color: #059669;">READY</div>
+                <div class="sl-metric-sub">Real-Time + Batch CSV</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -120,21 +129,26 @@ def render_system_page():
     with c6:
         st.markdown(
             """
-            <div class="kpi-card">
-                <div class="kpi-title">Dataset Status</div>
-                <div class="kpi-value" style="font-size: 1.35rem; color: #cbd5e1;">60 Records</div>
-                <div class="kpi-sub">Balanced 3-Class Corpus</div>
+            <div class="sl-metric sl-card-blue">
+                <div class="sl-metric-label">Dataset Status</div>
+                <div class="sl-metric-value" style="font-size: 1.5rem; color: #475569;">60 Records</div>
+                <div class="sl-metric-sub">Balanced 3-Class Corpus</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div class='sl-spacer-md'></div>", unsafe_allow_html=True)
 
     # -------------------------------------------------------------------------
     # 3. Runtime Parameters
     # -------------------------------------------------------------------------
-    st.markdown("### Runtime Parameter Specifications")
+    st.markdown(
+        '<div class="sl-card">'
+        '<div class="sl-section-title">Runtime Parameter Specifications</div>'
+        '<div class="sl-text-muted" style="margin-bottom:1rem;">Operational environment configuration constants.</div>',
+        unsafe_allow_html=True,
+    )
     params_df = pd.DataFrame({
         "Configuration Key": [
             "Random State Seed",
@@ -157,3 +171,4 @@ def render_system_page():
         "Operational Mode": ["Fixed", "Validated", "In-Memory", "Static", "Serialized", "Stratified", "Dynamic"],
     })
     st.dataframe(params_df, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)

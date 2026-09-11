@@ -1,36 +1,18 @@
-﻿"""SentimentLab Web Application.
+"""SentimentLab Web Application.
 
-An ultra-premium AI SaaS platform for sentiment intelligence:
-- Brand: 
-    SentimentLab
-    Understand the emotion behind every word.
-    ● System Online
-- Clean, continuous navigation without category labels:
-    Overview
-    Analyze
-    Insights
-    History
-    NLP Explorer
-    Model Intelligence
-    Data
-    Reports
-    Settings
-- Global command search palette ("Search SentimentLab...")
-- Cyber Neural Video Background
+Premium Light AI SaaS platform for sentiment intelligence:
+- Brand: SentimentLab / "Understand the emotion behind every word."
+- Clean continuous sidebar navigation with custom button-based nav
+- Ambient gradient background (no video — light theme)
 - Zero development stage references anywhere in the UI.
 """
 
-import base64
-from datetime import datetime
-import json
 from pathlib import Path
 import sys
 
-import numpy as np
-import pandas as pd
 import streamlit as st
 
-# Setup sys.path
+# Setup sys.path ---------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 APP_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR) not in sys.path:
@@ -52,52 +34,26 @@ from src.model_loader import validate_model_artifacts
 from src.predict import PredictionHistoryManager
 
 
-@st.cache_data
-def get_background_assets():
-    """Encode video and poster image to base64 for smooth background playback."""
-    poster_path = APP_DIR / "static" / "bg_poster.jpg"
-    video_path = APP_DIR / "static" / "bg_video_optimized.mp4"
-
-    poster_b64 = ""
-    if poster_path.exists():
-        poster_b64 = base64.b64encode(poster_path.read_bytes()).decode("utf-8")
-
-    video_b64 = ""
-    if video_path.exists():
-        video_b64 = base64.b64encode(video_path.read_bytes()).decode("utf-8")
-
-    return poster_b64, video_b64
+# Nav options with icons -------------------------------------------------------
+NAV_ITEMS = [
+    ("Overview",           "○"),
+    ("Analyze",            "⊹"),
+    ("Insights",           "◈"),
+    ("History",            "◷"),
+    ("NLP Explorer",       "◎"),
+    ("Model Intelligence", "◉"),
+    ("Data",               "▣"),
+    ("Reports",            "▤"),
+    ("Settings",           "⚙"),
+]
+NAV_OPTIONS = [n for n, _ in NAV_ITEMS]
 
 
-def render_background_layers():
-    """Inject background video and ambient neural vignette overlay."""
-    poster_b64, video_b64 = get_background_assets()
-
-    video_html = ""
-    if video_b64:
-        video_html = f"""
-        <video autoplay loop muted playsinline poster="data:image/jpeg;base64,{poster_b64}">
-            <source src="data:video/mp4;base64,{video_b64}" type="video/mp4">
-        </video>
-        """
-    elif poster_b64:
-        video_html = f"""
-        <div style="width: 100vw; height: 100vh; background: url('data:image/jpeg;base64,{poster_b64}') center/cover no-repeat; opacity: 0.35;"></div>
-        """
-
-    st.markdown(
-        f"""
-        <div id="bg-video-container">
-            {video_html}
-        </div>
-        <div id="bg-video-overlay"></div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
+# ------------------------------------------------------------------------------
+# Page Init
+# ------------------------------------------------------------------------------
 def init_page():
-    """Initialize page metadata, layout, background layers, and custom styling."""
+    """Initialize page config and inject CSS."""
     st.set_page_config(
         page_title="SentimentLab | Understand the emotion behind every word",
         page_icon="🧠",
@@ -110,9 +66,18 @@ def init_page():
         with open(css_path, "r", encoding="utf-8") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-    render_background_layers()
+    # Inject ambient pink orb div + hide default streamlit chrome
+    st.markdown(
+        """
+        <div class="sl-orb-pink"></div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
+# ------------------------------------------------------------------------------
+# Session State
+# ------------------------------------------------------------------------------
 def init_session_state():
     """Initialize persistent session managers and default routing."""
     if "history_manager" not in st.session_state:
@@ -123,118 +88,99 @@ def init_session_state():
         st.session_state["active_page"] = "Overview"
 
 
-def render_sidebar():
-    """Render the ultra-clean, continuous navigation sidebar without category headers."""
-    nav_options = [
-        "Overview",
-        "Analyze",
-        "Insights",
-        "History",
-        "NLP Explorer",
-        "Model Intelligence",
-        "Data",
-        "Reports",
-        "Settings",
-    ]
+# ------------------------------------------------------------------------------
+# Sidebar
+# ------------------------------------------------------------------------------
+def render_sidebar() -> str:
+    """Render the premium light sidebar with button-based navigation."""
 
-    # Process any pending page navigation request
-    if "target_page" in st.session_state and st.session_state["target_page"] in nav_options:
+    # Process any pending cross-page navigation request
+    if "target_page" in st.session_state and st.session_state["target_page"] in NAV_OPTIONS:
         st.session_state["active_page"] = st.session_state.pop("target_page")
 
     with st.sidebar:
-        # Branding Header
+        # Brand header
         st.markdown(
             """
-            <div class="brand-container">
-                <div class="brand-title">
-                    SentimentLab
-                </div>
-                <div class="brand-subtitle">
-                    Understand the emotion behind every word.
-                </div>
-                <div class="status-pill">
-                    <span class="status-dot"></span> System Online
+            <div class="sl-brand">
+                <div class="sl-brand-name">🧠 SentimentLab</div>
+                <div class="sl-brand-tagline">Understand the emotion behind every word.</div>
+                <div class="sl-status">
+                    <span class="sl-status-dot"></span>
+                    System Online
                 </div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-        st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height:0.25rem'></div>", unsafe_allow_html=True)
+        st.divider()
+        st.markdown("<div style='height:0.25rem'></div>", unsafe_allow_html=True)
 
-        # Global Search / Command Bar
-        search_cmd = st.text_input(
+        # Search bar
+        search_val = st.text_input(
             "Search",
             placeholder="Search SentimentLab... (Ctrl+K)",
-            key="global_search_input",
+            key="global_search",
             label_visibility="collapsed",
         )
-
-        # Handle search bar selection if matched
-        if search_cmd.strip():
-            matched = [opt for opt in nav_options if search_cmd.strip().lower() in opt.lower()]
+        if search_val.strip():
+            matched = [o for o in NAV_OPTIONS if search_val.strip().lower() in o.lower()]
             if matched and matched[0] != st.session_state.get("active_page"):
                 st.session_state["active_page"] = matched[0]
+                st.rerun()
 
-        st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height:0.35rem'></div>", unsafe_allow_html=True)
 
-        # Determine current index
+        # Navigation buttons
         current_page = st.session_state.get("active_page", "Overview")
-        current_index = nav_options.index(current_page) if current_page in nav_options else 0
+        for page_name, icon in NAV_ITEMS:
+            is_active = current_page == page_name
+            label = f"{icon}  {page_name}"
+            # Use a unique key per nav button
+            btn_key = f"nav_btn_{page_name.replace(' ', '_')}"
+            if is_active:
+                # Active item rendered as colored HTML block + disabled button approach
+                st.markdown(
+                    f"""
+                    <div class="sl-nav-item active">
+                        <span class="sl-nav-icon">{icon}</span>
+                        {page_name}
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+            else:
+                if st.button(label, key=btn_key, use_container_width=True):
+                    st.session_state["active_page"] = page_name
+                    st.rerun()
 
-        # Callback function for widget selection
-        def on_nav_change():
-            st.session_state["active_page"] = st.session_state["_sidebar_radio"]
-
-        # Single continuous navigation list
-        selected = st.radio(
-            label="Navigation Menu",
-            options=nav_options,
-            index=current_index,
-            key="_sidebar_radio",
-            on_change=on_nav_change,
-            label_visibility="collapsed",
-        )
-
-        st.session_state["active_page"] = selected
-
-        st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
+        # Footer
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
         st.markdown(
             """
-            <div style="padding: 0 0.5rem; font-size: 0.75rem; color: #64748b; line-height: 1.6;">
-                SentimentLab Platform v2.5.0<br/>
-                All systems operational.
+            <div class="sl-sidebar-footer">
+                SentimentLab v3.0<br/>
+                Premium AI SaaS Edition
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    return st.session_state["active_page"]
+    return st.session_state.get("active_page", "Overview")
 
 
-def render_top_header():
-    """Render clean global page top banner."""
-    st.markdown(
-        """
-        <div class="top-header">
-            <div class="header-title-wrap">
-                <h1>SentimentLab</h1>
-                <p>Understand the emotion behind every word.</p>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
+# ------------------------------------------------------------------------------
+# Main Controller
+# ------------------------------------------------------------------------------
 def main():
-    """Application controller."""
+    """Application entry point."""
     init_page()
     init_session_state()
     selected_page = render_sidebar()
-    render_top_header()
 
-    # Route based on navigation choice
+    # Route to the selected page
     if selected_page == "Overview":
         render_overview_page()
     elif selected_page == "Analyze":

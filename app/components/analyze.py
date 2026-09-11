@@ -1,64 +1,53 @@
-﻿"""Analyze Component for SentimentLab.
+"""Analyze Component for SentimentLab — Premium Light UI.
 
-The primary product experience:
-1. Single Text Analysis:
-   - "Paste a review, comment, feedback, message, or any text..."
-   - Character counter: 0 / 5000
-   - Example buttons: Positive, Negative, Neutral, Mixed, Negation
-   - Primary CTA: Analyze Sentiment
-   - Result panel: SENTIMENT, CONFIDENCE, Probability distribution (Pos, Neu, Neg), Model, Timestamp
-   - Sentiment Meter: Negative ─────────●──────── Positive
-   - "Analyze Another" button
-   - Explainability: "How SentimentLab reached this result"
-     Input Text -> Data Cleaning -> NLP Preprocessing -> TF-IDF Feature Extraction -> ML Model -> Sentiment Prediction
-     Original, Cleaned, Tokenized, Stopwords, Negation preservation, Lemmatized, TF-IDF
-
-2. Text Comparison:
-   - Text A and Text B independent analysis
-   - Comparison summary
-
-3. Batch Analysis (CSV Upload):
-   - Upload CSV with "text" column
-   - Validate, preview, run batch prediction with progress bar
-   - Display results table, filter, and CSV download
+Primary product experience:
+1. Single Text Analysis with result card, confidence bar, pipeline explainability
+2. Text Comparison — two-panel side-by-side
+3. Batch CSV Analysis — polished upload & batch run
 """
 
 from datetime import datetime
-import io
 import pandas as pd
 import streamlit as st
 import config
-from src.model_loader import (
-    load_best_model,
-    load_vectorizer,
-    validate_model_artifacts,
-)
+from src.model_loader import load_best_model, load_vectorizer, validate_model_artifacts
 from src.predict import predict_batch, predict_sentiment
-from src.preprocessing import (
-    expand_contractions,
-    lemmatize_tokens,
-    remove_stopwords,
-    tokenize_text,
-)
+from src.preprocessing import expand_contractions, lemmatize_tokens, remove_stopwords, tokenize_text
 from src.data_cleaning import clean_text_basic
+
+try:
+    import plotly.graph_objects as go
+    HAS_PLOTLY = True
+except ImportError:
+    HAS_PLOTLY = False
 
 
 @st.cache_resource
 def get_cached_prediction_artifacts():
-    """Cache loaded best model and vectorizer."""
     model, model_name, metadata = load_best_model()
     vectorizer = load_vectorizer()
     return model, model_name, metadata, vectorizer
 
 
 def render_analyze_page():
-    """Render the primary SentimentLab Analyzer experience with sub-modes."""
-    st.markdown("## ✦ Analyze Workspace")
-    st.caption("Perform real-time natural language classification, side-by-side text comparisons, or large batch file inference.")
+    """Render the Analyze workspace."""
+    st.markdown(
+        """
+        <div class="sl-page-header">
+            <div class="sl-page-eyebrow">ANALYSIS WORKSPACE</div>
+            <h1 class="sl-page-title">Analyze</h1>
+            <p class="sl-page-subtitle">
+                Real-time sentiment classification, side-by-side text comparison,
+                and large-batch CSV inference.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     val_report = validate_model_artifacts()
     if not val_report["valid"]:
-        st.error("Model artifacts are currently unavailable. Ensure models are trained.")
+        st.error("Model artifacts unavailable. Ensure models are trained.")
         return
 
     try:
@@ -67,145 +56,163 @@ def render_analyze_page():
         st.error(f"Error loading inference engine: {e}")
         return
 
-    # Sub-mode selection
-    sub_mode = st.radio(
-        "Analysis Mode",
-        ["Single Text Analysis", "Text Comparison", "Batch CSV Analysis"],
-        horizontal=True,
-        key="analyze_submode_radio",
-        label_visibility="collapsed",
-    )
-    st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
+    tab1, tab2, tab3 = st.tabs(["Single Text", "Compare Texts", "Batch CSV"])
 
-    if sub_mode == "Single Text Analysis":
-        _render_single_text_analysis(model, model_name, vectorizer)
-    elif sub_mode == "Text Comparison":
-        _render_text_comparison(model, model_name, vectorizer)
-    elif sub_mode == "Batch CSV Analysis":
-        _render_batch_analysis(model, model_name, vectorizer)
+    with tab1:
+        _render_single(model, model_name, vectorizer)
+    with tab2:
+        _render_comparison(model, model_name, vectorizer)
+    with tab3:
+        _render_batch(model, model_name, vectorizer)
 
 
-def _render_single_text_analysis(model, model_name, vectorizer):
-    """Render the core Single Text Analyzer."""
-    # 1. Preset Buttons
-    st.markdown("##### Quick Presets")
+def _render_single(model, model_name, vectorizer):
+    """Single text analysis panel."""
+    st.markdown("<div class='sl-spacer-sm'></div>", unsafe_allow_html=True)
+
+    # Presets
     presets = {
         "Positive": "The build quality is extraordinary, setup took less than two minutes, and customer support was outstanding!",
-        "Negative": "Terrible customer service. The device arrived damaged and the company completely refused to issue a refund.",
-        "Neutral": "The shipment arrived on Wednesday afternoon. It contains three charging cables and standard instructions.",
-        "Mixed": "The screen display is breathtakingly vibrant, but the battery drains in under three hours.",
+        "Negative": "Terrible customer service. The device arrived damaged and the company refused to issue a refund.",
+        "Neutral":  "The shipment arrived on Wednesday. It contains three charging cables and instructions.",
+        "Mixed":    "The screen display is breathtakingly vibrant, but the battery drains in under three hours.",
         "Negation": "I didn't think the performance would be bad, but it isn't quite as fast as advertised.",
     }
-
-    cols = st.columns(5)
+    st.markdown('<div class="sl-text-label">Quick Presets</div>', unsafe_allow_html=True)
+    p_cols = st.columns(5)
     for i, (p_name, p_text) in enumerate(presets.items()):
-        with cols[i]:
-            if st.button(p_name, use_container_width=True, key=f"btn_p_{p_name}"):
-                st.session_state["single_text_input_val"] = p_text
+        with p_cols[i]:
+            if st.button(p_name, key=f"preset_{p_name}", use_container_width=True):
+                st.session_state["single_input_text"] = p_text
 
-    # 2. Text Input & Counter
-    current_val = st.session_state.get("single_text_input_val", "")
+    st.markdown("<div class='sl-spacer-sm'></div>", unsafe_allow_html=True)
+
+    # Input card
+    st.markdown('<div class="sl-card">', unsafe_allow_html=True)
+    current_val = st.session_state.get("single_input_text", "")
     input_text = st.text_area(
-        label="Input Text",
+        "Input Text",
         value=current_val,
-        height=145,
+        height=165,
         max_chars=config.MAX_INPUT_LENGTH,
         placeholder="Paste a review, comment, feedback, message, or any text...",
-        key="analyzer_main_textarea_v2",
+        key="analyze_textarea",
         label_visibility="collapsed",
     )
-
     char_cnt = len(input_text)
-    st.caption(f"{char_cnt} / {config.MAX_INPUT_LENGTH}")
+    st.caption(f"{char_cnt} / {config.MAX_INPUT_LENGTH} characters")
 
-    # Action Buttons
-    col_run, col_clear, _ = st.columns([3, 1, 4])
+    col_run, col_clear, _ = st.columns([3, 1, 3])
     with col_run:
-        btn_analyze = st.button("Analyze Sentiment", type="primary", use_container_width=True, key="btn_run_single")
+        btn_analyze = st.button("Analyze Sentiment \u2192", type="primary",
+                                use_container_width=True, key="btn_single_run")
     with col_clear:
-        if st.button("Clear", use_container_width=True, key="btn_clear_single"):
-            st.session_state["single_text_input_val"] = ""
+        if st.button("Clear", key="btn_single_clear", use_container_width=True):
+            st.session_state["single_input_text"] = ""
+            st.session_state.pop("last_single_result", None)
             st.rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    # 3. Execution & Result Panel
+    # Run prediction
     result = None
     if btn_analyze and input_text.strip():
-        with st.spinner("Processing text..."):
-            result = predict_sentiment(
-                text=input_text,
-                model=model,
-                vectorizer=vectorizer,
-                model_name=model_name,
-            )
+        with st.spinner("Processing text through NLP pipeline..."):
+            result = predict_sentiment(input_text, model=model,
+                                      vectorizer=vectorizer, model_name=model_name)
             st.session_state["last_single_result"] = result
-            history_mgr = st.session_state.get("history_manager")
-            if history_mgr and result.get("valid"):
-                history_mgr.add_prediction(result)
-            st.toast("Analysis completed successfully!", icon="✅")
+            hm = st.session_state.get("history_manager")
+            if hm and result.get("valid"):
+                hm.add_prediction(result)
+            st.toast("Analysis complete!", icon="\u2705")
     elif "last_single_result" in st.session_state:
         result = st.session_state["last_single_result"]
 
+    # Results display
     if result and result.get("valid"):
-        st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
-        st.markdown("### Analysis Result")
-
+        st.markdown("<div class='sl-spacer-sm'></div>", unsafe_allow_html=True)
         sentiment = result["sentiment"]
-        score = result["score"]
-        score_type = result["score_type"]
-        m_used = result.get("model_name", model_name)
+        score     = result["score"]
+        score_type= result["score_type"]
+        m_used    = result.get("model_name", model_name)
         timestamp = result.get("timestamp", datetime.now().isoformat())
-        probs = result.get("probabilities", {})
-
+        probs     = result.get("probabilities", {})
         pos_p = probs.get("Positive", 0.0)
-        neu_p = probs.get("Neutral", 0.0)
+        neu_p = probs.get("Neutral",  0.0)
         neg_p = probs.get("Negative", 0.0)
 
-        badge_class = "badge-neutral"
-        marker_left_pct = 50
+        badge_map = {
+            "Positive": "sl-badge-positive",
+            "Negative": "sl-badge-negative",
+            "Neutral":  "sl-badge-neutral",
+        }
+        badge_cls = badge_map.get(sentiment, "sl-badge-neutral")
+
         if sentiment == "Positive":
-            badge_class = "badge-positive"
-            marker_left_pct = 50 + int(score * 45)
+            marker_pct = 50 + int(score * 45)
         elif sentiment == "Negative":
-            badge_class = "badge-negative"
-            marker_left_pct = 50 - int(score * 45)
+            marker_pct = 50 - int(score * 45)
+        else:
+            marker_pct = 50
 
-        col_card1, col_card2 = st.columns([1, 1])
+        col_r1, col_r2 = st.columns([1, 1], gap="medium")
 
-        with col_card1:
+        with col_r1:
             st.markdown(
                 f"""
-                <div class="product-card">
-                    <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #7dd3fc; letter-spacing: 0.08em; margin-bottom: 0.5rem;">
-                        SENTIMENT CLASSIFICATION
+                <div class="sl-card">
+                    <div class="sl-text-label">Sentiment Classification</div>
+                    <div style="margin: 0.75rem 0 1.25rem 0;">
+                        <span class="sl-badge {badge_cls} sl-badge-lg">{sentiment}</span>
                     </div>
-                    <div style="margin: 0.5rem 0 1.25rem 0;">
-                        <span class="sentiment-badge {badge_class}" style="font-size: 1.4rem; padding: 8px 24px;">
-                            {sentiment}
+                    <div style="font-size:0.88rem; color:#64748B; line-height:2;">
+                        <span style="color:#94A3B8;">Confidence</span>&nbsp;
+                        <strong style="color:#0F172A; font-size:1.35rem; font-weight:800;">
+                            {score*100:.1f}%
+                        </strong><br/>
+                        <span style="color:#94A3B8;">Model</span>&nbsp;
+                        <strong style="color:#6366F1;">{m_used}</strong><br/>
+                        <span style="color:#94A3B8;">Timestamp</span>&nbsp;
+                        <span style="color:#64748B; font-size:0.82rem;">
+                            {timestamp[:19].replace('T', ' ')}
                         </span>
-                    </div>
-                    <div style="font-size: 0.85rem; color: #94a3b8; line-height: 1.8;">
-                        Confidence: <strong style="color: #ffffff; font-size: 1.1rem;">{score * 100:.1f}%</strong><br/>
-                        Model: <strong style="color: #bae6fd;">{m_used}</strong><br/>
-                        Timestamp: <span style="color: #64748b;">{timestamp[:19].replace('T', ' ')}</span>
                     </div>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
 
-        with col_card2:
+        with col_r2:
             st.markdown(
-                """
-                <div class="product-card">
-                    <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #7dd3fc; letter-spacing: 0.08em; margin-bottom: 0.75rem;">
-                        PROBABILITY DISTRIBUTION
-                    </div>
-                """,
+                '<div class="sl-card"><div class="sl-text-label">Probability Distribution</div>',
                 unsafe_allow_html=True,
             )
-            if score_type == "probability":
+            if score_type == "probability" and HAS_PLOTLY:
+                cats   = ["Positive", "Neutral", "Negative"]
+                values = [pos_p, neu_p, neg_p]
+                colors = ["#10B981", "#6366F1", "#EF4444"]
+                fig_h = go.Figure(go.Bar(
+                    x=values, y=cats, orientation="h",
+                    marker_color=colors,
+                    text=[f"{v*100:.1f}%" for v in values],
+                    textposition="outside",
+                    textfont=dict(family="Inter", size=12, color="#334155"),
+                    hovertemplate="%{y}: %{x:.1%}<extra></extra>",
+                ))
+                fig_h.update_layout(
+                    xaxis=dict(range=[0, 1.15], tickformat=".0%",
+                               tickfont=dict(family="Inter", size=11, color="#94A3B8"),
+                               gridcolor="rgba(99,102,241,0.08)"),
+                    yaxis=dict(tickfont=dict(family="Inter", size=13, color="#334155")),
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    margin=dict(t=10, b=10, l=10, r=60),
+                    height=180, showlegend=False,
+                )
+                st.plotly_chart(fig_h, use_container_width=True,
+                                config={"displayModeBar": False})
+            elif score_type == "probability":
                 for cls, p_val in [("Positive", pos_p), ("Neutral", neu_p), ("Negative", neg_p)]:
-                    st.write(f"**{cls}:** {p_val * 100:.1f}%")
+                    st.write(f"**{cls}:** {p_val*100:.1f}%")
                     st.progress(min(max(p_val, 0.0), 1.0))
             else:
                 for cls in ["Negative", "Neutral", "Positive"]:
@@ -215,105 +222,126 @@ def _render_single_text_analysis(model, model_name, vectorizer):
         # Sentiment Meter
         st.markdown(
             f"""
-            <div class="meter-container">
-                <div class="meter-labels">
-                    <span style="color: #f87171;">Negative</span>
-                    <span style="color: #7dd3fc;">Neutral</span>
-                    <span style="color: #34d399;">Positive</span>
+            <div class="sl-meter">
+                <div class="sl-meter-labels">
+                    <span style="color:#DC2626;">Negative</span>
+                    <span style="color:#6366F1;">Neutral</span>
+                    <span style="color:#059669;">Positive</span>
                 </div>
-                <div class="meter-track">
-                    <div class="meter-marker" style="left: {marker_left_pct}%;"></div>
+                <div class="sl-meter-track">
+                    <div class="sl-meter-marker" style="left:{marker_pct}%;"></div>
                 </div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-        # Analyze Another Button
-        if st.button("✦ Analyze Another Text", use_container_width=True, key="btn_analyze_another"):
-            st.session_state["single_text_input_val"] = ""
+        if st.button("Analyze Another Text", use_container_width=True, key="btn_another"):
+            st.session_state["single_input_text"] = ""
             st.session_state.pop("last_single_result", None)
             st.rerun()
 
-        # 4. Explainability Expander: "How SentimentLab reached this result"
-        st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
-        with st.expander("How SentimentLab reached this result", expanded=False):
+        # Explainability
+        st.markdown("<div class='sl-spacer-sm'></div>", unsafe_allow_html=True)
+        with st.expander("How SentimentLab understood this", expanded=False):
             st.markdown(
                 """
-                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 1.25rem; color: #94a3b8; font-size: 0.85rem; flex-wrap: wrap;">
-                    <span>Input Text</span> → <span>Data Cleaning</span> → <span>NLP Preprocessing</span> → <span>TF-IDF Feature Extraction</span> → <span>ML Model</span> → <span style="color: #38bdf8; font-weight: 700;">Sentiment Prediction</span>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+                            margin-bottom:1rem;font-size:0.82rem;color:#64748B;">
+                    <span>Your Text</span>
+                    <span style="color:#6366F1;">\u2192</span>
+                    <span>Clean</span>
+                    <span style="color:#6366F1;">\u2192</span>
+                    <span>Understand Language</span>
+                    <span style="color:#6366F1;">\u2192</span>
+                    <span>Extract Features</span>
+                    <span style="color:#6366F1;">\u2192</span>
+                    <span>Predict</span>
+                    <span style="color:#6366F1;">\u2192</span>
+                    <strong style="color:#0F172A;">Sentiment</strong>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
-
-            raw_t = result.get("text", input_text)
-            s1_exp = expand_contractions(raw_t)
+            raw_t    = result.get("text", input_text)
+            s1_exp   = expand_contractions(raw_t)
             s2_clean = clean_text_basic(s1_exp)
-            s3_tok = tokenize_text(s2_clean)
-            s4_stop = remove_stopwords(s3_tok, preserve_negations=True)
-            s5_lem = lemmatize_tokens(s4_stop)
+            s3_tok   = tokenize_text(s2_clean)
+            s4_stop  = remove_stopwords(s3_tok, preserve_negations=True)
+            s5_lem   = lemmatize_tokens(s4_stop)
             s6_final = result.get("processed_text", " ".join(s5_lem))
 
-            c_exp1, c_exp2 = st.columns(2)
-            with c_exp1:
+            c_e1, c_e2 = st.columns(2)
+            with c_e1:
                 st.markdown("**Original Text**")
                 st.code(raw_t, language="text")
-                st.markdown("**Cleaned & Normalized Text**")
+                st.markdown("**Cleaned & Normalized**")
                 st.code(s2_clean, language="text")
-                st.markdown("**Tokenized Tokens**")
+                st.markdown("**Tokens**")
                 st.write(s3_tok)
-
-            with c_exp2:
+            with c_e2:
                 st.markdown("**Stopword Filtering (Negations Preserved)**")
                 st.write(s4_stop)
-                st.markdown("**Lemmatized Tokens (WordNet)**")
+                st.markdown("**Lemmatized Tokens**")
                 st.write(s5_lem)
                 st.markdown("**Final Processed Text (TF-IDF Input)**")
                 st.code(s6_final, language="text")
+            st.caption(f"Vectorized into {result.get('vocab_size', 570)} TF-IDF features \u00b7 classified by {m_used}.")
 
-            st.caption(f"Vectorized into {result.get('vocab_size', 570)} TF-IDF n-gram dimensions and classified by {m_used}.")
 
+def _render_comparison(model, model_name, vectorizer):
+    """Side-by-side text comparison."""
+    st.markdown("<div class='sl-spacer-sm'></div>", unsafe_allow_html=True)
+    st.markdown(
+        '<div class="sl-card" style="margin-bottom:1rem;">'
+        '<div class="sl-section-title">Text Comparison</div>'
+        '<div class="sl-text-muted" style="margin-bottom:1rem;">'
+        'Compare sentiment across two independent texts side-by-side.</div>',
+        unsafe_allow_html=True,
+    )
 
-def _render_text_comparison(model, model_name, vectorizer):
-    """Render side-by-side text comparison workspace."""
-    st.markdown("### Text Comparison Tool")
-    st.caption("Compare sentiment polarity, confidence distributions, and key phrase reactions across two independent texts.")
-
-    col_a, col_b = st.columns(2)
+    col_a, col_b = st.columns(2, gap="medium")
     with col_a:
-        st.markdown("##### Text A")
-        text_a = st.text_area("Input Text A", value="The camera quality on this new phone is breathtaking and works seamlessly.", height=120, key="cmp_text_a")
+        st.markdown('<div class="sl-text-label">Text A</div>', unsafe_allow_html=True)
+        text_a = st.text_area(
+            "Text A",
+            value="The camera quality on this new phone is breathtaking and works seamlessly.",
+            height=120, key="cmp_a", label_visibility="collapsed",
+        )
     with col_b:
-        st.markdown("##### Text B")
-        text_b = st.text_area("Input Text B", value="The battery life is frustratingly short and overheats after 20 minutes of usage.", height=120, key="cmp_text_b")
+        st.markdown('<div class="sl-text-label">Text B</div>', unsafe_allow_html=True)
+        text_b = st.text_area(
+            "Text B",
+            value="The battery life is frustratingly short and overheats after 20 minutes.",
+            height=120, key="cmp_b", label_visibility="collapsed",
+        )
 
-    if st.button("Compare Texts", type="primary", use_container_width=True, key="btn_run_compare"):
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    if st.button("Compare Texts \u2192", type="primary", use_container_width=True, key="btn_compare"):
         if not text_a.strip() or not text_b.strip():
-            st.warning("Please enter text in both Text A and Text B to compare.")
+            st.warning("Please enter text in both panels.")
             return
-
         with st.spinner("Analyzing both texts..."):
             res_a = predict_sentiment(text_a, model=model, vectorizer=vectorizer, model_name=model_name)
             res_b = predict_sentiment(text_b, model=model, vectorizer=vectorizer, model_name=model_name)
 
-        col_ra, col_rb = st.columns(2)
-        for target_col, res, label in [(col_ra, res_a, "Text A"), (col_rb, res_b, "Text B")]:
-            with target_col:
-                sent = res["sentiment"]
+        col_ra, col_rb = st.columns(2, gap="medium")
+        badge_map = {"Positive": "sl-badge-positive", "Negative": "sl-badge-negative", "Neutral": "sl-badge-neutral"}
+        for tcol, res, lbl in [(col_ra, res_a, "Text A"), (col_rb, res_b, "Text B")]:
+            with tcol:
+                sent  = res["sentiment"]
                 score = res["score"]
                 probs = res.get("probabilities", {})
-                badge = "badge-positive" if sent == "Positive" else ("badge-negative" if sent == "Negative" else "badge-neutral")
-
                 st.markdown(
                     f"""
-                    <div class="product-card">
-                        <div style="font-weight: 700; color: #7dd3fc; font-size: 0.85rem;">{label} RESULT</div>
-                        <div style="margin: 0.5rem 0;">
-                            <span class="sentiment-badge {badge}">{sent}</span>
+                    <div class="sl-card">
+                        <div class="sl-text-label">{lbl} Result</div>
+                        <div style="margin:0.6rem 0;">
+                            <span class="sl-badge {badge_map.get(sent,'sl-badge-neutral')} sl-badge-lg">{sent}</span>
                         </div>
-                        <div style="font-size: 0.85rem; color: #94a3b8;">
-                            Confidence: <strong style="color: #ffffff;">{score*100:.1f}%</strong>
+                        <div style="font-size:0.85rem;color:#64748B;">
+                            Confidence: <strong style="color:#0F172A;font-size:1.1rem;">{score*100:.1f}%</strong>
                         </div>
                     </div>
                     """,
@@ -321,76 +349,100 @@ def _render_text_comparison(model, model_name, vectorizer):
                 )
                 if res["score_type"] == "probability":
                     for cls in ["Positive", "Neutral", "Negative"]:
-                        st.write(f"**{cls}:** {probs.get(cls, 0.0)*100:.1f}%")
+                        st.write(f"**{cls}:** {probs.get(cls,0.0)*100:.1f}%")
                         st.progress(min(max(probs.get(cls, 0.0), 0.0), 1.0))
 
-        st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
-        st.info(f"**Comparison Summary:** Text A classified as **{res_a['sentiment']}** ({res_a['score']*100:.1f}%), while Text B classified as **{res_b['sentiment']}** ({res_b['score']*100:.1f}%).")
+        st.info(
+            f"**Comparison:** Text A \u2192 **{res_a['sentiment']}** ({res_a['score']*100:.1f}%) "
+            f"| Text B \u2192 **{res_b['sentiment']}** ({res_b['score']*100:.1f}%)"
+        )
 
 
-def _render_batch_analysis(model, model_name, vectorizer):
-    """Render batch CSV file analysis."""
-    st.markdown("### Batch CSV Analysis")
-    st.caption("Upload a CSV file containing a `text` column to execute high-throughput batch sentiment classification.")
+def _render_batch(model, model_name, vectorizer):
+    """Batch CSV upload and analysis."""
+    st.markdown("<div class='sl-spacer-sm'></div>", unsafe_allow_html=True)
 
-    uploaded_file = st.file_uploader("Upload CSV File", type=["csv"], key="batch_csv_uploader")
+    st.markdown(
+        '<div class="sl-card">'
+        '<div class="sl-section-title">Batch CSV Analysis</div>'
+        '<div class="sl-text-muted" style="margin-bottom:1rem;">'
+        'Upload a CSV file containing a <code>text</code> column to run batch classification.</div>',
+        unsafe_allow_html=True,
+    )
 
-    if uploaded_file is not None:
+    uploaded = st.file_uploader(
+        "Upload CSV",
+        type=["csv"],
+        key="batch_uploader",
+        label_visibility="collapsed",
+    )
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    if uploaded is not None:
         try:
-            df = pd.read_csv(uploaded_file)
+            df = pd.read_csv(uploaded)
         except Exception as e:
-            st.error(f"Failed to parse CSV file: {e}")
+            st.error(f"Failed to parse CSV: {e}")
             return
 
         if "text" not in df.columns:
-            st.error("Invalid CSV structure. The file must contain a 'text' column.")
+            st.error("CSV must contain a 'text' column.")
             return
 
-        st.success(f"CSV uploaded successfully! Found **{len(df)}** records.")
-        st.caption("Preview of uploaded records (first 5):")
+        st.success(f"Uploaded successfully \u2014 **{len(df)} records** found.")
         st.dataframe(df.head(5), use_container_width=True)
 
-        if st.button("Run Batch Prediction", type="primary", key="btn_run_batch"):
+        if st.button("Run Batch Prediction \u2192", type="primary", key="btn_batch_run"):
             texts_list = df["text"].dropna().astype(str).tolist()
-
             progress_bar = st.progress(0.0)
-            status_text = st.empty()
-
+            status_text  = st.empty()
             status_text.text(f"Classifying {len(texts_list)} texts...")
-            results = []
 
+            results = []
             for idx, txt in enumerate(texts_list):
                 res = predict_sentiment(txt, model=model, vectorizer=vectorizer, model_name=model_name)
                 results.append({
                     "Text": txt,
                     "Predicted Sentiment": res.get("sentiment", "Unknown"),
-                    "Confidence": f"{res.get('score', 0.0)*100:.1f}%" if res.get("score_type") == "probability" else f"{res.get('score', 0.0):.4f}",
+                    "Confidence": (
+                        f"{res.get('score', 0.0)*100:.1f}%"
+                        if res.get("score_type") == "probability"
+                        else f"{res.get('score', 0.0):.4f}"
+                    ),
                     "Model": res.get("model_name", model_name),
                     "Timestamp": res.get("timestamp", datetime.now().isoformat()),
                 })
                 progress_bar.progress((idx + 1) / len(texts_list))
 
             status_text.text("Batch classification complete!")
-            st.toast("Batch analysis finished successfully!", icon="🚀")
+            st.toast("Batch analysis finished!", icon="\U0001f680")
+            st.session_state["last_batch_df"] = pd.DataFrame(results)
 
-            res_df = pd.DataFrame(results)
-            st.session_state["last_batch_results_df"] = res_df
+    if "last_batch_df" in st.session_state:
+        res_df = st.session_state["last_batch_df"]
 
-    if "last_batch_results_df" in st.session_state:
-        res_df = st.session_state["last_batch_results_df"]
-        st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
-        st.markdown("#### Batch Results")
+        st.markdown("<div class='sl-spacer-sm'></div>", unsafe_allow_html=True)
+        sc = res_df["Predicted Sentiment"].value_counts()
+        m1, m2, m3, m4, m5 = st.columns(5)
+        with m1: st.metric("Records", len(res_df))
+        with m2: st.metric("Positive", int(sc.get("Positive", 0)))
+        with m3: st.metric("Neutral",  int(sc.get("Neutral",  0)))
+        with m4: st.metric("Negative", int(sc.get("Negative", 0)))
+        with m5:
+            try:
+                avg_c = res_df["Confidence"].str.rstrip("%").astype(float).mean()
+                st.metric("Avg Confidence", f"{avg_c:.1f}%")
+            except Exception:
+                st.metric("Avg Confidence", "\u2014")
 
-        filter_choice = st.selectbox("Filter by Sentiment:", ["All", "Positive", "Neutral", "Negative"], key="batch_filter_sel")
-        display_df = res_df if filter_choice == "All" else res_df[res_df["Predicted Sentiment"] == filter_choice]
+        filt = st.selectbox("Filter:", ["All", "Positive", "Neutral", "Negative"], key="batch_filter")
+        disp = res_df if filt == "All" else res_df[res_df["Predicted Sentiment"] == filt]
+        st.dataframe(disp, use_container_width=True)
 
-        st.dataframe(display_df, use_container_width=True)
-
-        csv_out = res_df.to_csv(index=False).encode("utf-8")
         st.download_button(
-            label="📥 Download Analyzed CSV",
-            data=csv_out,
-            file_name=f"sentimentlab_batch_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+            label="Download Results (CSV)",
+            data=res_df.to_csv(index=False).encode("utf-8"),
+            file_name=f"sentimentlab_batch_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
             mime="text/csv",
-            key="btn_dl_batch_csv",
+            key="btn_batch_dl",
         )
