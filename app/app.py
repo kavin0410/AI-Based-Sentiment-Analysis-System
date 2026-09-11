@@ -2,8 +2,8 @@
 
 Premium Light AI SaaS platform for sentiment intelligence:
 - Brand: SentimentLab / "Understand the emotion behind every word."
-- Clean continuous sidebar navigation with custom button-based nav
-- Ambient gradient background (no video — light theme)
+- Clean continuous sidebar navigation with modern glassmorphic styling
+- Ambient gradient background
 - Zero development stage references anywhere in the UI.
 """
 
@@ -47,6 +47,7 @@ NAV_ITEMS = [
     ("Settings",           "⚙"),
 ]
 NAV_OPTIONS = [n for n, _ in NAV_ITEMS]
+NAV_ICON_DICT = dict(NAV_ITEMS)
 
 
 # ------------------------------------------------------------------------------
@@ -66,14 +67,6 @@ def init_page():
         with open(css_path, "r", encoding="utf-8") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-    # Inject ambient pink orb div + hide default streamlit chrome
-    st.markdown(
-        """
-        <div class="sl-orb-pink"></div>
-        """,
-        unsafe_allow_html=True,
-    )
-
 
 # ------------------------------------------------------------------------------
 # Session State
@@ -92,7 +85,7 @@ def init_session_state():
 # Sidebar
 # ------------------------------------------------------------------------------
 def render_sidebar() -> str:
-    """Render the premium light sidebar with button-based navigation."""
+    """Render the premium light sidebar."""
 
     # Process any pending cross-page navigation request
     if "target_page" in st.session_state and st.session_state["target_page"] in NAV_OPTIONS:
@@ -133,36 +126,31 @@ def render_sidebar() -> str:
 
         st.markdown("<div style='height:0.35rem'></div>", unsafe_allow_html=True)
 
-        # Navigation buttons
+        # Determine current index
         current_page = st.session_state.get("active_page", "Overview")
-        for page_name, icon in NAV_ITEMS:
-            is_active = current_page == page_name
-            label = f"{icon}  {page_name}"
-            # Use a unique key per nav button
-            btn_key = f"nav_btn_{page_name.replace(' ', '_')}"
-            if is_active:
-                # Active item rendered as colored HTML block + disabled button approach
-                st.markdown(
-                    f"""
-                    <div class="sl-nav-item active">
-                        <span class="sl-nav-icon">{icon}</span>
-                        {page_name}
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-            else:
-                if st.button(label, key=btn_key, use_container_width=True):
-                    st.session_state["active_page"] = page_name
-                    st.rerun()
+        current_index = NAV_OPTIONS.index(current_page) if current_page in NAV_OPTIONS else 0
+
+        def on_nav_change():
+            st.session_state["active_page"] = st.session_state["_sidebar_radio"]
+
+        selected = st.radio(
+            label="Navigation",
+            options=NAV_OPTIONS,
+            index=current_index,
+            key="_sidebar_radio",
+            on_change=on_nav_change,
+            label_visibility="collapsed",
+            format_func=lambda name: f"{NAV_ICON_DICT.get(name, '○')}  {name}",
+        )
+        st.session_state["active_page"] = selected
 
         # Footer
         st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
         st.markdown(
             """
             <div class="sl-sidebar-footer">
-                SentimentLab v3.0<br/>
-                Premium AI SaaS Edition
+                SentimentLab Platform v3.0<br/>
+                All systems operational.
             </div>
             """,
             unsafe_allow_html=True,

@@ -1,21 +1,18 @@
 /* ==========================================================================
-   SentimentLab — Premium Light AI SaaS Design System
-   WHITE + GLASS + GLOSS + FLOATING
+   SentimentLab — Master Light AI SaaS Design System
+   White + Glass + Gloss + Floating Cards + Apple/Linear aesthetic
    ========================================================================== */
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
-/* --------------------------------------------------------------------------
-   Root & Body
-   -------------------------------------------------------------------------- */
 :root {
   --bg-base:        #F4F6FB;
-  --bg-card:        rgba(255, 255, 255, 0.78);
-  --bg-card-hover:  rgba(255, 255, 255, 0.92);
-  --bg-sidebar:     rgba(255, 255, 255, 0.90);
+  --bg-card:        rgba(255, 255, 255, 0.82);
+  --bg-card-hover:  rgba(255, 255, 255, 0.95);
+  --bg-sidebar:     rgba(255, 255, 255, 0.92);
 
   --border-card:    rgba(99, 102, 241, 0.12);
-  --border-subtle:  rgba(148, 163, 184, 0.18);
+  --border-subtle:  rgba(148, 163, 184, 0.20);
 
   --text-primary:   #0F172A;
   --text-secondary: #334155;
@@ -28,21 +25,21 @@
   --accent-mint:    #10B981;
 
   --pos-bg:         rgba(16, 185, 129, 0.10);
-  --pos-border:     rgba(16, 185, 129, 0.30);
+  --pos-border:     rgba(16, 185, 129, 0.32);
   --pos-text:       #059669;
 
   --neg-bg:         rgba(239, 68, 68, 0.09);
-  --neg-border:     rgba(239, 68, 68, 0.28);
+  --neg-border:     rgba(239, 68, 68, 0.30);
   --neg-text:       #DC2626;
 
   --neu-bg:         rgba(99, 102, 241, 0.09);
-  --neu-border:     rgba(99, 102, 241, 0.24);
+  --neu-border:     rgba(99, 102, 241, 0.26);
   --neu-text:       #4F46E5;
 
-  --shadow-sm:      0 2px 8px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-md:      0 6px 24px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.05);
-  --shadow-lg:      0 16px 48px rgba(15, 23, 42, 0.12), 0 4px 16px rgba(15, 23, 42, 0.06);
-  --shadow-xl:      0 24px 64px rgba(15, 23, 42, 0.16), 0 8px 24px rgba(15, 23, 42, 0.08);
+  --shadow-sm:      0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.03);
+  --shadow-md:      0 6px 20px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(15, 23, 42, 0.04);
+  --shadow-lg:      0 14px 40px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.04);
+  --shadow-xl:      0 20px 50px rgba(15, 23, 42, 0.12), 0 8px 20px rgba(15, 23, 42, 0.06);
 
   --radius-sm:      10px;
   --radius-md:      16px;
@@ -50,82 +47,30 @@
   --radius-xl:      28px;
 }
 
-html, body, [class*="css"] {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: var(--text-primary);
-}
-
 /* --------------------------------------------------------------------------
-   App Background — Ambient Gradient Base
+   Global Reset & Base
    -------------------------------------------------------------------------- */
+html, body {
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  color: var(--text-primary) !important;
+  background-color: var(--bg-base) !important;
+}
+
 .stApp {
-  background: var(--bg-base) !important;
-  position: relative;
+  background: radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.07) 0%, transparent 45%),
+              radial-gradient(circle at 90% 90%, rgba(6, 182, 212, 0.06) 0%, transparent 45%),
+              radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.04) 0%, transparent 50%),
+              var(--bg-base) !important;
+  color: var(--text-primary) !important;
 }
-
-/* Ambient gradient orbs (pure CSS, behind content) */
-.stApp::before {
-  content: "";
-  position: fixed;
-  top: -15%;
-  left: -10%;
-  width: 55vw;
-  height: 55vw;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.11) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  animation: floatOrb1 18s ease-in-out infinite alternate;
-}
-
-.stApp::after {
-  content: "";
-  position: fixed;
-  bottom: -10%;
-  right: -8%;
-  width: 50vw;
-  height: 50vw;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.09) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  animation: floatOrb2 22s ease-in-out infinite alternate;
-}
-
-@keyframes floatOrb1 {
-  0%   { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(4%, 6%) scale(1.08); }
-}
-@keyframes floatOrb2 {
-  0%   { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(-5%, -4%) scale(1.06); }
-}
-
-/* Additional pink orb via an injected div */
-.sl-orb-pink {
-  position: fixed;
-  top: 45%;
-  left: 50%;
-  width: 40vw;
-  height: 40vw;
-  background: radial-gradient(circle, rgba(236, 72, 153, 0.06) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  transform: translate(-50%, -50%);
-  animation: floatOrb1 26s ease-in-out infinite alternate;
-}
-
-/* Hide Streamlit chrome */
-#MainMenu, footer, header { visibility: hidden; }
 
 /* --------------------------------------------------------------------------
    Scrollbar
    -------------------------------------------------------------------------- */
-::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.22); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.42); }
+::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.20); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.40); }
 
 /* --------------------------------------------------------------------------
    Sidebar
@@ -135,26 +80,20 @@ html, body, [class*="css"] {
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border-right: 1px solid var(--border-card) !important;
-  box-shadow: 2px 0 24px rgba(99, 102, 241, 0.06) !important;
-}
-
-[data-testid="stSidebar"] > div:first-child {
-  padding-top: 1.5rem !important;
+  box-shadow: 2px 0 24px rgba(99, 102, 241, 0.05) !important;
 }
 
 [data-testid="stSidebar"] hr {
   border-color: var(--border-subtle) !important;
-  margin: 0.75rem 0;
+  margin: 0.75rem 0 !important;
 }
 
-/* --------------------------------------------------------------------------
-   Brand
-   -------------------------------------------------------------------------- */
+/* Brand */
 .sl-brand {
-  padding: 0.25rem 0.5rem 1rem 0.5rem;
+  padding: 0.25rem 0.25rem 0.75rem 0.25rem;
 }
 .sl-brand-name {
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A855F7 100%);
@@ -164,7 +103,7 @@ html, body, [class*="css"] {
   line-height: 1.2;
 }
 .sl-brand-tagline {
-  font-size: 0.78rem;
+  font-size: 0.80rem;
   color: var(--text-muted);
   margin-top: 3px;
   font-style: italic;
@@ -173,7 +112,7 @@ html, body, [class*="css"] {
 .sl-status {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   margin-top: 0.6rem;
   padding: 3px 10px;
   background: rgba(16, 185, 129, 0.08);
@@ -189,60 +128,36 @@ html, body, [class*="css"] {
   border-radius: 50%;
   background: #10B981;
   box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
-  animation: pulse-dot 2.5s ease-in-out infinite;
-}
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(16,185,129,0.6); }
-  50%       { opacity: 0.65; box-shadow: 0 0 12px rgba(16,185,129,0.9); }
 }
 
-/* --------------------------------------------------------------------------
-   Sidebar Navigation — Custom Button Nav
-   -------------------------------------------------------------------------- */
-.sl-nav-section {
-  margin-top: 0.25rem;
-}
+/* Active Nav item */
 .sl-nav-item {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 0.6rem 1rem;
   border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.18s ease;
   color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
-  margin: 2px 4px;
+  margin: 3px 0;
   border: 1px solid transparent;
-  text-decoration: none;
-}
-.sl-nav-item:hover {
-  background: rgba(99, 102, 241, 0.07);
-  color: var(--accent-blue);
-  border-color: rgba(99, 102, 241, 0.12);
-  transform: translateX(2px);
 }
 .sl-nav-item.active {
   background: linear-gradient(135deg, #6366F1, #8B5CF6);
   color: #ffffff !important;
   border-color: rgba(99, 102, 241, 0.4);
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.30), inset 0 1px 0 rgba(255,255,255,0.2);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.28), inset 0 1px 0 rgba(255,255,255,0.2);
   font-weight: 600;
-  transform: none;
 }
 .sl-nav-icon {
   width: 18px;
   text-align: center;
   font-size: 0.95rem;
-  opacity: 0.75;
   flex-shrink: 0;
 }
-.sl-nav-item.active .sl-nav-icon {
-  opacity: 1;
-}
 
-/* Streamlit button resets — used for nav items inside sidebar */
+/* Sidebar button styling */
 [data-testid="stSidebar"] div[data-testid="stButton"] > button {
   background: transparent !important;
   border: 1px solid transparent !important;
@@ -250,7 +165,7 @@ html, body, [class*="css"] {
   color: var(--text-secondary) !important;
   font-size: 0.9rem !important;
   font-weight: 500 !important;
-  padding: 0.55rem 1rem !important;
+  padding: 0.55rem 0.9rem !important;
   width: 100% !important;
   text-align: left !important;
   transition: all 0.18s ease !important;
@@ -258,9 +173,27 @@ html, body, [class*="css"] {
   justify-content: flex-start !important;
 }
 [data-testid="stSidebar"] div[data-testid="stButton"] > button:hover {
+  background: rgba(99, 102, 241, 0.08) !important;
+  color: var(--accent-blue) !important;
+  border-color: rgba(99, 102, 241, 0.14) !important;
+}
+
+/* Sidebar Radio (if radio is used) */
+[data-testid="stSidebar"] div[data-testid="stRadio"] > div {
+  gap: 0.25rem;
+}
+[data-testid="stSidebar"] div[data-testid="stRadio"] label {
+  padding: 0.5rem 0.85rem !important;
+  border-radius: var(--radius-sm) !important;
+  color: var(--text-secondary) !important;
+  font-size: 0.92rem !important;
+  font-weight: 500 !important;
+  transition: all 0.18s ease !important;
+  border: 1px solid transparent !important;
+}
+[data-testid="stSidebar"] div[data-testid="stRadio"] label:hover {
   background: rgba(99, 102, 241, 0.07) !important;
   color: var(--accent-blue) !important;
-  border-color: rgba(99, 102, 241, 0.12) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -269,36 +202,31 @@ html, body, [class*="css"] {
 .sl-card {
   position: relative;
   background: var(--bg-card);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.92);
   border-radius: var(--radius-lg);
-  padding: 1.5rem;
+  padding: 1.4rem 1.5rem;
   box-shadow: var(--shadow-lg);
   transition: transform 0.22s ease, box-shadow 0.22s ease;
-  overflow: hidden;
   margin-bottom: 1.25rem;
 }
-/* Glossy top highlight */
 .sl-card::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.85) 50%, transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9) 50%, transparent);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   pointer-events: none;
 }
 .sl-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-xl);
 }
 
-/* Card variants */
 .sl-card-sm {
-  padding: 1.1rem 1.25rem;
+  padding: 1.1rem 1.3rem;
   border-radius: var(--radius-md);
 }
 .sl-card-hero {
@@ -309,19 +237,19 @@ html, body, [class*="css"] {
   box-shadow: var(--shadow-xl);
 }
 .sl-card-blue {
-  background: linear-gradient(145deg, rgba(241,244,255,0.9) 0%, rgba(230,233,255,0.75) 100%);
+  background: linear-gradient(145deg, rgba(241,244,255,0.92) 0%, rgba(230,233,255,0.78) 100%);
   border-color: rgba(99, 102, 241, 0.18);
 }
 .sl-card-green {
-  background: linear-gradient(145deg, rgba(240,255,248,0.9) 0%, rgba(220,252,231,0.75) 100%);
+  background: linear-gradient(145deg, rgba(240,255,248,0.92) 0%, rgba(220,252,231,0.78) 100%);
   border-color: rgba(16, 185, 129, 0.18);
 }
 .sl-card-violet {
-  background: linear-gradient(145deg, rgba(248,245,255,0.9) 0%, rgba(237,233,254,0.75) 100%);
+  background: linear-gradient(145deg, rgba(248,245,255,0.92) 0%, rgba(237,233,254,0.78) 100%);
   border-color: rgba(139, 92, 246, 0.18);
 }
 .sl-card-cyan {
-  background: linear-gradient(145deg, rgba(240,254,254,0.9) 0%, rgba(207,250,254,0.75) 100%);
+  background: linear-gradient(145deg, rgba(240,254,254,0.92) 0%, rgba(207,250,254,0.78) 100%);
   border-color: rgba(6, 182, 212, 0.18);
 }
 
@@ -331,31 +259,18 @@ html, body, [class*="css"] {
 .sl-metric {
   position: relative;
   background: var(--bg-card);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.90);
   border-radius: var(--radius-md);
-  padding: 1.2rem 1.4rem;
+  padding: 1.15rem 1.3rem;
   box-shadow: var(--shadow-md);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   overflow: hidden;
 }
-.sl-metric::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9) 50%, transparent);
-  pointer-events: none;
-}
 .sl-metric:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
-}
-.sl-metric-icon {
-  font-size: 1.3rem;
-  margin-bottom: 0.5rem;
-  display: block;
 }
 .sl-metric-label {
   font-size: 0.72rem;
@@ -363,14 +278,14 @@ html, body, [class*="css"] {
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.35rem;
 }
 .sl-metric-value {
-  font-size: 1.8rem;
+  font-size: 1.75rem;
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: -0.03em;
-  line-height: 1;
+  line-height: 1.1;
 }
 .sl-metric-sub {
   font-size: 0.78rem;
@@ -378,11 +293,11 @@ html, body, [class*="css"] {
   margin-top: 0.35rem;
 }
 
-/* Streamlit native st.metric override for light theme */
+/* Streamlit native st.metric override */
 div[data-testid="stMetric"] {
   background: var(--bg-card) !important;
-  backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255,255,255,0.88) !important;
+  backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(255,255,255,0.90) !important;
   border-radius: var(--radius-md) !important;
   padding: 1.1rem 1.3rem !important;
   box-shadow: var(--shadow-md) !important;
@@ -399,13 +314,9 @@ div[data-testid="stMetricValue"] {
   font-weight: 800 !important;
   font-size: 1.55rem !important;
 }
-div[data-testid="stMetricDelta"] {
-  color: var(--text-muted) !important;
-  font-size: 0.8rem !important;
-}
 
 /* --------------------------------------------------------------------------
-   Sentiment Badges / Pills
+   Sentiment Badges
    -------------------------------------------------------------------------- */
 .sl-badge {
   display: inline-flex;
@@ -441,8 +352,8 @@ div[data-testid="stMetricDelta"] {
    Page Headers
    -------------------------------------------------------------------------- */
 .sl-page-header {
-  margin-bottom: 2rem;
-  padding-bottom: 1.25rem;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid var(--border-subtle);
 }
 .sl-page-eyebrow {
@@ -469,16 +380,13 @@ div[data-testid="stMetricDelta"] {
   line-height: 1.15;
 }
 .sl-page-subtitle {
-  font-size: 1rem;
+  font-size: 0.98rem;
   color: var(--text-muted);
-  margin-top: 0.4rem;
+  margin-top: 0.35rem;
   font-weight: 400;
   line-height: 1.5;
 }
 
-/* --------------------------------------------------------------------------
-   Section Labels
-   -------------------------------------------------------------------------- */
 .sl-section-label {
   font-size: 0.75rem;
   font-weight: 700;
@@ -492,7 +400,7 @@ div[data-testid="stMetricDelta"] {
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.02em;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 /* --------------------------------------------------------------------------
@@ -501,7 +409,7 @@ div[data-testid="stMetricDelta"] {
 .sl-meter {
   margin: 1.25rem 0;
   padding: 1rem 1.25rem;
-  background: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.75);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
@@ -521,7 +429,7 @@ div[data-testid="stMetricDelta"] {
   height: 8px;
   border-radius: 4px;
   background: linear-gradient(90deg, #DC2626 0%, #A78BFA 50%, #059669 100%);
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
 }
 .sl-meter-marker {
   position: absolute;
@@ -539,14 +447,9 @@ div[data-testid="stMetricDelta"] {
 /* --------------------------------------------------------------------------
    NLP Pipeline Nodes
    -------------------------------------------------------------------------- */
-.sl-pipeline-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
 .sl-pipeline-node {
   background: var(--bg-card);
-  border: 1px solid rgba(255,255,255,0.88);
+  border: 1px solid rgba(255,255,255,0.90);
   border-radius: var(--radius-md);
   padding: 1rem 1.25rem;
   box-shadow: var(--shadow-sm);
@@ -616,17 +519,17 @@ div[data-testid="stMetricDelta"] {
   font-weight: 700 !important;
   letter-spacing: 0.01em !important;
   padding: 0.65rem 1.75rem !important;
-  box-shadow: 0 4px 16px rgba(99,102,241,0.30), inset 0 1px 0 rgba(255,255,255,0.25) !important;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.28), inset 0 1px 0 rgba(255,255,255,0.25) !important;
   transition: all 0.2s ease !important;
 }
 .stButton > button[kind="primary"]:hover {
   background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%) !important;
-  box-shadow: 0 6px 24px rgba(99,102,241,0.45), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+  box-shadow: 0 6px 24px rgba(99,102,241,0.40), inset 0 1px 0 rgba(255,255,255,0.3) !important;
   transform: translateY(-2px);
 }
 
 .stButton > button:not([kind="primary"]) {
-  background: rgba(255,255,255,0.80) !important;
+  background: rgba(255,255,255,0.85) !important;
   backdrop-filter: blur(12px) !important;
   color: var(--text-secondary) !important;
   border: 1px solid var(--border-subtle) !important;
@@ -643,44 +546,34 @@ div[data-testid="stMetricDelta"] {
 }
 
 /* --------------------------------------------------------------------------
-   Text Inputs / Text Areas
+   Inputs & Textareas
    -------------------------------------------------------------------------- */
 .stTextArea textarea {
-  background: rgba(255,255,255,0.88) !important;
+  background: rgba(255,255,255,0.90) !important;
   backdrop-filter: blur(12px) !important;
   color: var(--text-primary) !important;
   border: 1.5px solid var(--border-subtle) !important;
   border-radius: var(--radius-md) !important;
   font-size: 0.96rem !important;
   padding: 1rem !important;
-  transition: border-color 0.2s, box-shadow 0.2s !important;
   box-shadow: var(--shadow-sm) !important;
 }
 .stTextArea textarea:focus {
   border-color: var(--accent-blue) !important;
   box-shadow: 0 0 0 3px rgba(99,102,241,0.12), var(--shadow-sm) !important;
-  outline: none !important;
-}
-.stTextArea textarea::placeholder {
-  color: var(--text-faint) !important;
 }
 
 .stTextInput input {
-  background: rgba(255,255,255,0.88) !important;
-  backdrop-filter: blur(12px) !important;
+  background: rgba(255,255,255,0.90) !important;
   color: var(--text-primary) !important;
   border: 1.5px solid var(--border-subtle) !important;
   border-radius: var(--radius-sm) !important;
   padding: 0.6rem 0.9rem !important;
   box-shadow: var(--shadow-sm) !important;
-  transition: border-color 0.2s, box-shadow 0.2s !important;
 }
 .stTextInput input:focus {
   border-color: var(--accent-blue) !important;
   box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
-}
-.stTextInput input::placeholder {
-  color: var(--text-faint) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -688,8 +581,7 @@ div[data-testid="stMetricDelta"] {
    -------------------------------------------------------------------------- */
 .stTabs [data-baseweb="tab-list"] {
   gap: 4px;
-  background: rgba(255,255,255,0.65);
-  backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.70);
   border: 1px solid var(--border-subtle);
   padding: 5px 6px;
   border-radius: var(--radius-sm);
@@ -701,140 +593,15 @@ div[data-testid="stMetricDelta"] {
   font-weight: 600;
   font-size: 0.88rem;
   padding: 0.45rem 1rem;
-  transition: all 0.18s;
 }
 .stTabs [aria-selected="true"] {
   background: linear-gradient(135deg, #6366F1, #8B5CF6) !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 10px rgba(99,102,241,0.28) !important;
+  box-shadow: 0 2px 10px rgba(99,102,241,0.25) !important;
 }
 
 /* --------------------------------------------------------------------------
-   Selectbox / Dropdowns
-   -------------------------------------------------------------------------- */
-.stSelectbox [data-baseweb="select"] > div:first-child {
-  background: rgba(255,255,255,0.88) !important;
-  border: 1.5px solid var(--border-subtle) !important;
-  border-radius: var(--radius-sm) !important;
-  color: var(--text-primary) !important;
-  box-shadow: var(--shadow-sm) !important;
-}
-
-/* --------------------------------------------------------------------------
-   DataFrames / Tables
-   -------------------------------------------------------------------------- */
-.stDataFrame {
-  border-radius: var(--radius-md) !important;
-  overflow: hidden;
-  border: 1px solid var(--border-subtle) !important;
-  box-shadow: var(--shadow-sm) !important;
-}
-iframe[title="st_dataframe"] {
-  border-radius: var(--radius-md) !important;
-}
-
-/* --------------------------------------------------------------------------
-   Alerts / Info Boxes
-   -------------------------------------------------------------------------- */
-.stAlert {
-  border-radius: var(--radius-md) !important;
-  border-left-width: 3px !important;
-  box-shadow: var(--shadow-sm) !important;
-}
-[data-baseweb="notification"] {
-  border-radius: var(--radius-md) !important;
-}
-
-/* --------------------------------------------------------------------------
-   Progress Bars
-   -------------------------------------------------------------------------- */
-.stProgress > div > div > div > div {
-  background: linear-gradient(90deg, #6366F1, #8B5CF6) !important;
-  border-radius: 4px !important;
-}
-.stProgress > div > div {
-  background: rgba(99,102,241,0.10) !important;
-  border-radius: 4px !important;
-}
-
-/* --------------------------------------------------------------------------
-   File Uploader
-   -------------------------------------------------------------------------- */
-[data-testid="stFileUploader"] {
-  border: 2px dashed rgba(99,102,241,0.25) !important;
-  border-radius: var(--radius-lg) !important;
-  background: rgba(241,244,255,0.5) !important;
-  padding: 1rem !important;
-  transition: border-color 0.2s, background 0.2s !important;
-}
-[data-testid="stFileUploader"]:hover {
-  border-color: var(--accent-blue) !important;
-  background: rgba(99,102,241,0.06) !important;
-}
-
-/* --------------------------------------------------------------------------
-   Expanders
-   -------------------------------------------------------------------------- */
-.streamlit-expanderHeader {
-  background: rgba(255,255,255,0.7) !important;
-  border: 1px solid var(--border-subtle) !important;
-  border-radius: var(--radius-sm) !important;
-  color: var(--text-secondary) !important;
-  font-weight: 600 !important;
-}
-.streamlit-expanderContent {
-  background: rgba(255,255,255,0.55) !important;
-  border: 1px solid var(--border-subtle) !important;
-  border-top: none !important;
-  border-radius: 0 0 var(--radius-sm) var(--radius-sm) !important;
-}
-
-/* --------------------------------------------------------------------------
-   Code Blocks
-   -------------------------------------------------------------------------- */
-.stCodeBlock {
-  border-radius: var(--radius-sm) !important;
-  border: 1px solid var(--border-subtle) !important;
-}
-
-/* --------------------------------------------------------------------------
-   Spinner
-   -------------------------------------------------------------------------- */
-.stSpinner > div {
-  border-top-color: var(--accent-blue) !important;
-}
-
-/* --------------------------------------------------------------------------
-   Radio (used only for analyze sub-mode, NOT sidebar)
-   -------------------------------------------------------------------------- */
-.stRadio [data-testid="stRadioGroup"] {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  background: rgba(255,255,255,0.65);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 4px 6px;
-  backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-sm);
-}
-.stRadio label {
-  border-radius: 7px;
-  padding: 0.4rem 1rem !important;
-  color: var(--text-muted) !important;
-  font-size: 0.88rem !important;
-  font-weight: 600 !important;
-  cursor: pointer;
-  transition: all 0.18s;
-}
-.stRadio label:has(input:checked) {
-  background: linear-gradient(135deg, #6366F1, #8B5CF6) !important;
-  color: white !important;
-  box-shadow: 0 2px 10px rgba(99,102,241,0.28) !important;
-}
-
-/* --------------------------------------------------------------------------
-   Hero AI Visual (used in overview)
+   Hero Visual Elements
    -------------------------------------------------------------------------- */
 .sl-hero-visual {
   display: flex;
@@ -844,23 +611,18 @@ iframe[title="st_dataframe"] {
   min-height: 220px;
 }
 .sl-brain-orb {
-  width: 130px;
-  height: 130px;
+  width: 125px;
+  height: 125px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.20), rgba(6,182,212,0.12));
+  background: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.18), rgba(6,182,212,0.10));
   border: 2px solid rgba(99,102,241,0.22);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3.5rem;
-  box-shadow: 0 0 40px rgba(99,102,241,0.18), 0 0 80px rgba(139,92,246,0.10), inset 0 1px 0 rgba(255,255,255,0.7);
-  animation: orb-pulse 4s ease-in-out infinite;
+  font-size: 3.2rem;
+  box-shadow: 0 0 35px rgba(99,102,241,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
   position: relative;
   z-index: 2;
-}
-@keyframes orb-pulse {
-  0%, 100% { box-shadow: 0 0 40px rgba(99,102,241,0.18), 0 0 80px rgba(139,92,246,0.10), inset 0 1px 0 rgba(255,255,255,0.7); }
-  50%       { box-shadow: 0 0 60px rgba(99,102,241,0.28), 0 0 100px rgba(139,92,246,0.16), inset 0 1px 0 rgba(255,255,255,0.7); }
 }
 .sl-orbit-badge {
   position: absolute;
@@ -874,37 +636,24 @@ iframe[title="st_dataframe"] {
   z-index: 3;
 }
 .sl-orbit-pos {
-  top: 12%;
-  right: 5%;
-  background: rgba(240,255,248,0.92);
+  top: 14%; right: 8%;
+  background: rgba(240,255,248,0.95);
   color: var(--pos-text);
   border: 1.5px solid var(--pos-border);
-  animation: orbit-float 5s ease-in-out infinite;
 }
 .sl-orbit-neg {
-  bottom: 12%;
-  right: 5%;
-  background: rgba(255,240,240,0.92);
+  bottom: 14%; right: 8%;
+  background: rgba(255,240,240,0.95);
   color: var(--neg-text);
   border: 1.5px solid var(--neg-border);
-  animation: orbit-float 6s ease-in-out infinite 1s;
 }
 .sl-orbit-neu {
-  top: 38%;
-  left: 2%;
-  background: rgba(241,240,255,0.92);
+  top: 40%; left: 4%;
+  background: rgba(241,240,255,0.95);
   color: var(--neu-text);
   border: 1.5px solid var(--neu-border);
-  animation: orbit-float 7s ease-in-out infinite 0.5s;
-}
-@keyframes orbit-float {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-8px); }
 }
 
-/* --------------------------------------------------------------------------
-   Flow arrows (hero)
-   -------------------------------------------------------------------------- */
 .sl-flow {
   display: flex;
   align-items: center;
@@ -917,7 +666,7 @@ iframe[title="st_dataframe"] {
   align-items: center;
   gap: 5px;
   padding: 4px 12px;
-  background: rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.80);
   border: 1px solid var(--border-subtle);
   border-radius: 20px;
   font-size: 0.75rem;
@@ -931,9 +680,6 @@ iframe[title="st_dataframe"] {
   opacity: 0.6;
 }
 
-/* --------------------------------------------------------------------------
-   Recent Predictions Table
-   -------------------------------------------------------------------------- */
 .sl-pred-row {
   display: flex;
   align-items: center;
@@ -944,13 +690,10 @@ iframe[title="st_dataframe"] {
 }
 .sl-pred-row:last-child { border-bottom: none; }
 .sl-pred-row:hover { background: rgba(99,102,241,0.04); border-radius: 8px; }
-.sl-pred-time { font-size: 0.72rem; color: var(--text-faint); min-width: 80px; }
+.sl-pred-time { font-size: 0.72rem; color: var(--text-faint); min-width: 75px; }
 .sl-pred-text { flex: 1; font-size: 0.85rem; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sl-pred-conf { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); min-width: 55px; text-align: right; }
+.sl-pred-conf { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); min-width: 50px; text-align: right; }
 
-/* --------------------------------------------------------------------------
-   Utility Helpers
-   -------------------------------------------------------------------------- */
 .sl-divider {
   height: 1px;
   background: var(--border-subtle);
@@ -969,39 +712,17 @@ iframe[title="st_dataframe"] {
   color: var(--text-muted);
   margin-bottom: 0.35rem;
 }
-.sl-view-all {
-  font-size: 0.82rem;
-  color: var(--accent-blue);
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-}
-.sl-view-all:hover { text-decoration: underline; }
 
-/* --------------------------------------------------------------------------
-   Quick Analyze Card (overview)
-   -------------------------------------------------------------------------- */
 .sl-quick-analyze-card {
-  background: linear-gradient(145deg, rgba(241,244,255,0.90), rgba(230,233,255,0.75));
+  background: linear-gradient(145deg, rgba(241,244,255,0.92), rgba(230,233,255,0.78));
   border: 1px solid rgba(99,102,241,0.18);
   border-radius: var(--radius-lg);
-  padding: 1.5rem;
+  padding: 1.4rem 1.5rem;
   box-shadow: var(--shadow-lg);
   position: relative;
   overflow: hidden;
 }
-.sl-quick-analyze-card::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9) 50%, transparent);
-  pointer-events: none;
-}
 
-/* --------------------------------------------------------------------------
-   Health / Status Indicator Badges
-   -------------------------------------------------------------------------- */
 .sl-health-badge {
   display: inline-flex;
   align-items: center;
@@ -1025,9 +746,6 @@ iframe[title="st_dataframe"] {
   background: #10B981;
 }
 
-/* --------------------------------------------------------------------------
-   Sidebar Footer
-   -------------------------------------------------------------------------- */
 .sl-sidebar-footer {
   padding: 0.75rem 0.75rem;
   font-size: 0.72rem;
