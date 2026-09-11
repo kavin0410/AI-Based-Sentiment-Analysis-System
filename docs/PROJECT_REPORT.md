@@ -1,14 +1,84 @@
-﻿# Project Report
+# Project Report
 
-## AI Sentiment Intelligence: AI-Based Sentiment Analysis System Using Machine Learning
+## SentimentLab: AI-Based Sentiment Analysis System Using Machine Learning
+*"Understand the emotion behind every word."*
 
 **Document Type:** Academic Minor Project Report  
-**Submitted By:** [Student Name]  
+**Submitted By:** Candidate Name(s): To be filled  
 **Institution:** [Institution Name]  
 **Department:** Computer Science and Engineering  
 **Academic Year:** 2025-2026  
 **Project Deadline:** 11 September 2026  
 **Report Version:** Final — Stage 7  
+
+---
+
+## Project Information Table
+
+| Item | Details |
+|------|---------|
+| **Project Title** | SentimentLab — "Understand the emotion behind every word." |
+| **Candidate Name(s)** | Candidate Name(s): To be filled |
+| **Domain** | Natural Language Processing (NLP) / Machine Learning / Artificial Intelligence |
+| **Dataset** | SentimentLab Demo Dataset (60 records, 3 classes: Positive, Negative, Neutral) |
+| **Source Code** | Included (`src/`) |
+| **Jupyter Notebook** | Included (`notebooks/sentiment_analysis.ipynb`) |
+| **Model Files** | Included (`models/`: Logistic Regression, Naive Bayes, Linear SVM, TF-IDF Vectorizer) |
+| **Application/Dashboard** | SentimentLab (Streamlit + Next.js + FastAPI) |
+| **Screenshots** | Included (`screenshots/`) |
+| **Documentation** | Included (`docs/PROJECT_REPORT.md`) |
+| **GitHub Repository** | https://github.com/kavin0410/AI-Based-Sentiment-Analysis-System.git |
+
+---
+
+## Detailed Project Submission Information
+
+1. **PROJECT TITLE**
+   - **Title:** SentimentLab
+   - **Tagline:** *"Understand the emotion behind every word."*
+
+2. **CANDIDATE NAME(S)**
+   - **Candidate Name(s):** To be filled
+
+3. **DOMAIN**
+   - Natural Language Processing (NLP) / Machine Learning / Artificial Intelligence
+
+4. **DATASET**
+   - **Dataset Name:** SentimentLab Demo Dataset
+   - **Dataset Source:** Custom curated benchmark dataset
+   - **Number of Records:** 60 records (20 Positive, 20 Negative, 20 Neutral)
+   - **Input Features:** `text` (Raw free-form text input string)
+   - **Target Variable:** `sentiment`
+   - **Sentiment Classes:** Positive, Negative, Neutral
+   - **Raw Dataset File:** `data/raw/demo_dataset.csv`
+   - **Cleaned Dataset File:** `data/processed/cleaned_dataset.csv`
+
+5. **SOURCE CODE**
+   - Full Python package structure included in `src/` (data loading, cleaning, NLP preprocessing, TF-IDF feature extraction, model training, evaluation, model caching, prediction engine).
+
+6. **JUPYTER NOTEBOOK**
+   - Complete analysis notebook included: `notebooks/sentiment_analysis.ipynb`.
+
+7. **MODEL FILES**
+   - `models/logistic_regression.pkl`
+   - `models/naive_bayes.pkl`
+   - `models/linear_svm.pkl`
+   - `models/tfidf_vectorizer.pkl`
+   - `models/model_metadata.json`
+
+8. **APPLICATION / DASHBOARD**
+   - **Application:** SentimentLab
+   - **Source Code:** `app/` (Streamlit local UI), `pages/` (Next.js Vercel UI), `api/` (FastAPI backend API)
+   - **Tech Stack:** Python, FastAPI, Next.js, React, TypeScript, Tailwind CSS, Scikit-Learn, NLTK, Streamlit
+
+9. **SCREENSHOTS**
+   - Included in `screenshots/` directory covering Overview, Sentiment Analyzer, Prediction Result, Insights, History, NLP Explorer, Model Intelligence, Data Center, Reports, Settings.
+
+10. **DOCUMENTATION**
+    - Complete academic project report in `docs/PROJECT_REPORT.md`.
+
+11. **GITHUB REPOSITORY**
+    - https://github.com/kavin0410/AI-Based-Sentiment-Analysis-System.git
 
 ---
 
