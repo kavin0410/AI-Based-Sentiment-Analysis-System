@@ -47,7 +47,7 @@ def render_reports_page():
         )
         if config.EVALUATION_RESULTS_CSV.exists():
             eval_df = pd.read_csv(config.EVALUATION_RESULTS_CSV)
-            st.dataframe(eval_df, use_container_width=True)
+            st.table(eval_df)
 
             st.download_button(
                 label="Download Evaluation Results (CSV)",
@@ -101,7 +101,7 @@ def render_reports_page():
                 filtered_err = err_df
 
             st.caption(f"Showing **{len(filtered_err)}** misclassified records.")
-            st.dataframe(filtered_err, use_container_width=True)
+            st.table(filtered_err.head(20))
 
             st.download_button(
                 label="Download Error Analysis (CSV)",
@@ -125,9 +125,9 @@ def render_reports_page():
         )
         if config.MODEL_COMPARISON_CSV.exists():
             comp_df = pd.read_csv(config.MODEL_COMPARISON_CSV, index_col=0)
-            st.dataframe(comp_df, use_container_width=True)
+            st.table(comp_df)
         elif config.EVALUATION_RESULTS_CSV.exists():
-            st.dataframe(pd.read_csv(config.EVALUATION_RESULTS_CSV), use_container_width=True)
+            st.table(pd.read_csv(config.EVALUATION_RESULTS_CSV))
         else:
             st.info("Model comparison data not found.")
         st.markdown("</div>", unsafe_allow_html=True)

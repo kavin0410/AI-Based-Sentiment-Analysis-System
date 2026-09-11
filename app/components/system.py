@@ -170,5 +170,5 @@ def render_system_page():
         ],
         "Operational Mode": ["Fixed", "Validated", "In-Memory", "Static", "Serialized", "Stratified", "Dynamic"],
     })
-    st.dataframe(params_df, use_container_width=True)
+    st.table(params_df)
     st.markdown("</div>", unsafe_allow_html=True)

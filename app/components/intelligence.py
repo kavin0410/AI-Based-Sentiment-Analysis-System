@@ -138,8 +138,7 @@ def render_insights_page():
                 """,
                 unsafe_allow_html=True,
             )
-            st.dataframe(filtered_df[[config.TEXT_COLUMN, config.SENTIMENT_COLUMN]],
-                        use_container_width=True, height=220)
+            st.table(filtered_df[[config.TEXT_COLUMN, config.SENTIMENT_COLUMN]].head(12))
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col_terms:

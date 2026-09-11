@@ -375,7 +375,7 @@ def _render_batch(model, model_name, vectorizer):
             return
 
         st.success(f"Uploaded successfully \u2014 **{len(df)} records** found.")
-        st.dataframe(df.head(5), use_container_width=True)
+        st.table(df.head(5))
 
         if st.button("Run Batch Prediction \u2192", type="primary", key="btn_batch_run"):
             texts_list = df["text"].dropna().astype(str).tolist()
@@ -422,7 +422,7 @@ def _render_batch(model, model_name, vectorizer):
 
         filt = st.selectbox("Filter:", ["All", "Positive", "Neutral", "Negative"], key="batch_filter")
         disp = res_df if filt == "All" else res_df[res_df["Predicted Sentiment"] == filt]
-        st.dataframe(disp, use_container_width=True)
+        st.table(disp.head(25))
 
         st.download_button(
             label="Download Results (CSV)",

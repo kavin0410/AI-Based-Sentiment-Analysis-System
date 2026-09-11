@@ -1,19 +1,19 @@
 /* ==========================================================================
    SentimentLab — Master Light AI SaaS Design System
-   White + Glass + Gloss + Floating Cards + Apple/Linear aesthetic
-   High Contrast Light Mode
+   Pure White Glassmorphism + Dark Black High-Contrast Typography
+   Zero Black Backgrounds \u00b7 Zero Black Boxes \u00b7 Zero White-on-White Text
    ========================================================================== */
 
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 :root {
   --bg-base:        #F4F6FB;
-  --bg-card:        rgba(255, 255, 255, 0.88);
-  --bg-card-hover:  rgba(255, 255, 255, 0.98);
-  --bg-sidebar:     rgba(255, 255, 255, 0.95);
+  --bg-card:        #FFFFFF;
+  --bg-card-glass:  rgba(255, 255, 255, 0.92);
+  --bg-sidebar:     #FFFFFF;
 
-  --border-card:    rgba(99, 102, 241, 0.14);
-  --border-subtle:  rgba(148, 163, 184, 0.24);
+  --border-card:    rgba(99, 102, 241, 0.16);
+  --border-subtle:  rgba(148, 163, 184, 0.25);
 
   --text-primary:   #0F172A;
   --text-secondary: #1E293B;
@@ -51,7 +51,7 @@
 /* --------------------------------------------------------------------------
    Global Reset & Base
    -------------------------------------------------------------------------- */
-html, body, [class*="css"], [data-testid="stAppViewContainer"] {
+html, body, [class*="css"], [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
   font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
   color: var(--text-primary) !important;
   background-color: var(--bg-base) !important;
@@ -78,13 +78,11 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
 ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.45); }
 
 /* --------------------------------------------------------------------------
-   Sidebar Base
+   Sidebar
    -------------------------------------------------------------------------- */
 [data-testid="stSidebar"] {
-  background: var(--bg-sidebar) !important;
-  backdrop-filter: blur(24px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-  border-right: 1px solid var(--border-card) !important;
+  background: #FFFFFF !important;
+  border-right: 1.5px solid var(--border-subtle) !important;
   box-shadow: 2px 0 24px rgba(99, 102, 241, 0.05) !important;
 }
 
@@ -93,7 +91,6 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
   margin: 0.75rem 0 !important;
 }
 
-/* Brand */
 .sl-brand {
   padding: 0.25rem 0.25rem 0.5rem 0.25rem;
 }
@@ -135,13 +132,10 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
   box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
 }
 
-/* --------------------------------------------------------------------------
-   Sidebar Search Input
-   -------------------------------------------------------------------------- */
 [data-testid="stSidebar"] [data-testid="stTextInput"] input {
   background: #FFFFFF !important;
   color: #0F172A !important;
-  border: 1.5px solid rgba(99, 102, 241, 0.22) !important;
+  border: 1.5px solid rgba(99, 102, 241, 0.25) !important;
   border-radius: 12px !important;
   padding: 0.65rem 1rem !important;
   font-size: 0.88rem !important;
@@ -158,18 +152,14 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
 }
 
-/* --------------------------------------------------------------------------
-   Sidebar Navigation Radio — Floating Pills
-   -------------------------------------------------------------------------- */
 [data-testid="stSidebar"] [data-testid="stRadio"] > div {
   gap: 6px !important;
 }
-
 [data-testid="stSidebar"] [data-testid="stRadio"] label {
   display: flex !important;
   align-items: center !important;
-  background: rgba(255, 255, 255, 0.80) !important;
-  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  background: #FFFFFF !important;
+  border: 1.5px solid rgba(148, 163, 184, 0.22) !important;
   border-radius: 12px !important;
   padding: 0.65rem 1rem !important;
   margin: 2px 0 !important;
@@ -177,7 +167,6 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
   transition: all 0.2s ease !important;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03) !important;
 }
-
 [data-testid="stSidebar"] [data-testid="stRadio"] label *,
 [data-testid="stSidebar"] [data-testid="stRadio"] label p,
 [data-testid="stSidebar"] [data-testid="stRadio"] label span,
@@ -187,20 +176,17 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
   font-weight: 600 !important;
   letter-spacing: -0.01em !important;
 }
-
 [data-testid="stSidebar"] [data-testid="stRadio"] label > div:first-child {
   display: none !important;
 }
-
 [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
   background: rgba(99, 102, 241, 0.09) !important;
-  border-color: rgba(99, 102, 241, 0.32) !important;
+  border-color: rgba(99, 102, 241, 0.35) !important;
   transform: translateX(3px) !important;
 }
 [data-testid="stSidebar"] [data-testid="stRadio"] label:hover * {
   color: #4F46E5 !important;
 }
-
 [data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {
   background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%) !important;
   border-color: rgba(99, 102, 241, 0.5) !important;
@@ -216,7 +202,7 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
 }
 
 /* --------------------------------------------------------------------------
-   DATAFRAME & TABLE STYLES — PURE WHITE THEME
+   ALL TABLES & DATAFRAMES — PURE WHITE THEME
    -------------------------------------------------------------------------- */
 [data-testid="stDataFrame"],
 .stDataFrame,
@@ -228,88 +214,237 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
   background-color: #FFFFFF !important;
   color: #0F172A !important;
   border-radius: 14px !important;
-  border: 1.5px solid rgba(148, 163, 184, 0.24) !important;
+  border: 1.5px solid rgba(148, 163, 184, 0.25) !important;
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
   overflow: hidden !important;
 }
 
-/* Force light cells in Glide Data Grid */
+/* Force light background on Dataframe cells */
 [data-testid="stDataFrame"] canvas {
-  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
 }
 
-/* Tables fallback */
-table, [data-testid="stTable"] table {
+/* Standard HTML Tables */
+table, [data-testid="stTable"] table, .sl-table {
   background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
   color: #0F172A !important;
   border-collapse: separate !important;
   border-spacing: 0 !important;
-  border: 1.5px solid rgba(148, 163, 184, 0.24) !important;
+  border: 1.5px solid rgba(148, 163, 184, 0.25) !important;
   border-radius: 14px !important;
   overflow: hidden !important;
   width: 100% !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
 }
-table th, [data-testid="stTable"] th {
+
+table thead tr th, [data-testid="stTable"] thead tr th, .sl-table th {
   background: #F8FAFC !important;
-  color: #334155 !important;
+  background-color: #F8FAFC !important;
+  color: #1E293B !important;
   font-weight: 700 !important;
-  font-size: 0.85rem !important;
+  font-size: 0.82rem !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
-  padding: 0.8rem 1rem !important;
-  border-bottom: 2px solid rgba(99, 102, 241, 0.16) !important;
+  padding: 0.85rem 1.1rem !important;
+  border-bottom: 2px solid rgba(99, 102, 241, 0.18) !important;
+  text-align: left !important;
 }
-table td, [data-testid="stTable"] td {
+
+table tbody tr td, [data-testid="stTable"] tbody tr td, .sl-table td {
   background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
   color: #0F172A !important;
   font-size: 0.88rem !important;
-  padding: 0.75rem 1rem !important;
+  padding: 0.8rem 1.1rem !important;
   border-bottom: 1px solid rgba(148, 163, 184, 0.15) !important;
 }
-table tr:last-child td {
+
+table tbody tr:hover td, [data-testid="stTable"] tbody tr:hover td {
+  background: #F1F5F9 !important;
+}
+
+table tbody tr:last-child td, [data-testid="stTable"] tbody tr:last-child td {
   border-bottom: none !important;
 }
 
 /* --------------------------------------------------------------------------
-   DOWNLOAD BUTTONS — PURE WHITE GLASS STYLE
+   ALL BUTTONS & DOWNLOAD BUTTONS — PURE WHITE GLASS STYLE
    -------------------------------------------------------------------------- */
 [data-testid="stDownloadButton"] > button,
-.stDownloadButton > button {
+.stDownloadButton > button,
+[data-testid="baseButton-secondary"],
+button[kind="secondary"],
+.stButton > button:not([kind="primary"]) {
   background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
   color: #1E293B !important;
-  border: 1.5px solid rgba(99, 102, 241, 0.32) !important;
+  border: 1.5px solid rgba(99, 102, 241, 0.28) !important;
   border-radius: 12px !important;
   font-weight: 700 !important;
-  font-size: 0.92rem !important;
-  padding: 0.7rem 1.5rem !important;
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04) !important;
+  font-size: 0.90rem !important;
+  padding: 0.65rem 1.4rem !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
   transition: all 0.2s ease !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
 }
+
 [data-testid="stDownloadButton"] > button:hover,
-.stDownloadButton > button:hover {
+.stDownloadButton > button:hover,
+[data-testid="baseButton-secondary"]:hover,
+button[kind="secondary"]:hover,
+.stButton > button:not([kind="primary"]):hover {
   background: rgba(99, 102, 241, 0.08) !important;
+  background-color: rgba(99, 102, 241, 0.08) !important;
   color: #4F46E5 !important;
   border-color: #6366F1 !important;
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.20) !important;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.18) !important;
   transform: translateY(-2px) !important;
 }
-[data-testid="stDownloadButton"] > button * {
+
+[data-testid="stDownloadButton"] > button *,
+.stDownloadButton > button *,
+[data-testid="baseButton-secondary"] * {
+  color: #1E293B !important;
+}
+
+/* Primary Action Buttons */
+.stButton > button[kind="primary"],
+[data-testid="baseButton-primary"] {
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%) !important;
+  background-color: #6366F1 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,0.25) !important;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+  padding: 0.65rem 1.75rem !important;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.28), inset 0 1px 0 rgba(255,255,255,0.25) !important;
+  transition: all 0.2s ease !important;
+}
+.stButton > button[kind="primary"]:hover,
+[data-testid="baseButton-primary"]:hover {
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%) !important;
+  box-shadow: 0 6px 24px rgba(99,102,241,0.40), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+  transform: translateY(-2px) !important;
+  color: #ffffff !important;
+}
+.stButton > button[kind="primary"] *,
+[data-testid="baseButton-primary"] * {
+  color: #ffffff !important;
+}
+
+/* --------------------------------------------------------------------------
+   SELECTBOXES & DROPDOWNS — WHITE THEME
+   -------------------------------------------------------------------------- */
+div[data-baseweb="select"] > div {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1.5px solid var(--border-subtle) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+div[data-baseweb="select"] * {
+  color: #0F172A !important;
+}
+div[data-baseweb="popover"], div[data-baseweb="menu"], ul[role="listbox"] {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1.5px solid var(--border-subtle) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+li[role="option"] {
+  background: #FFFFFF !important;
+  color: #1E293B !important;
+}
+li[role="option"]:hover, li[aria-selected="true"] {
+  background: rgba(99, 102, 241, 0.10) !important;
+  color: #4F46E5 !important;
+}
+li[role="option"] * {
   color: inherit !important;
 }
 
 /* --------------------------------------------------------------------------
-   Glass Cards
+   TEXTAREAS & INPUTS — PURE WHITE
+   -------------------------------------------------------------------------- */
+.stTextArea textarea {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1.5px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+  font-size: 0.96rem !important;
+  padding: 1rem !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+.stTextArea textarea:focus {
+  border-color: var(--accent-blue) !important;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.12), var(--shadow-sm) !important;
+}
+.stTextArea textarea::placeholder {
+  color: #64748B !important;
+  opacity: 1 !important;
+}
+
+.stTextInput input {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1.5px solid var(--border-subtle) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 0.6rem 0.9rem !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+.stTextInput input:focus {
+  border-color: var(--accent-blue) !important;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
+}
+.stTextInput input::placeholder {
+  color: #64748B !important;
+  opacity: 1 !important;
+}
+
+/* --------------------------------------------------------------------------
+   EXPANDERS & CODE BLOCKS — WHITE THEME
+   -------------------------------------------------------------------------- */
+.stCodeBlock, [data-testid="stCodeBlock"], pre, code {
+  background: #F8FAFC !important;
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+  border: 1.5px solid rgba(148, 163, 184, 0.25) !important;
+  border-radius: 12px !important;
+}
+
+[data-testid="stExpander"] {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  border: 1.5px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-sm) !important;
+  margin-bottom: 0.75rem !important;
+}
+[data-testid="stExpander"] details summary p,
+[data-testid="stExpander"] details summary span {
+  color: #1E293B !important;
+  font-weight: 700 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Glass Cards & Metric Cards
    -------------------------------------------------------------------------- */
 .sl-card {
   position: relative;
   background: var(--bg-card);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.94);
+  border: 1.5px solid rgba(148, 163, 184, 0.20);
   border-radius: var(--radius-lg);
   padding: 1.4rem 1.5rem;
   box-shadow: var(--shadow-lg);
@@ -321,7 +456,7 @@ table tr:last-child td {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9) 50%, transparent);
+  background: linear-gradient(90deg, transparent, rgba(99,102,241,0.3) 50%, transparent);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   pointer-events: none;
 }
@@ -337,36 +472,31 @@ table tr:last-child td {
 .sl-card-hero {
   border-radius: var(--radius-xl);
   padding: 2rem 2.25rem;
-  background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(243,244,255,0.88) 100%);
-  border: 1px solid rgba(99, 102, 241, 0.15);
+  background: linear-gradient(145deg, #FFFFFF 0%, #F8FAFC 100%);
+  border: 1.5px solid rgba(99, 102, 241, 0.20);
   box-shadow: var(--shadow-xl);
 }
 .sl-card-blue {
-  background: linear-gradient(145deg, rgba(241,244,255,0.95) 0%, rgba(230,233,255,0.82) 100%);
-  border-color: rgba(99, 102, 241, 0.18);
+  background: linear-gradient(145deg, #FFFFFF 0%, #F1F5F9 100%);
+  border-color: rgba(99, 102, 241, 0.22);
 }
 .sl-card-green {
-  background: linear-gradient(145deg, rgba(240,255,248,0.95) 0%, rgba(220,252,231,0.82) 100%);
-  border-color: rgba(16, 185, 129, 0.18);
+  background: linear-gradient(145deg, #FFFFFF 0%, #ECFDF5 100%);
+  border-color: rgba(16, 185, 129, 0.22);
 }
 .sl-card-violet {
-  background: linear-gradient(145deg, rgba(248,245,255,0.95) 0%, rgba(237,233,254,0.82) 100%);
-  border-color: rgba(139, 92, 246, 0.18);
+  background: linear-gradient(145deg, #FFFFFF 0%, #F5F3FF 100%);
+  border-color: rgba(139, 92, 246, 0.22);
 }
 .sl-card-cyan {
-  background: linear-gradient(145deg, rgba(240,254,254,0.95) 0%, rgba(207,250,254,0.82) 100%);
-  border-color: rgba(6, 182, 212, 0.18);
+  background: linear-gradient(145deg, #FFFFFF 0%, #ECFEFF 100%);
+  border-color: rgba(6, 182, 212, 0.22);
 }
 
-/* --------------------------------------------------------------------------
-   Metric Cards
-   -------------------------------------------------------------------------- */
 .sl-metric {
   position: relative;
-  background: var(--bg-card);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255,255,255,0.92);
+  background: #FFFFFF;
+  border: 1.5px solid rgba(148, 163, 184, 0.22);
   border-radius: var(--radius-md);
   padding: 1.15rem 1.3rem;
   box-shadow: var(--shadow-md);
@@ -399,9 +529,8 @@ table tr:last-child td {
 }
 
 div[data-testid="stMetric"] {
-  background: var(--bg-card) !important;
-  backdrop-filter: blur(18px) !important;
-  border: 1px solid rgba(255,255,255,0.92) !important;
+  background: #FFFFFF !important;
+  border: 1.5px solid rgba(148, 163, 184, 0.22) !important;
   border-radius: var(--radius-md) !important;
   padding: 1.1rem 1.3rem !important;
   box-shadow: var(--shadow-md) !important;
@@ -513,7 +642,7 @@ div[data-testid="stMetricValue"] {
 .sl-meter {
   margin: 1.25rem 0;
   padding: 1rem 1.25rem;
-  background: rgba(255,255,255,0.75);
+  background: #FFFFFF;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
@@ -549,152 +678,12 @@ div[data-testid="stMetricValue"] {
 }
 
 /* --------------------------------------------------------------------------
-   NLP Pipeline Nodes
-   -------------------------------------------------------------------------- */
-.sl-pipeline-node {
-  background: var(--bg-card);
-  border: 1px solid rgba(255,255,255,0.92);
-  border-radius: var(--radius-md);
-  padding: 1rem 1.25rem;
-  box-shadow: var(--shadow-sm);
-  position: relative;
-  transition: box-shadow 0.2s, transform 0.2s;
-}
-.sl-pipeline-node:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateX(3px);
-}
-.sl-pipeline-connector {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 28px;
-  color: var(--accent-blue) !important;
-  font-size: 1.1rem;
-  opacity: 0.6;
-}
-.sl-pipeline-step-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6366F1, #8B5CF6);
-  color: white !important;
-  font-size: 0.7rem;
-  font-weight: 700;
-  margin-right: 8px;
-  flex-shrink: 0;
-}
-.sl-pipeline-step-label {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--text-primary) !important;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-.sl-pipeline-step-desc {
-  font-size: 0.8rem;
-  color: var(--text-muted) !important;
-  margin-top: 4px;
-  line-height: 1.45;
-}
-.sl-pipeline-output {
-  margin-top: 8px;
-  padding: 0.5rem 0.75rem;
-  background: #F8FAFC;
-  border: 1px solid rgba(99, 102, 241, 0.18);
-  border-radius: 8px;
-  font-size: 0.82rem;
-  color: #1E293B !important;
-  font-family: "JetBrains Mono", monospace;
-  word-break: break-all;
-}
-
-/* --------------------------------------------------------------------------
-   Buttons
-   -------------------------------------------------------------------------- */
-.stButton > button[kind="primary"] {
-  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%) !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(255,255,255,0.25) !important;
-  border-radius: var(--radius-sm) !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.01em !important;
-  padding: 0.65rem 1.75rem !important;
-  box-shadow: 0 4px 16px rgba(99,102,241,0.28), inset 0 1px 0 rgba(255,255,255,0.25) !important;
-  transition: all 0.2s ease !important;
-}
-.stButton > button[kind="primary"]:hover {
-  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%) !important;
-  box-shadow: 0 6px 24px rgba(99,102,241,0.40), inset 0 1px 0 rgba(255,255,255,0.3) !important;
-  transform: translateY(-2px);
-}
-
-.stButton > button:not([kind="primary"]) {
-  background: #FFFFFF !important;
-  backdrop-filter: blur(12px) !important;
-  color: #1E293B !important;
-  border: 1.5px solid var(--border-subtle) !important;
-  border-radius: var(--radius-sm) !important;
-  font-weight: 600 !important;
-  transition: all 0.15s ease !important;
-  box-shadow: var(--shadow-sm) !important;
-}
-.stButton > button:not([kind="primary"]):hover {
-  color: var(--accent-blue) !important;
-  border-color: rgba(99,102,241,0.35) !important;
-  background: rgba(99,102,241,0.06) !important;
-  box-shadow: var(--shadow-md) !important;
-}
-
-/* --------------------------------------------------------------------------
-   Inputs & Textareas
-   -------------------------------------------------------------------------- */
-.stTextArea textarea {
-  background: #FFFFFF !important;
-  backdrop-filter: blur(12px) !important;
-  color: #0F172A !important;
-  border: 1.5px solid var(--border-subtle) !important;
-  border-radius: var(--radius-md) !important;
-  font-size: 0.96rem !important;
-  padding: 1rem !important;
-  box-shadow: var(--shadow-sm) !important;
-}
-.stTextArea textarea:focus {
-  border-color: var(--accent-blue) !important;
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.12), var(--shadow-sm) !important;
-}
-.stTextArea textarea::placeholder {
-  color: #64748B !important;
-  opacity: 1 !important;
-}
-
-.stTextInput input {
-  background: #FFFFFF !important;
-  color: #0F172A !important;
-  border: 1.5px solid var(--border-subtle) !important;
-  border-radius: var(--radius-sm) !important;
-  padding: 0.6rem 0.9rem !important;
-  box-shadow: var(--shadow-sm) !important;
-}
-.stTextInput input:focus {
-  border-color: var(--accent-blue) !important;
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
-}
-.stTextInput input::placeholder {
-  color: #64748B !important;
-  opacity: 1 !important;
-}
-
-/* --------------------------------------------------------------------------
    Tabs
    -------------------------------------------------------------------------- */
 .stTabs [data-baseweb="tab-list"] {
   gap: 4px;
-  background: rgba(255,255,255,0.85);
-  border: 1px solid var(--border-subtle);
+  background: #FFFFFF;
+  border: 1.5px solid var(--border-subtle);
   padding: 5px 6px;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-sm);
@@ -710,28 +699,6 @@ div[data-testid="stMetricValue"] {
   background: linear-gradient(135deg, #6366F1, #8B5CF6) !important;
   color: #ffffff !important;
   box-shadow: 0 2px 10px rgba(99,102,241,0.25) !important;
-}
-
-/* --------------------------------------------------------------------------
-   Code Blocks & Expanders
-   -------------------------------------------------------------------------- */
-.stCodeBlock, [data-testid="stCodeBlock"], pre, code {
-  background: #F8FAFC !important;
-  color: #0F172A !important;
-  border: 1px solid rgba(148, 163, 184, 0.25) !important;
-  border-radius: 10px !important;
-}
-
-[data-testid="stExpander"] {
-  background: rgba(255, 255, 255, 0.88) !important;
-  border: 1.5px solid var(--border-subtle) !important;
-  border-radius: var(--radius-md) !important;
-  box-shadow: var(--shadow-sm) !important;
-  margin-bottom: 0.75rem !important;
-}
-[data-testid="stExpander"] details summary p {
-  color: #1E293B !important;
-  font-weight: 700 !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -771,19 +738,19 @@ div[data-testid="stMetricValue"] {
 }
 .sl-orbit-pos {
   top: 14%; right: 8%;
-  background: rgba(240,255,248,0.96);
+  background: #FFFFFF;
   color: var(--pos-text) !important;
   border: 1.5px solid var(--pos-border);
 }
 .sl-orbit-neg {
   bottom: 14%; right: 8%;
-  background: rgba(255,240,240,0.96);
+  background: #FFFFFF;
   color: var(--neg-text) !important;
   border: 1.5px solid var(--neg-border);
 }
 .sl-orbit-neu {
   top: 40%; left: 4%;
-  background: rgba(241,240,255,0.96);
+  background: #FFFFFF;
   color: var(--neu-text) !important;
   border: 1.5px solid var(--neu-border);
 }
@@ -848,8 +815,8 @@ div[data-testid="stMetricValue"] {
 }
 
 .sl-quick-analyze-card {
-  background: linear-gradient(145deg, rgba(241,244,255,0.95), rgba(230,233,255,0.82));
-  border: 1px solid rgba(99,102,241,0.18);
+  background: linear-gradient(145deg, #FFFFFF, #F8FAFC);
+  border: 1.5px solid rgba(99,102,241,0.22);
   border-radius: var(--radius-lg);
   padding: 1.4rem 1.5rem;
   box-shadow: var(--shadow-lg);

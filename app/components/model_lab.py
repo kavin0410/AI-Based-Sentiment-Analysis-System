@@ -67,9 +67,9 @@ def render_model_lab_page():
 
         if config.MODEL_COMPARISON_CSV.exists():
             comp_df = pd.read_csv(config.MODEL_COMPARISON_CSV, index_col=0)
-            st.dataframe(comp_df, use_container_width=True)
+            st.table(comp_df)
         elif config.EVALUATION_RESULTS_CSV.exists():
-            st.dataframe(pd.read_csv(config.EVALUATION_RESULTS_CSV), use_container_width=True)
+            st.table(pd.read_csv(config.EVALUATION_RESULTS_CSV))
 
         # Plotly grouped bar for metrics
         if HAS_PLOTLY and config.EVALUATION_RESULTS_CSV.exists():
@@ -212,11 +212,11 @@ def render_model_lab_page():
                 if model_col:
                     filtered_pc = pc_df[pc_df[model_col].astype(str).str.lower() == sel_matrix.lower()]
                     if not filtered_pc.empty:
-                        st.dataframe(filtered_pc, use_container_width=True)
+                        st.table(filtered_pc)
                     else:
-                        st.dataframe(pc_df, use_container_width=True)
+                        st.table(pc_df)
                 else:
-                    st.dataframe(pc_df, use_container_width=True)
+                    st.table(pc_df)
             else:
                 st.info("Per-class metrics not available.")
             st.markdown("</div>", unsafe_allow_html=True)

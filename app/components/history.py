@@ -129,12 +129,10 @@ def render_history_page():
             "model": "Model",
         })
 
-        st.dataframe(
+        st.table(
             disp_df[["Timestamp", "Text Preview", "Sentiment", "Confidence", "Model"]].sort_values(
                 "Timestamp", ascending=False
-            ),
-            use_container_width=True,
-            height=320,
+            ).head(30)
         )
 
         # Detailed inspection

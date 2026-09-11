@@ -72,7 +72,7 @@ def render_data_quality_page():
             '<div class="sl-text-muted" style="margin-bottom:0.75rem;">Unprocessed text with punctuation, numbers, and contractions.</div>',
             unsafe_allow_html=True,
         )
-        st.dataframe(raw_df, use_container_width=True, height=300)
+        st.table(raw_df.head(15))
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col_clean:
@@ -84,7 +84,7 @@ def render_data_quality_page():
         )
         if config.CLEANED_DATA_FILE.exists():
             clean_df = pd.read_csv(config.CLEANED_DATA_FILE)
-            st.dataframe(clean_df, use_container_width=True, height=300)
+            st.table(clean_df.head(15))
         else:
             st.info("Cleaned dataset not found.")
         st.markdown("</div>", unsafe_allow_html=True)
