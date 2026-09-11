@@ -42,4 +42,15 @@ build/
 *.pkl
 !models/*.pkl
 
+# ==============================================================================
+# Node.js / Next.js / Vercel Frontend Artifacts
+# ==============================================================================
+node_modules/
+.next/
+out/
+.vercel/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 # Note: Source code, notebooks, documentation, README, requirements.txt, and dataset files are tracked.

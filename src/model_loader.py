@@ -205,3 +205,25 @@ def validate_model_artifacts() -> Dict[str, Any]:
             report["errors"].append(str(e))
 
     return report
+
+
+def load_model_by_name(model_name: str) -> Tuple[Any, Path]:
+    """Load a trained model artifact by its display name.
+
+    Args:
+        model_name: One of 'Logistic Regression', 'Multinomial Naive Bayes', 'Linear SVM'.
+
+    Returns:
+        Tuple of (loaded_model, artifact_path).
+
+    Raises:
+        ValueError: If model_name is not recognized.
+    """
+    if model_name not in MODEL_NAME_TO_FILE:
+        raise ValueError(
+            f"[ERROR] Unknown model name '{model_name}'. "
+            f"Expected one of: {list(MODEL_NAME_TO_FILE.keys())}"
+        )
+    artifact_path = MODEL_NAME_TO_FILE[model_name]
+    model = load_model(artifact_path)
+    return model, artifact_path
