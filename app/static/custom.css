@@ -1,22 +1,20 @@
 ﻿/* ==========================================================================
-   SentimentLab — Neural Cyber Aesthetic Design System
-   Matches ui 1 Deep Indigo / Electric Cyan Neural Constellation Background
+   SentimentLab — Master AI SaaS Design System
+   Matches ui 1 Cyber Neural Network Video Background
    ========================================================================== */
 
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
-/* Base Reset & Fonts */
 html, body, [class*="css"] {
     font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    color: #e6f1fe;
+    color: #e2e8f0;
 }
 
-/* App Background (Transparent so video & poster shine through) */
 .stApp {
     background-color: transparent !important;
 }
 
-/* Background Video Layer */
+/* Video Layer */
 #bg-video-container {
     position: fixed;
     top: 0;
@@ -26,7 +24,7 @@ html, body, [class*="css"] {
     z-index: -999;
     overflow: hidden;
     pointer-events: none;
-    background: #060913;
+    background: #040711;
 }
 
 #bg-video-container video {
@@ -39,11 +37,10 @@ html, body, [class*="css"] {
     height: auto;
     transform: translate(-50%, -50%);
     object-fit: cover;
-    opacity: 0.38; /* Perfect cinematic subtle motion */
-    filter: saturate(1.2) contrast(1.1);
+    opacity: 0.32;
+    filter: saturate(1.15) contrast(1.1);
 }
 
-/* Gradient Vignette overlay on top of video for maximum contrast & readability */
 #bg-video-overlay {
     position: fixed;
     top: 0;
@@ -51,56 +48,41 @@ html, body, [class*="css"] {
     width: 100vw;
     height: 100vh;
     z-index: -998;
-    background: radial-gradient(circle at 15% 25%, rgba(6, 11, 28, 0.65) 0%, rgba(3, 6, 16, 0.90) 70%, rgba(2, 4, 10, 0.97) 100%);
+    background: radial-gradient(circle at 20% 30%, rgba(6, 11, 28, 0.70) 0%, rgba(3, 6, 16, 0.92) 75%, rgba(2, 4, 10, 0.98) 100%);
     pointer-events: none;
 }
 
-/* Hide default Streamlit clutter */
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: hidden;}
+#MainMenu, footer, header {visibility: hidden;}
 
 /* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-::-webkit-scrollbar-track {
-    background: rgba(3, 6, 16, 0.7);
-}
-::-webkit-scrollbar-thumb {
-    background: rgba(0, 217, 255, 0.2);
-    border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 217, 255, 0.4);
-}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(3, 6, 16, 0.7); }
+::-webkit-scrollbar-thumb { background: rgba(0, 217, 255, 0.22); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 217, 255, 0.45); }
 
-/* ==========================================================================
-   Sidebar: Deep Frosted Glass
-   ========================================================================== */
+/* Sidebar */
 [data-testid="stSidebar"] {
-    background-color: rgba(6, 10, 22, 0.78) !important;
-    backdrop-filter: blur(20px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-    border-right: 1px solid rgba(0, 217, 255, 0.12) !important;
-    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5) !important;
+    background-color: rgba(6, 10, 22, 0.82) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+    border-right: 1px solid rgba(56, 189, 248, 0.12) !important;
+    box-shadow: 4px 0 35px rgba(0, 0, 0, 0.6) !important;
 }
 
 [data-testid="stSidebar"] hr {
-    border-color: rgba(0, 217, 255, 0.1) !important;
+    border-color: rgba(56, 189, 248, 0.1) !important;
     margin: 1.25rem 0;
 }
 
-/* Sidebar Branding */
+/* Brand container */
 .brand-container {
-    padding: 0.5rem 0.25rem 1rem 0.25rem;
+    padding: 0.5rem 0.25rem 0.75rem 0.25rem;
 }
-.brand-logo {
-    font-size: 1.45rem;
+.brand-title {
+    font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: -0.03em;
-    background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 60%, #38bdf8 100%);
+    background: linear-gradient(135deg, #ffffff 10%, #a5f3fc 60%, #38bdf8 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     display: flex;
@@ -108,15 +90,13 @@ header {visibility: hidden;}
     gap: 0.5rem;
 }
 .brand-subtitle {
-    font-size: 0.8rem;
-    color: #7dd3fc;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    font-size: 0.82rem;
+    color: #94a3b8;
     margin-top: 2px;
+    font-weight: 400;
+    font-style: italic;
 }
 
-/* Glowing Status Pill */
 .status-pill {
     display: inline-flex;
     align-items: center;
@@ -125,11 +105,11 @@ header {visibility: hidden;}
     background: rgba(16, 185, 129, 0.1);
     border: 1px solid rgba(16, 185, 129, 0.3);
     border-radius: 20px;
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: #34d399;
     margin-top: 0.75rem;
-    box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
 }
 .status-dot {
     width: 6px;
@@ -139,13 +119,12 @@ header {visibility: hidden;}
     box-shadow: 0 0 8px #10b981;
 }
 
-/* Continuous Navigation List */
+/* Sidebar nav items */
 div[data-testid="stRadio"] > div {
-    gap: 0.35rem;
+    gap: 0.25rem;
 }
-
 div[data-testid="stRadio"] label {
-    padding: 0.55rem 0.9rem;
+    padding: 0.5rem 0.85rem;
     border-radius: 9px;
     color: #94a3b8;
     font-size: 0.92rem;
@@ -153,7 +132,6 @@ div[data-testid="stRadio"] label {
     transition: all 0.2s ease;
     border: 1px solid transparent;
 }
-
 div[data-testid="stRadio"] label:hover {
     color: #38bdf8 !important;
     background: rgba(14, 165, 233, 0.08) !important;
@@ -161,17 +139,17 @@ div[data-testid="stRadio"] label:hover {
     transform: translateX(3px);
 }
 
-/* Top Header */
+/* Top bar with quick command hint */
 .top-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-bottom: 1.25rem;
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+    border-bottom: 1px solid rgba(56, 189, 248, 0.1);
 }
 .header-title-wrap h1 {
-    font-size: 2rem;
+    font-size: 1.95rem;
     font-weight: 800;
     letter-spacing: -0.04em;
     background: linear-gradient(135deg, #ffffff 20%, #bae6fd 60%, #60a5fa 100%);
@@ -180,45 +158,41 @@ div[data-testid="stRadio"] label:hover {
     margin: 0;
 }
 .header-title-wrap p {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     color: #94a3b8;
-    margin: 4px 0 0 0;
+    margin: 3px 0 0 0;
 }
 
-/* ==========================================================================
-   Cyber Frosted Glass Cards
-   ========================================================================== */
+/* Cards */
 .product-card {
     background: rgba(11, 19, 43, 0.65);
     backdrop-filter: blur(16px) saturate(160%);
     -webkit-backdrop-filter: blur(16px) saturate(160%);
     border: 1px solid rgba(56, 189, 248, 0.16);
     border-radius: 14px;
-    padding: 1.5rem;
+    padding: 1.4rem;
     margin-bottom: 1.25rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.2s ease;
 }
 .product-card:hover {
     border-color: rgba(56, 189, 248, 0.35);
     box-shadow: 0 12px 40px rgba(14, 165, 233, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
 }
 
-/* KPI Cards */
+/* KPI Card */
 .kpi-card {
     background: rgba(10, 18, 40, 0.65);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(56, 189, 248, 0.14);
     border-radius: 12px;
-    padding: 1.2rem 1.3rem;
+    padding: 1.1rem 1.25rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     transition: all 0.2s ease;
 }
 .kpi-card:hover {
     border-color: rgba(56, 189, 248, 0.4);
-    box-shadow: 0 6px 25px rgba(14, 165, 233, 0.2);
     transform: translateY(-2px);
 }
 .kpi-title {
@@ -227,7 +201,7 @@ div[data-testid="stRadio"] label:hover {
     color: #7dd3fc;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.35rem;
 }
 .kpi-value {
     font-size: 1.75rem;
@@ -239,42 +213,17 @@ div[data-testid="stRadio"] label:hover {
 .kpi-sub {
     font-size: 0.8rem;
     color: #94a3b8;
-    margin-top: 0.3rem;
+    margin-top: 0.25rem;
 }
 
-/* Streamlit Native Metric Cards */
-div[data-testid="stMetric"] {
-    background: rgba(10, 18, 40, 0.65) !important;
-    backdrop-filter: blur(16px) !important;
-    border: 1px solid rgba(56, 189, 248, 0.14) !important;
-    border-radius: 12px !important;
-    padding: 1.1rem 1.3rem !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
-}
-div[data-testid="stMetricLabel"] {
-    color: #7dd3fc !important;
-    font-size: 0.75rem !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.06em !important;
-}
-div[data-testid="stMetricValue"] {
-    color: #ffffff !important;
-    font-weight: 800 !important;
-    font-size: 1.65rem !important;
-    text-shadow: 0 0 15px rgba(56, 189, 248, 0.25) !important;
-}
-
-/* ==========================================================================
-   Sentiment Polarity Badges (Glowing Cyber Accents)
-   ========================================================================== */
+/* Sentiment Badges */
 .sentiment-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 6px 18px;
     border-radius: 30px;
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     font-weight: 700;
     letter-spacing: -0.01em;
 }
@@ -297,18 +246,52 @@ div[data-testid="stMetricValue"] {
     box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
 }
 
-/* ==========================================================================
-   Inputs, Textareas & Buttons
-   ========================================================================== */
+/* Sentiment Meter */
+.meter-container {
+    margin: 1.25rem 0;
+    padding: 0.75rem 1rem;
+    background: rgba(6, 10, 22, 0.6);
+    border-radius: 10px;
+    border: 1px solid rgba(56, 189, 248, 0.12);
+}
+.meter-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+}
+.meter-track {
+    position: relative;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #ef4444 0%, #0ea5e9 50%, #10b981 100%);
+}
+.meter-marker {
+    position: absolute;
+    top: -6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid #0284c7;
+    box-shadow: 0 0 12px rgba(2, 132, 199, 0.8);
+    transform: translateX(-50%);
+    transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Native inputs */
 .stTextArea textarea {
     background-color: rgba(9, 16, 36, 0.75) !important;
     backdrop-filter: blur(14px) !important;
     color: #f8fafc !important;
     border: 1px solid rgba(56, 189, 248, 0.2) !important;
     border-radius: 12px !important;
-    font-size: 0.96rem !important;
+    font-size: 0.98rem !important;
     padding: 1.1rem !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
     transition: all 0.2s ease !important;
 }
 .stTextArea textarea:focus {
@@ -316,7 +299,15 @@ div[data-testid="stMetricValue"] {
     box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3), 0 0 25px rgba(14, 165, 233, 0.2) !important;
 }
 
-/* Primary Button (Electric Cyan to Royal Blue Neon Glow) */
+.stTextInput input {
+    background-color: rgba(9, 16, 36, 0.75) !important;
+    backdrop-filter: blur(14px) !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(56, 189, 248, 0.2) !important;
+    border-radius: 10px !important;
+}
+
+/* Buttons */
 .stButton > button[kind="primary"] {
     background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
     color: #ffffff !important;
@@ -334,7 +325,6 @@ div[data-testid="stMetricValue"] {
     transform: translateY(-2px);
 }
 
-/* Secondary Button */
 .stButton > button:not([kind="primary"]) {
     background: rgba(10, 18, 40, 0.65) !important;
     backdrop-filter: blur(12px) !important;
@@ -348,39 +338,45 @@ div[data-testid="stMetricValue"] {
     color: #38bdf8 !important;
     border-color: rgba(56, 189, 248, 0.4) !important;
     background: rgba(14, 165, 233, 0.12) !important;
-    box-shadow: 0 0 15px rgba(14, 165, 233, 0.2) !important;
 }
 
-/* Tables & Dataframes */
-[data-testid="stDataFrame"] {
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid rgba(56, 189, 248, 0.15);
-    background: rgba(8, 14, 30, 0.65);
-    backdrop-filter: blur(16px);
+div[data-testid="stMetric"] {
+    background: rgba(10, 18, 40, 0.65) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(56, 189, 248, 0.14) !important;
+    border-radius: 12px !important;
+    padding: 1.1rem 1.3rem !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+div[data-testid="stMetricLabel"] {
+    color: #7dd3fc !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+}
+div[data-testid="stMetricValue"] {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    font-size: 1.65rem !important;
+    text-shadow: 0 0 15px rgba(56, 189, 248, 0.25) !important;
 }
 
-/* Expanders */
-.streamlit-expanderHeader {
-    background-color: rgba(10, 18, 40, 0.65) !important;
-    border: 1px solid rgba(56, 189, 248, 0.15) !important;
-    border-radius: 10px !important;
-    color: #bae6fd !important;
-    font-weight: 600 !important;
+/* Tabs */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 0.5rem;
+    background-color: rgba(6, 10, 22, 0.6);
+    padding: 0.35rem;
+    border-radius: 10px;
+    border: 1px solid rgba(56, 189, 248, 0.12);
 }
-.streamlit-expanderContent {
-    background-color: rgba(6, 10, 22, 0.7) !important;
-    border: 1px solid rgba(56, 189, 248, 0.1) !important;
-    border-top: none !important;
-    border-bottom-left-radius: 10px !important;
-    border-bottom-right-radius: 10px !important;
+.stTabs [data-baseweb="tab"] {
+    border-radius: 7px;
+    color: #94a3b8;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
 }
-
-/* Code blocks */
-code {
-    font-family: "JetBrains Mono", monospace !important;
-    background-color: rgba(3, 7, 18, 0.7) !important;
-    border: 1px solid rgba(56, 189, 248, 0.15) !important;
+.stTabs [aria-selected="true"] {
+    background-color: rgba(14, 165, 233, 0.18) !important;
     color: #38bdf8 !important;
-    border-radius: 4px !important;
 }

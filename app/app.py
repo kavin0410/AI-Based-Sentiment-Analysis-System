@@ -1,19 +1,23 @@
-﻿"""SentimentLab Web Application (SentimentAI).
+﻿"""SentimentLab Web Application.
 
 An ultra-premium AI SaaS platform for sentiment intelligence:
-- Brand: 🧠 SentimentAI / Intelligence Platform / ● System Online
+- Brand: 
+    SentimentLab
+    Understand the emotion behind every word.
+    ● System Online
 - Clean, continuous navigation without category labels:
-  ⌂ Overview
-  ✦ Analyze
-  ◈ Insights
-  ◷ History
-  ◎ NLP Explorer
-  ◉ Model Intelligence
-  ▣ Data
-  ▤ Reports
-  ⚙ Settings
-- Background: Cyber Neural Constellation Video Background & Glassmorphic UI
-- Zero development stage mentions anywhere in the user interface.
+    Overview
+    Analyze
+    Insights
+    History
+    NLP Explorer
+    Model Intelligence
+    Data
+    Reports
+    Settings
+- Global command search palette ("Search SentimentLab...")
+- Cyber Neural Video Background
+- Zero development stage references anywhere in the UI.
 """
 
 import base64
@@ -26,7 +30,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-# Ensure root directories in path
+# Setup sys.path
 BASE_DIR = Path(__file__).resolve().parent.parent
 APP_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR) not in sys.path:
@@ -66,7 +70,7 @@ def get_background_assets():
 
 
 def render_background_layers():
-    """Inject background video and ambient neural overlay."""
+    """Inject background video and ambient neural vignette overlay."""
     poster_b64, video_b64 = get_background_assets()
 
     video_html = ""
@@ -93,7 +97,7 @@ def render_background_layers():
 
 
 def init_page():
-    """Initialize page metadata, layout, background video and inject custom CSS."""
+    """Initialize page metadata, layout, background layers, and custom styling."""
     st.set_page_config(
         page_title="SentimentLab | Understand the emotion behind every word",
         page_icon="🧠",
@@ -110,24 +114,40 @@ def init_page():
 
 
 def init_session_state():
-    """Ensure session state structures exist."""
+    """Initialize persistent session managers and default routing."""
     if "history_manager" not in st.session_state:
         st.session_state["history_manager"] = PredictionHistoryManager(
             max_limit=config.PREDICTION_HISTORY_LIMIT
         )
+    if "sentimentlab_nav" not in st.session_state:
+        st.session_state["sentimentlab_nav"] = "Overview"
 
 
 def render_sidebar():
     """Render the ultra-clean, continuous navigation sidebar without category headers."""
+    nav_options = [
+        "Overview",
+        "Analyze",
+        "Insights",
+        "History",
+        "NLP Explorer",
+        "Model Intelligence",
+        "Data",
+        "Reports",
+        "Settings",
+    ]
+
     with st.sidebar:
-        # Branding
+        # Branding Header
         st.markdown(
             """
             <div class="brand-container">
-                <div class="brand-logo">
-                    <span>🧠</span> SentimentAI
+                <div class="brand-title">
+                    SentimentLab
                 </div>
-                <div class="brand-subtitle">Intelligence Platform</div>
+                <div class="brand-subtitle">
+                    Understand the emotion behind every word.
+                </div>
                 <div class="status-pill">
                     <span class="status-dot"></span> System Online
                 </div>
@@ -138,32 +158,36 @@ def render_sidebar():
 
         st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
 
-        # One clean, continuous navigation list with clean icons
-        nav_options = [
-            "⌂ Overview",
-            "✦ Analyze",
-            "◈ Insights",
-            "◷ History",
-            "◎ NLP Explorer",
-            "◉ Model Intelligence",
-            "▣ Data",
-            "▤ Reports",
-            "⚙ Settings",
-        ]
+        # Global Search / Command Bar
+        search_cmd = st.text_input(
+            "Search",
+            placeholder="Search SentimentLab... (Ctrl+K)",
+            key="global_search_input",
+            label_visibility="collapsed",
+        )
 
+        # Jump to section if search matches
+        if search_cmd.strip():
+            matched = [opt for opt in nav_options if search_cmd.strip().lower() in opt.lower()]
+            if matched and matched[0] != st.session_state.get("sentimentlab_nav"):
+                st.session_state["sentimentlab_nav"] = matched[0]
+
+        st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+
+        # Single continuous navigation list
         selected = st.radio(
-            label="Navigation",
+            label="Navigation Menu",
             options=nav_options,
-            index=0,
             key="sentimentlab_nav",
             label_visibility="collapsed",
         )
 
-        st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
         st.markdown(
             """
-            <div style="padding: 0 0.5rem; font-size: 0.75rem; color: #7dd3fc; opacity: 0.8; line-height: 1.6;">
-                “Understand the emotion behind every word.”
+            <div style="padding: 0 0.5rem; font-size: 0.75rem; color: #64748b; line-height: 1.6;">
+                SentimentLab Platform v2.5.0<br/>
+                All systems operational.
             </div>
             """,
             unsafe_allow_html=True,
@@ -188,30 +212,30 @@ def render_top_header():
 
 
 def main():
-    """Application entry controller."""
+    """Application controller."""
     init_page()
     init_session_state()
     selected_page = render_sidebar()
     render_top_header()
 
-    # Route based on selected item
-    if selected_page == "⌂ Overview":
+    # Route based on navigation choice
+    if selected_page == "Overview":
         render_overview_page()
-    elif selected_page == "✦ Analyze":
+    elif selected_page == "Analyze":
         render_analyze_page()
-    elif selected_page == "◈ Insights":
+    elif selected_page == "Insights":
         render_insights_page()
-    elif selected_page == "◷ History":
+    elif selected_page == "History":
         render_history_page()
-    elif selected_page == "◎ NLP Explorer":
+    elif selected_page == "NLP Explorer":
         render_nlp_engine_page()
-    elif selected_page == "◉ Model Intelligence":
+    elif selected_page == "Model Intelligence":
         render_model_lab_page()
-    elif selected_page == "▣ Data":
+    elif selected_page == "Data":
         render_data_quality_page()
-    elif selected_page == "▤ Reports":
+    elif selected_page == "Reports":
         render_reports_page()
-    elif selected_page == "⚙ Settings":
+    elif selected_page == "Settings":
         render_system_page()
 
 

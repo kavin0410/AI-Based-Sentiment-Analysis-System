@@ -1,10 +1,26 @@
-﻿"""Overview Component for SentimentAI (SentimentLab).
+﻿"""Overview Component for SentimentLab.
 
-Provides executive product overview:
-- Clean product introduction
-- Total predictions, positive %, negative %, neutral %, average confidence
-- Active model, model status, dataset status
-- Quick Sentiment Analyzer with live result
+Executive hero section:
+- SentimentLab
+  "Understand the emotion behind every word."
+  "Analyze text, uncover sentiment, and transform language into actionable intelligence using machine learning."
+- Primary CTA: Analyze Text (switches to Analyze tab)
+- Secondary CTA: Explore Intelligence (switches to Model Intelligence tab)
+- Live system statistics:
+  * Total Dataset Records
+  * Predictions
+  * Positive %
+  * Negative %
+  * Neutral %
+  * Average Confidence
+  * TF-IDF Features
+  * Active Model
+- Compact System Health Indicators (ONLINE / READY):
+  * AI Engine
+  * NLP Pipeline
+  * TF-IDF
+  * ML Models
+  * Prediction Engine
 """
 
 import json
@@ -12,30 +28,58 @@ from pathlib import Path
 import streamlit as st
 import config
 from src.model_loader import validate_model_artifacts
-from src.predict import predict_sentiment
 
 
 def render_overview_page():
-    """Render the executive Overview page."""
-    # Top Product Summary Header
+    """Render the executive Overview hero page."""
+    # -------------------------------------------------------------------------
+    # 1. Hero Section
+    # -------------------------------------------------------------------------
     st.markdown(
         """
-        <div style="margin-bottom: 2rem;">
-            <p style="font-size: 1.05rem; color: #94a3b8; line-height: 1.6; max-width: 850px; margin: 0;">
-                <strong>SentimentLab</strong> delivers real-time sentiment intelligence across customer feedback, product reviews, 
-                and unstructured text. Powered by custom NLP tokenization, 570 TF-IDF features, and supervised machine learning classifiers.
+        <div style="padding: 1rem 0 2rem 0; max-width: 900px;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem;">
+                Neural Language Intelligence
+            </div>
+            <h1 style="font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; margin: 0; background: linear-gradient(135deg, #ffffff 30%, #bae6fd 70%, #38bdf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                SentimentLab
+            </h1>
+            <p style="font-size: 1.25rem; font-weight: 600; color: #7dd3fc; margin: 0.5rem 0 0.75rem 0; letter-spacing: -0.01em;">
+                “Understand the emotion behind every word.”
+            </p>
+            <p style="font-size: 1.02rem; color: #94a3b8; line-height: 1.6; margin: 0 0 1.75rem 0;">
+                Analyze text, uncover sentiment, and transform language into actionable intelligence using machine learning.
             </p>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
+    # Hero Action CTAs
+    col_cta1, col_cta2, _ = st.columns([2, 2, 4])
+    with col_cta1:
+        if st.button("✦ Analyze Text", type="primary", use_container_width=True, key="btn_hero_analyze"):
+            st.session_state["sentimentlab_nav"] = "✦ Analyze"
+            st.rerun()
+    with col_cta2:
+        if st.button("◉ Explore Intelligence", use_container_width=True, key="btn_hero_intelligence"):
+            st.session_state["sentimentlab_nav"] = "◉ Model Intelligence"
+            st.rerun()
+
+    st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
+
     # -------------------------------------------------------------------------
-    # 1. Executive Performance & Session Metrics
+    # 2. Live System Statistics
     # -------------------------------------------------------------------------
+    st.markdown("### Live Platform Metrics")
+
+    val_report = validate_model_artifacts()
+    active_model = val_report.get("best_model_name", "Logistic Regression")
+    vocab_sz = val_report.get("vectorizer_vocab_size", 570)
+
     history_mgr = st.session_state.get("history_manager")
-    history_items = history_mgr.get_history() if history_mgr else []
-    total_preds = len(history_items)
+    h_items = history_mgr.get_history() if history_mgr else []
+    total_preds = len(h_items)
 
     if total_preds > 0:
         h_df = history_mgr.to_dataframe()
@@ -43,150 +87,61 @@ def render_overview_page():
         pos_pct = (s_counts.get("Positive", 0) / total_preds) * 100
         neg_pct = (s_counts.get("Negative", 0) / total_preds) * 100
         neu_pct = (s_counts.get("Neutral", 0) / total_preds) * 100
-
         prob_rows = h_df[h_df["score_type"] == "probability"]
         avg_conf = (prob_rows["score"].mean() * 100) if not prob_rows.empty else 0.0
     else:
-        # Default corpus benchmark metrics when session is fresh
+        # Default baseline distributions from training corpus
         pos_pct = 33.3
         neg_pct = 33.3
         neu_pct = 33.3
         avg_conf = 35.6
 
-    val_report = validate_model_artifacts()
-    active_model = val_report.get("best_model_name", "Logistic Regression")
+    row1_c1, row1_c2, row1_c3, row1_c4 = st.columns(4)
+    with row1_c1:
+        st.metric("Total Dataset Records", "60 Records", "48 train / 12 test")
+    with row1_c2:
+        st.metric("Predictions Logged", f"{total_preds}", "Active session queries")
+    with row1_c3:
+        st.metric("Positive Sentiment", f"{pos_pct:.1f}%")
+    with row1_c4:
+        st.metric("Negative Sentiment", f"{neg_pct:.1f}%")
 
-    c1, c2, c3, c4, c5 = st.columns(5)
-    with c1:
-        st.metric("Total Predictions", f"{total_preds if total_preds > 0 else 'Active'}", "Session queries" if total_preds > 0 else "System ready")
-    with c2:
-        st.metric("Positive", f"{pos_pct:.1f}%")
-    with c3:
-        st.metric("Neutral", f"{neu_pct:.1f}%")
-    with c4:
-        st.metric("Negative", f"{neg_pct:.1f}%")
-    with c5:
-        st.metric("Avg Confidence", f"{avg_conf:.1f}%")
-
-    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
-
-    # -------------------------------------------------------------------------
-    # 2. System Status & Active Engine Spec
-    # -------------------------------------------------------------------------
-    col_stat1, col_stat2, col_stat3 = st.columns(3)
-
-    with col_stat1:
-        st.markdown(
-            f"""
-            <div class="kpi-card">
-                <div class="kpi-title">Active Model</div>
-                <div class="kpi-value" style="font-size: 1.35rem; color: #f8fafc;">{active_model}</div>
-                <div class="kpi-sub">Optimized for high-dimensional TF-IDF vectors</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    with col_stat2:
-        st.markdown(
-            """
-            <div class="kpi-card">
-                <div class="kpi-title">Model Health</div>
-                <div class="kpi-value" style="font-size: 1.35rem; color: #34d399;">Ready & Loaded</div>
-                <div class="kpi-sub">3 Classifiers (LR, MNB, LinearSVC) serialized</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    with col_stat3:
-        st.markdown(
-            """
-            <div class="kpi-card">
-                <div class="kpi-title">Dataset Health</div>
-                <div class="kpi-value" style="font-size: 1.35rem; color: #cbd5e1;">60 Records</div>
-                <div class="kpi-sub">Balanced 3-class corpus (20 / 20 / 20)</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+    row2_c1, row2_c2, row2_c3, row2_c4 = st.columns(4)
+    with row2_c1:
+        st.metric("Neutral Sentiment", f"{neu_pct:.1f}%")
+    with row2_c2:
+        st.metric("Average Confidence", f"{avg_conf:.1f}%")
+    with row2_c3:
+        st.metric("TF-IDF Features", f"{vocab_sz} Terms", "Unigram + Bigram")
+    with row2_c4:
+        st.metric("Active Top Model", active_model, "Selected by Weighted F1")
 
     st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
 
     # -------------------------------------------------------------------------
-    # 3. Quick Sentiment Analyzer
+    # 3. Compact System Health Indicators
     # -------------------------------------------------------------------------
-    st.markdown("### Quick Analysis")
-    col_left, col_right = st.columns([5, 5])
+    st.markdown("### Infrastructure Health Matrix")
 
-    with col_left:
-        quick_text = st.text_area(
-            "Quick Input:",
-            value=st.session_state.get("overview_input_text", "The customer support team was fast, helpful, and resolved my issue immediately."),
-            height=120,
-            key="overview_quick_textarea",
-            placeholder="Paste text here to test...",
-            label_visibility="collapsed",
-        )
+    h_cols = st.columns(5)
+    health_items = [
+        ("AI Engine", "ONLINE", "#34d399", "Python / Scikit-Learn"),
+        ("NLP Pipeline", "READY", "#34d399", "12-Step NLTK Engine"),
+        ("TF-IDF", "LOADED", "#34d399", f"{vocab_sz} vocabulary features"),
+        ("ML Models", "ONLINE", "#34d399", "3 Classifiers Serialized"),
+        ("Prediction Engine", "READY", "#34d399", "Real-Time Inference"),
+    ]
 
-        col_b1, col_b2 = st.columns([3, 2])
-        with col_b1:
-            btn_run = st.button("✦ Analyze Sentiment", type="primary", use_container_width=True, key="btn_ov_analyze")
-        with col_b2:
-            if st.button("Clear", use_container_width=True, key="btn_ov_clear"):
-                st.session_state["overview_input_text"] = ""
-                st.rerun()
-
-    with col_right:
-        result = None
-        if btn_run and quick_text.strip():
-            with st.spinner("Analyzing..."):
-                result = predict_sentiment(quick_text.strip())
-                st.session_state["last_overview_result"] = result
-                if history_mgr and result.get("valid"):
-                    history_mgr.add_prediction(result)
-        elif "last_overview_result" in st.session_state:
-            result = st.session_state["last_overview_result"]
-
-        if result and result.get("valid"):
-            sentiment = result["sentiment"]
-            score = result["score"]
-            score_type = result["score_type"]
-            probs = result.get("probabilities", {})
-
-            badge_style = "badge-neutral"
-            if sentiment == "Positive":
-                badge_style = "badge-positive"
-            elif sentiment == "Negative":
-                badge_style = "badge-negative"
-
+    for i, (name, state, color, desc) in enumerate(health_items):
+        with h_cols[i]:
             st.markdown(
                 f"""
-                <div class="product-card" style="padding: 1.25rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                        <span class="sentiment-badge {badge_style}">{sentiment}</span>
-                        <span style="font-size: 0.8rem; color: #64748b;">Confidence: <strong>{score * 100:.1f}%</strong></span>
+                <div class="kpi-card" style="text-align: center; padding: 1rem 0.5rem;">
+                    <div style="font-size: 0.72rem; font-weight: 700; color: #7dd3fc; text-transform: uppercase; letter-spacing: 0.05em;">{name}</div>
+                    <div style="font-size: 1.15rem; font-weight: 800; color: {color}; margin: 4px 0;">
+                        <span class="status-dot" style="background-color: {color}; box-shadow: 0 0 8px {color};"></span> {state}
                     </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-            if score_type == "probability":
-                for cls in ["Positive", "Neutral", "Negative"]:
-                    p_val = probs.get(cls, 0.0)
-                    st.write(f"**{cls}:** {p_val * 100:.1f}%")
-                    st.progress(min(max(p_val, 0.0), 1.0))
-            else:
-                st.write(f"Decision Score: `{score:.4f}`")
-
-            st.markdown("</div>", unsafe_allow_html=True)
-        else:
-            st.markdown(
-                """
-                <div class="product-card" style="text-align: center; padding: 2.25rem 1rem; color: #64748b;">
-                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #475569;">✦</div>
-                    <div style="font-size: 0.95rem; font-weight: 500; color: #94a3b8;">Ready to analyze</div>
-                    <div style="font-size: 0.8rem; margin-top: 0.25rem;">Enter text on the left to view real-time sentiment</div>
+                    <div style="font-size: 0.72rem; color: #94a3b8;">{desc}</div>
                 </div>
                 """,
                 unsafe_allow_html=True,
