@@ -1,237 +1,190 @@
-"""Analyze Page Component for AI Sentiment Intelligence (Stage 6).
+﻿"""Analyzer Component for AI Sentiment Intelligence.
 
-Provides the primary interactive real-time sentiment analyzer:
-- Input text area with live character counter
-- Clickable example sentences
-- Real-time sentiment classification using the evaluated best model
-- Score & probability breakdown display
-- Step-by-step NLP transformation inspector
-- Technical prediction metadata inspector
-- Session prediction history table with CSV export
+Provides the primary SaaS sentiment analyzer experience:
+- Large text area with character counter (0 / 5000)
+- 6 quick example pills (Very Positive, Positive, Neutral, Negative, Very Negative, Mixed)
+- Primary CTA: "✨ Analyze Sentiment"
+- Prediction output: Sentiment, Confidence, Probabilities, Model, Timestamp
+- Technical explainability expander: Original text, Cleaned text, NLP process, TF-IDF representation
 """
 
 from datetime import datetime
-import json
-from pathlib import Path
-import sys
-
-import pandas as pd
 import streamlit as st
-
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-if str(BASE_DIR) not in sys.path:
-    sys.path.insert(0, str(BASE_DIR))
-
 import config
 from src.model_loader import (
     load_best_model,
     load_vectorizer,
     validate_model_artifacts,
 )
-from src.predict import (
-    PredictionHistoryManager,
-    format_prediction_result,
-    predict_sentiment,
-)
+from src.predict import predict_sentiment
 
 
 @st.cache_resource
 def get_cached_prediction_artifacts():
-    """Cache loaded best model and vectorizer in Streamlit memory."""
+    """Cache loaded best model and vectorizer."""
     model, model_name, metadata = load_best_model()
     vectorizer = load_vectorizer()
     return model, model_name, metadata, vectorizer
 
 
 def render_analyze_page():
-    """Render the primary Real-Time Sentiment Analyzer page."""
-    st.markdown("## ⚡ Real-Time Sentiment Engine")
-    st.caption("Classify new, unseen text using the dynamically selected best ML model and TF-IDF feature extractor.")
+    """Render the primary Sentiment Analyzer page."""
+    st.markdown("## ✨ Sentiment Analyzer")
+    st.caption("Classify unstructured text in real time with confidence scoring and step-by-step pipeline inspection.")
 
-    # 1. Artifact Validation Check
     val_report = validate_model_artifacts()
     if not val_report["valid"]:
-        st.error("🚨 Model Artifact Validation Failed!")
-        for err in val_report.get("errors", []):
-            st.warning(f"- {err}")
-        st.info("Please execute Stage 3 (`python run_stage3.py`) and Stage 4 (`python run_stage4.py`) first.")
+        st.error("Model artifacts are missing. Please ensure models are trained.")
         return
 
-    # 2. Load cached model & vectorizer
     try:
         model, model_name, meta, vectorizer = get_cached_prediction_artifacts()
     except Exception as e:
-        st.error(f"Error loading model artifacts: {e}")
+        st.error(f"Error loading models: {e}")
         return
 
-    # Active Best Model Info Banner
-    best_f1 = meta.get("f1_score", 0.0)
-    st.info(
-        f"🤖 **Active Best Model:** `{model_name}` | "
-        f"**Selection Criterion:** Weighted F1 Score ({best_f1*100:.2f}%) | "
-        f"**TF-IDF Vocabulary:** {len(vectorizer.get_feature_names_out())} features"
-    )
+    # -------------------------------------------------------------------------
+    # 1. Example Presets
+    # -------------------------------------------------------------------------
+    st.markdown("##### Quick Presets")
+    preset_dict = {
+        "Very Positive": "I am absolutely blown away by how extraordinary and perfect this product is! Best purchase ever.",
+        "Positive": "Customer support was fast, friendly, and solved my issue within minutes.",
+        "Neutral": "The shipment arrived on Wednesday afternoon. The package includes three replacement cables.",
+        "Negative": "The battery life is noticeably worse than advertised and drains in under three hours.",
+        "Very Negative": "Completely useless and broke on day one! Customer service refused to refund my money.",
+        "Mixed": "I didn't hate the device, but the interface was unintuitive and confusing at first.",
+    }
 
-    # 3. Example Sentences Selector
-    st.markdown("##### 💡 Try an Example Sentence")
-    example_sentences = [
-        "I absolutely love this product! It works perfectly and exceeded all my expectations.",
-        "This is by far the worst experience I have ever had; complete waste of money.",
-        "The product arrived yesterday on time and the package contains standard accessories.",
-        "Customer support was quick, friendly, and resolved my issue in minutes.",
-        "I wouldn't recommend this service to anyone; they refused to issue a refund.",
-        "I didn't think the movie was bad, but the pacing was somewhat slow.",
-    ]
+    cols = st.columns(6)
+    for i, (label, text_val) in enumerate(preset_dict.items()):
+        with cols[i]:
+            if st.button(label, use_container_width=True, key=f"btn_preset_{i}"):
+                st.session_state["analyzer_input_text"] = text_val
 
-    example_cols = st.columns(3)
-    for i, ex in enumerate(example_sentences):
-        with example_cols[i % 3]:
-            if st.button(f"Try Example {i+1}", key=f"ex_analyze_btn_{i}", use_container_width=True):
-                st.session_state["user_text_input"] = ex
-
-    # 4. Text Input Area
-    st.divider()
-    st.markdown("##### 📝 Enter Custom Text to Analyze")
-
+    # -------------------------------------------------------------------------
+    # 2. Text Input Area with Character Count
+    # -------------------------------------------------------------------------
+    st.markdown("##### Input Text")
+    current_val = st.session_state.get("analyzer_input_text", "")
     input_text = st.text_area(
-        "Input Text:",
-        value=st.session_state.get("user_text_input", ""),
-        height=120,
+        label="Input text to analyze:",
+        value=current_val,
+        height=140,
         max_chars=config.MAX_INPUT_LENGTH,
-        placeholder="Type or paste any text review, comment, or message here...",
-        key="main_text_input_area",
+        placeholder="Type or paste any text review, feedback, or message here...",
+        key="analyzer_main_textarea",
+        label_visibility="collapsed",
     )
 
-    char_count = len(input_text)
-    st.caption(f"Character Count: **{char_count} / {config.MAX_INPUT_LENGTH}**")
+    char_cnt = len(input_text)
+    st.caption(f"**{char_cnt}** / {config.MAX_INPUT_LENGTH} characters")
 
-    # Action Buttons
-    col_btn1, col_btn2, col_btn3 = st.columns([2, 2, 6])
-    with col_btn1:
-        btn_analyze = st.button("⚡ Analyze Sentiment", type="primary", use_container_width=True, key="btn_main_analyze")
-    with col_btn2:
-        if st.button("🗑️ Clear Input", use_container_width=True, key="btn_clear_input"):
-            st.session_state["user_text_input"] = ""
+    col_b1, col_b2, _ = st.columns([2, 1, 4])
+    with col_b1:
+        btn_analyze = st.button("✨ Analyze Sentiment", type="primary", use_container_width=True, key="btn_run_analyzer")
+    with col_b2:
+        if st.button("Clear", use_container_width=True, key="btn_clear_analyzer"):
+            st.session_state["analyzer_input_text"] = ""
             st.rerun()
 
-    # 5. Execute Prediction when button clicked
-    if btn_analyze:
-        if not input_text.strip():
-            st.warning("⚠️ Please enter some text to analyze.")
-        else:
-            with st.spinner("Analyzing sentiment using NLP engine & ML model..."):
-                result = predict_sentiment(
-                    text=input_text,
-                    model=model,
-                    vectorizer=vectorizer,
-                    model_name=model_name,
-                )
-
-            if not result.get("valid", False):
-                st.error(f"Validation Error: {result.get('error')}")
-            else:
-                # Add to session history
-                history_mgr = st.session_state.get("history_manager")
-                if history_mgr:
-                    history_mgr.add_prediction(result)
-
-                # Render Result Card
-                st.divider()
-                st.markdown("### 🏁 Prediction Output")
-
-                sentiment = result["sentiment"]
-                score = result["score"]
-                score_type = result["score_type"]
-
-                col_res1, col_res2 = st.columns([1, 1])
-
-                with col_res1:
-                    # Visual Card styling
-                    if sentiment == "Positive":
-                        st.success(f"### 🟢 POSITIVE\nPredicted Sentiment Category")
-                    elif sentiment == "Negative":
-                        st.error(f"### 🔴 NEGATIVE\nPredicted Sentiment Category")
-                    else:
-                        st.info(f"### ⚪ NEUTRAL\nPredicted Sentiment Category")
-
-                    st.markdown(f"**Model Used:** `{model_name}`")
-
-                    if score_type == "probability":
-                        st.metric("Confidence Score", f"{score * 100:.1f}%")
-                    else:
-                        st.metric("Decision Score", f"{score:.4f}")
-                        st.caption("ℹ️ *Decision score is the model's classification score and is not a probability.*")
-
-                with col_res2:
-                    st.markdown("##### 📊 Class Score Breakdown")
-                    probs = result.get("probabilities", {})
-
-                    if score_type == "probability":
-                        for cls in ["Positive", "Neutral", "Negative"]:
-                            p_val = probs.get(cls, 0.0)
-                            st.write(f"**{cls}:** {p_val*100:.1f}%")
-                            st.progress(min(max(p_val, 0.0), 1.0))
-                    else:
-                        st.caption("Decision Scores per Class (Linear SVM):")
-                        for cls in ["Negative", "Neutral", "Positive"]:
-                            sc_val = probs.get(cls, 0.0)
-                            st.write(f"**{cls}:** `{sc_val:.4f}`")
-
-                # Expandable Preprocessing Details
-                with st.expander("🔍 View NLP Preprocessing Pipeline Transformation", expanded=False):
-                    col_exp1, col_exp2 = st.columns(2)
-                    with col_exp1:
-                        st.info(f"**Original Input Text:**\n\n{result['text']}")
-                    with col_exp2:
-                        st.success(f"**Preprocessed Clean Text (TF-IDF Input):**\n\n`{result['processed_text']}`")
-
-                # Model Metadata Details
-                with st.expander("📋 Prediction Technical Metadata", expanded=False):
-                    st.json({
-                        "selected_model": result["model_name"],
-                        "score_type": result["score_type"],
-                        "score_value": result["score"],
-                        "tfidf_features": result["vocab_size"],
-                        "timestamp": result["timestamp"],
-                    })
-
-    # 6. Session Prediction History Table
-    st.divider()
-    st.markdown("### 📜 Session Prediction History")
-    history_mgr = st.session_state.get("history_manager")
-
-    if not history_mgr or not history_mgr.get_history():
-        st.info("No predictions recorded in this session yet. Enter text above to analyze.")
-    else:
-        history_df = history_mgr.to_dataframe()
-        st.caption(f"Showing last **{len(history_df)} / {config.PREDICTION_HISTORY_LIMIT}** session predictions.")
-
-        display_history = history_df.copy()
-        display_history["text_preview"] = display_history["text"].apply(
-            lambda t: t[:60] + "..." if len(t) > 60 else t
-        )
-        display_history["score_display"] = display_history.apply(
-            lambda r: f"{r['score']*100:.1f}%" if r["score_type"] == "probability" else f"{r['score']:.4f}",
-            axis=1,
-        )
-
-        st.dataframe(
-            display_history[["timestamp", "text_preview", "sentiment", "model", "score_display"]].sort_values("timestamp", ascending=False),
-            use_container_width=True,
-        )
-
-        col_hist1, col_hist2 = st.columns([3, 2])
-        with col_hist1:
-            csv_data = history_mgr.to_csv()
-            st.download_button(
-                label="📥 Download Session History (CSV)",
-                data=csv_data,
-                file_name=f"sentiment_predictions_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                mime="text/csv",
-                use_container_width=True,
-                key="btn_download_csv_analyze",
+    # -------------------------------------------------------------------------
+    # 3. Prediction Output
+    # -------------------------------------------------------------------------
+    result = None
+    if btn_analyze and input_text.strip():
+        with st.spinner("Analyzing text with machine learning engine..."):
+            result = predict_sentiment(
+                text=input_text,
+                model=model,
+                vectorizer=vectorizer,
+                model_name=model_name,
             )
-        with col_hist2:
-            if st.button("🗑️ Clear Session History", use_container_width=True, key="btn_clear_history_analyze"):
-                history_mgr.clear()
-                st.rerun()
+            st.session_state["analyzer_last_result"] = result
+            history_mgr = st.session_state.get("history_manager")
+            if history_mgr and result.get("valid"):
+                history_mgr.add_prediction(result)
+    elif "analyzer_last_result" in st.session_state:
+        result = st.session_state["analyzer_last_result"]
+
+    if result and result.get("valid"):
+        st.divider()
+        st.markdown("### Prediction Result")
+
+        sentiment = result["sentiment"]
+        score = result["score"]
+        score_type = result["score_type"]
+        m_used = result.get("model_name", model_name)
+        timestamp = result.get("timestamp", datetime.now().isoformat())
+        probs = result.get("probabilities", {})
+
+        badge_class = "badge-neutral"
+        if sentiment == "Positive":
+            badge_class = "badge-positive"
+        elif sentiment == "Negative":
+            badge_class = "badge-negative"
+
+        col_res1, col_res2 = st.columns([1, 1])
+
+        with col_res1:
+            st.markdown(
+                f"""
+                <div class="asi-card">
+                    <div style="font-size: 0.85rem; color: #8b949e; text-transform: uppercase; letter-spacing: 0.05em;">Predicted Polarity</div>
+                    <div style="margin-top: 8px;">
+                        <span class="{badge_class}" style="font-size: 1.4rem; padding: 8px 20px;">
+                            {sentiment.upper()}
+                        </span>
+                    </div>
+                    <div style="margin-top: 16px; font-size: 0.85rem; color: #8b949e;">
+                        Model: <strong style="color: #f0f6fc;">{m_used}</strong>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #8b949e; margin-top: 4px;">
+                        Analyzed at: {timestamp[:19].replace('T', ' ')}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            if score_type == "probability":
+                st.metric("Confidence", f"{score * 100:.1f}%")
+            else:
+                st.metric("Decision Score", f"{score:.4f}")
+                st.caption("Raw decision score (Linear SVM) — not a probability.")
+
+        with col_res2:
+            st.markdown("##### Probability Distribution")
+            if score_type == "probability":
+                for cls in ["Positive", "Neutral", "Negative"]:
+                    p_val = probs.get(cls, 0.0)
+                    st.write(f"**{cls}:** {p_val * 100:.1f}%")
+                    st.progress(min(max(p_val, 0.0), 1.0))
+            else:
+                st.caption("Decision Scores per Class:")
+                for cls in ["Negative", "Neutral", "Positive"]:
+                    st.write(f"**{cls}:** `{probs.get(cls, 0.0):.4f}`")
+
+        # ---------------------------------------------------------------------
+        # 4. Explainability Expander
+        # ---------------------------------------------------------------------
+        with st.expander("🔍 How the AI processed this text", expanded=False):
+            st.markdown("**1. Original Text**")
+            st.code(result.get("text", input_text), language="text")
+
+            st.markdown("**2. Cleaned & Preprocessed Text (TF-IDF Input)**")
+            st.code(result.get("processed_text", ""), language="text")
+
+            st.markdown("**3. NLP Processing Pipeline**")
+            st.markdown(
+                """
+                - Contractions expanded (`don't` → `do not`, `didn't` → `did not`)
+                - Normalized to lowercase & special characters stripped
+                - Tokenized with NLTK tokenizer
+                - Negation words (`not`, `no`, `never`) preserved
+                - Tokens lemmatized to base roots via WordNetLemmatizer
+                """
+            )
+
+            st.markdown("**4. TF-IDF Representation**")
+            st.caption(f"Vectorized against pre-fitted {result.get('vocab_size', 570)}-term vocabulary (unigrams + bigrams, sublinear TF scaling).")

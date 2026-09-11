@@ -1,22 +1,12 @@
-"""NLP Engine Component for AI Sentiment Intelligence (Stage 6).
+﻿"""NLP Explorer Component for AI Sentiment Intelligence.
 
-Provides an interactive demonstration and visual storytelling of the 12-step NLP preprocessing pipeline:
-- Contraction expansion
-- Lowercasing & noise removal
-- Tokenization
-- Controlled stopword filtering with Negation Preservation
-- WordNet Lemmatization
+Provides interactive step-by-step visual NLP pipeline walkthrough:
+Raw Text -> Contraction Expansion -> Normalization -> Tokenization
+-> Controlled Stopword Removal -> Negation Preservation -> Lemmatization -> Final Text
 """
 
-from pathlib import Path
-import sys
-
+import re
 import streamlit as st
-
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-if str(BASE_DIR) not in sys.path:
-    sys.path.insert(0, str(BASE_DIR))
-
 import config
 from src.data_cleaning import clean_text_basic
 from src.preprocessing import (
@@ -29,100 +19,108 @@ from src.preprocessing import (
 
 
 def render_nlp_engine_page():
-    """Render the Interactive NLP Engine page."""
-    st.markdown("## 🔬 Interactive NLP Preprocessing Engine")
-    st.caption("Step-by-step text normalization, contraction expansion, negation preservation, and WordNet lemmatization.")
+    """Render the interactive NLP Explorer page."""
+    st.markdown("## 🧠 NLP Explorer")
+    st.caption("Inspect how unstructured human language is transformed into a clean feature space, step-by-step.")
 
-    # 1. Negation Preservation Callout
-    st.divider()
-    st.markdown("### 🛑 Controlled Stopword Strategy: Negation Preservation")
-    st.info(
-        "💡 **Why Negation Preservation Matters:** Standard stopword lists strip words like *'not'*, *'no'*, and *'never'*. "
-        "For example, converting *'not good'* to *'good'* completely flips sentiment! "
-        "Our custom NLP engine explicitly retains **sentiment-critical negations**: "
-        "`{'not', 'no', 'never', 'neither', 'nor', 'nothing', 'nowhere', 'hardly', 'scarcely', 'barely', 'without', 'against'}`."
-    )
-
-    # 2. Pipeline Storytelling Flow
-    st.divider()
-    st.markdown("### 🔄 12-Step NLP Transformation Pipeline")
-    st.code(
+    # -------------------------------------------------------------------------
+    # 1. Negation Preservation Callout Card
+    # -------------------------------------------------------------------------
+    st.markdown(
         """
-RAW TEXT
-  │
-  ├── 1. Safe String Conversion
-  ├── 2. Contraction Expansion (don't -> do not, isn't -> is not)
-  ├── 3. Lowercase Normalization
-  ├── 4. Remove URLs & Web Links
-  ├── 5. Remove HTML Tags & Entities (<b> -> empty)
-  ├── 6. Remove Email Addresses
-  ├── 7. Remove Special Characters (retaining letters & spaces)
-  ├── 8. Extra Whitespace Collapse
-  ├── 9. NLTK Word Tokenization
-  ├── 10. Controlled Stopword Filtering (Strictly Retaining Negations)
-  ├── 11. WordNet Lemmatization (running -> run, better -> good)
-  └── 12. Rejoin Clean Space-Separated Token String
-  │
-TF-IDF VECTORIZER MATRIX (570 Features)
+        <div class="asi-card" style="border-left: 3px solid #388bfd;">
+            <div style="font-weight: 600; color: #58a6ff; font-size: 0.95rem;">💡 Controlled Stopword Removal with Negation Preservation</div>
+            <div style="font-size: 0.85rem; color: #8b949e; margin-top: 4px;">
+                Standard NLP pipelines blindly remove negation words such as <em>"not"</em>, <em>"no"</em>, and <em>"never"</em>,
+                turning <strong>"not satisfied"</strong> into <strong>"satisfied"</strong> — totally reversing sentiment!
+                Our custom pipeline preserves 12 essential negation tokens to protect sentiment polarity.
+            </div>
+        </div>
         """,
-        language="text",
+        unsafe_allow_html=True,
     )
 
-    # 3. Interactive Preprocessing Pipeline Simulator
     st.divider()
-    st.markdown("### 🧪 Test the Real-time Pipeline Simulator")
 
-    example_sentences = [
+    # -------------------------------------------------------------------------
+    # 2. Interactive Input
+    # -------------------------------------------------------------------------
+    st.markdown("### 🔬 Test the Preprocessing Pipeline")
+    preset_examples = [
         "I don't like this phone, it's NOT good at all and the battery died!",
         "Customer support was quick, friendly, and resolved my issue in minutes.",
         "The device was delivered yesterday afternoon as scheduled.",
-        "Check OUT: https://test.com! Email: help@site.com. <b>AWESOME</b> app... loved it!",
+        "I didn't think the movie was bad, but the cinematography wasn't great either.",
     ]
 
-    selected_example = st.selectbox(
-        "Pick an example sentence to test:",
-        ["(Custom input)"] + example_sentences,
-        key="nlp_sim_select",
+    selected_ex = st.selectbox(
+        "Choose an example or enter your own text below:",
+        ["(Custom Text)"] + preset_examples,
+        key="nlp_preset_sel",
     )
 
-    default_text = (
-        selected_example
-        if selected_example != "(Custom input)"
-        else "I didn't enjoy this movie, but the cinematography wasn't bad!"
-    )
+    default_val = selected_ex if selected_ex != "(Custom Text)" else "I haven't seen a better product all year; it isn't disappointing!"
+    user_input = st.text_area("Input Text to Trace:", value=default_val, height=90, key="nlp_trace_input")
 
-    user_input = st.text_area("Input Text to Preprocess:", value=default_text, height=100, key="nlp_sim_input")
+    if not user_input.strip():
+        st.info("Enter text above to see the step-by-step transformation.")
+        return
 
-    col_opts1, col_opts2, col_opts3 = st.columns(3)
-    with col_opts1:
-        opt_contractions = st.checkbox("Expand Contractions", value=True, key="cb_contractions")
-    with col_opts2:
-        opt_stopwords = st.checkbox("Filter Stopwords (Preserve Negations)", value=True, key="cb_stopwords")
-    with col_opts3:
-        opt_lemmatize = st.checkbox("Apply WordNet Lemmatization", value=True, key="cb_lemmatize")
+    # -------------------------------------------------------------------------
+    # 3. Step-by-Step Transformations (Preserving real logic)
+    # -------------------------------------------------------------------------
+    raw_text = user_input.strip()
 
-    if st.button("⚡ Run Preprocessing Pipeline", type="primary", key="btn_run_nlp_sim"):
-        if user_input.strip():
-            step_contraction = expand_contractions(user_input) if opt_contractions else user_input
-            step_basic = clean_text_basic(step_contraction, remove_punct=True)
-            tokens_raw = tokenize_text(step_basic)
-            tokens_filtered = remove_stopwords(tokens_raw) if opt_stopwords else tokens_raw
-            tokens_lemmatized = lemmatize_tokens(tokens_filtered) if opt_lemmatize else tokens_filtered
-            final_clean = " ".join(tokens_lemmatized)
+    # Step 1: Contraction Expansion
+    step1_expanded = expand_contractions(raw_text)
 
-            st.divider()
-            st.markdown("##### 🏁 Preprocessing Result")
-            col_res1, col_res2 = st.columns(2)
-            with col_res1:
-                st.info(f"**Original Input Text:**\n\n{user_input}")
-            with col_res2:
-                st.success(f"**Cleaned Feature Text (TF-IDF Ready):**\n\n`{final_clean}`")
+    # Step 2: Normalization (clean_text_basic: lowercase, strip URLs, HTML, special chars)
+    step2_normalized = clean_text_basic(step1_expanded)
 
-            with st.expander("🔍 Step-by-Step Pipeline Inspection", expanded=True):
-                st.markdown(f"1. **Contraction Expansion:** `{step_contraction}`")
-                st.markdown(f"2. **Lowercasing & Special Characters:** `{step_basic}`")
-                st.markdown(f"3. **Tokenization:** `{tokens_raw}`")
-                st.markdown(f"4. **Controlled Stopwords (Negations Retained):** `{tokens_filtered}`")
-                st.markdown(f"5. **WordNet Lemmatization:** `{tokens_lemmatized}`")
-        else:
-            st.warning("Please enter some text to preprocess.")
+    # Step 3: Tokenization
+    step3_tokens = tokenize_text(step2_normalized)
+
+    # Step 4: Controlled Stopword Removal (Negations preserved)
+    step4_no_stops = remove_stopwords(step3_tokens, preserve_negations=True)
+
+    # Step 5: Lemmatization
+    step5_lemmatized = lemmatize_tokens(step4_no_stops)
+
+    # Step 6: Final Clean String
+    step6_final = " ".join(step5_lemmatized)
+
+    st.markdown("#### Transformation Pipeline")
+
+    # Step 0: Raw Text
+    with st.expander("Step 0: Raw Input Text", expanded=True):
+        st.code(raw_text, language="text")
+
+    # Step 1: Contractions
+    with st.expander("Step 1: Contraction Expansion", expanded=True):
+        st.caption("Expands colloquial contractions (e.g., *don't* -> *do not*, *isn't* -> *is not*).")
+        st.code(step1_expanded, language="text")
+
+    # Step 2: Normalization
+    with st.expander("Step 2: Normalization & Cleaning", expanded=True):
+        st.caption("Converts to lowercase, removes URLs, HTML tags, special symbols, and excess whitespace.")
+        st.code(step2_normalized, language="text")
+
+    # Step 3: Tokenization
+    with st.expander("Step 3: Tokenization", expanded=True):
+        st.caption("Splits the normalized sentence into individual linguistic tokens using NLTK.")
+        st.write(step3_tokens)
+
+    # Step 4: Stopword Removal + Negation Preservation
+    with st.expander("Step 4: Controlled Stopword Removal (Negations Kept)", expanded=True):
+        st.caption("Filters non-informative stopwords while retaining sentiment-critical negations.")
+        st.write(step4_no_stops)
+
+    # Step 5: Lemmatization
+    with st.expander("Step 5: WordNet Lemmatization", expanded=True):
+        st.caption("Reduces inflected tokens to canonical base lemmas (e.g., *running* -> *run*).")
+        st.write(step5_lemmatized)
+
+    # Step 6: Final Text
+    with st.expander("Step 6: Final Feature-Ready Representation", expanded=True):
+        st.caption("The reconstructed clean string passed directly into the TF-IDF vectorizer (570 features).")
+        st.code(step6_final, language="text")

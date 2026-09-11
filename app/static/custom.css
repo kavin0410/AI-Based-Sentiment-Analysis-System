@@ -1,0 +1,179 @@
+﻿/* ==========================================================================
+   AI Sentiment Intelligence — Premium Dark Design System
+   ========================================================================== */
+
+/* Global Background and Defaults */
+.stApp {
+    background-color: #0d1117;
+    color: #e6edf3;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+}
+
+/* Sidebar Styling */
+[data-testid="stSidebar"] {
+    background-color: #161b22;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-testid="stSidebar"] hr {
+    border-color: rgba(255, 255, 255, 0.08);
+    margin: 1rem 0;
+}
+
+/* Glassmorphic Cards */
+.asi-card {
+    background: rgba(22, 27, 34, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    transition: all 0.2s ease-in-out;
+}
+
+.asi-card:hover {
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* Metric Pill */
+.asi-metric-card {
+    background: #161b22;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.asi-metric-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(56, 139, 253, 0.4);
+}
+
+.asi-metric-value {
+    font-size: 1.85rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #f0f6fc;
+}
+
+.asi-metric-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #8b949e;
+    margin-top: 0.25rem;
+}
+
+/* Sentiment Badge Colors */
+.badge-positive {
+    background: rgba(46, 160, 67, 0.15);
+    color: #3fb950;
+    border: 1px solid rgba(46, 160, 67, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-negative {
+    background: rgba(248, 81, 73, 0.15);
+    color: #f85149;
+    border: 1px solid rgba(248, 81, 73, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-neutral {
+    background: rgba(139, 148, 158, 0.15);
+    color: #c9d1d9;
+    border: 1px solid rgba(139, 148, 158, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* System Pulse Dot */
+.pulse-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #2ea043;
+    box-shadow: 0 0 8px #2ea043;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+/* Clean Custom Headers */
+.asi-header-title {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #f0f6fc;
+    margin: 0;
+}
+
+.asi-header-tagline {
+    font-size: 0.95rem;
+    color: #8b949e;
+    margin: 0.2rem 0 0 0;
+    font-weight: 400;
+}
+
+/* Streamlit Native Element Polishing */
+div[data-testid="stMetric"] {
+    background-color: #161b22;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+}
+
+div[data-testid="stMetricLabel"] {
+    color: #8b949e !important;
+    font-size: 0.8rem !important;
+}
+
+div[data-testid="stMetricValue"] {
+    color: #f0f6fc !important;
+    font-weight: 700 !important;
+}
+
+/* Buttons */
+.stButton > button {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+.stButton > button[kind="primary"] {
+    background: #238636;
+    border-color: rgba(240, 246, 252, 0.1);
+}
+
+.stButton > button[kind="primary"]:hover {
+    background: #2ea043;
+    border-color: rgba(240, 246, 252, 0.2);
+}
+
+/* Radio button nav in sidebar */
+div[data-testid="stRadio"] > div {
+    gap: 0.35rem;
+}
+
+div[data-testid="stRadio"] label {
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+}
+
+div[data-testid="stRadio"] label:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
