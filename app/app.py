@@ -12,9 +12,11 @@ An ultra-premium AI SaaS platform for sentiment intelligence:
   ▣ Data
   ▤ Reports
   ⚙ Settings
+- Background: Cyber Neural Constellation Video Background & Glassmorphic UI
 - Zero development stage mentions anywhere in the user interface.
 """
 
+import base64
 from datetime import datetime
 import json
 from pathlib import Path
@@ -46,8 +48,52 @@ from src.model_loader import validate_model_artifacts
 from src.predict import PredictionHistoryManager
 
 
+@st.cache_data
+def get_background_assets():
+    """Encode video and poster image to base64 for smooth background playback."""
+    poster_path = APP_DIR / "static" / "bg_poster.jpg"
+    video_path = APP_DIR / "static" / "bg_video_optimized.mp4"
+
+    poster_b64 = ""
+    if poster_path.exists():
+        poster_b64 = base64.b64encode(poster_path.read_bytes()).decode("utf-8")
+
+    video_b64 = ""
+    if video_path.exists():
+        video_b64 = base64.b64encode(video_path.read_bytes()).decode("utf-8")
+
+    return poster_b64, video_b64
+
+
+def render_background_layers():
+    """Inject background video and ambient neural overlay."""
+    poster_b64, video_b64 = get_background_assets()
+
+    video_html = ""
+    if video_b64:
+        video_html = f"""
+        <video autoplay loop muted playsinline poster="data:image/jpeg;base64,{poster_b64}">
+            <source src="data:video/mp4;base64,{video_b64}" type="video/mp4">
+        </video>
+        """
+    elif poster_b64:
+        video_html = f"""
+        <div style="width: 100vw; height: 100vh; background: url('data:image/jpeg;base64,{poster_b64}') center/cover no-repeat; opacity: 0.35;"></div>
+        """
+
+    st.markdown(
+        f"""
+        <div id="bg-video-container">
+            {video_html}
+        </div>
+        <div id="bg-video-overlay"></div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def init_page():
-    """Initialize page metadata, layout, and inject custom CSS."""
+    """Initialize page metadata, layout, background video and inject custom CSS."""
     st.set_page_config(
         page_title="SentimentLab | Understand the emotion behind every word",
         page_icon="🧠",
@@ -59,6 +105,8 @@ def init_page():
     if css_path.exists():
         with open(css_path, "r", encoding="utf-8") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+    render_background_layers()
 
 
 def init_session_state():
@@ -114,7 +162,7 @@ def render_sidebar():
         st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
         st.markdown(
             """
-            <div style="padding: 0 0.5rem; font-size: 0.75rem; color: #475569; line-height: 1.6;">
+            <div style="padding: 0 0.5rem; font-size: 0.75rem; color: #7dd3fc; opacity: 0.8; line-height: 1.6;">
                 “Understand the emotion behind every word.”
             </div>
             """,
