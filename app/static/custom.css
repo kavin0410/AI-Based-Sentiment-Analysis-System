@@ -1,40 +1,41 @@
 /* ==========================================================================
    SentimentLab — Master Light AI SaaS Design System
    White + Glass + Gloss + Floating Cards + Apple/Linear aesthetic
+   High Contrast Light Mode
    ========================================================================== */
 
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 :root {
   --bg-base:        #F4F6FB;
-  --bg-card:        rgba(255, 255, 255, 0.82);
-  --bg-card-hover:  rgba(255, 255, 255, 0.95);
-  --bg-sidebar:     rgba(255, 255, 255, 0.92);
+  --bg-card:        rgba(255, 255, 255, 0.85);
+  --bg-card-hover:  rgba(255, 255, 255, 0.96);
+  --bg-sidebar:     rgba(255, 255, 255, 0.94);
 
-  --border-card:    rgba(99, 102, 241, 0.12);
-  --border-subtle:  rgba(148, 163, 184, 0.20);
+  --border-card:    rgba(99, 102, 241, 0.14);
+  --border-subtle:  rgba(148, 163, 184, 0.22);
 
   --text-primary:   #0F172A;
-  --text-secondary: #334155;
-  --text-muted:     #64748B;
-  --text-faint:     #94A3B8;
+  --text-secondary: #1E293B;
+  --text-muted:     #475569;
+  --text-faint:     #64748B;
 
   --accent-blue:    #6366F1;
   --accent-violet:  #8B5CF6;
   --accent-cyan:    #06B6D4;
   --accent-mint:    #10B981;
 
-  --pos-bg:         rgba(16, 185, 129, 0.10);
-  --pos-border:     rgba(16, 185, 129, 0.32);
-  --pos-text:       #059669;
+  --pos-bg:         rgba(16, 185, 129, 0.12);
+  --pos-border:     rgba(16, 185, 129, 0.35);
+  --pos-text:       #047857;
 
-  --neg-bg:         rgba(239, 68, 68, 0.09);
-  --neg-border:     rgba(239, 68, 68, 0.30);
-  --neg-text:       #DC2626;
+  --neg-bg:         rgba(239, 68, 68, 0.10);
+  --neg-border:     rgba(239, 68, 68, 0.32);
+  --neg-text:       #B91C1C;
 
-  --neu-bg:         rgba(99, 102, 241, 0.09);
-  --neu-border:     rgba(99, 102, 241, 0.26);
-  --neu-text:       #4F46E5;
+  --neu-bg:         rgba(99, 102, 241, 0.10);
+  --neu-border:     rgba(99, 102, 241, 0.28);
+  --neu-text:       #4338CA;
 
   --shadow-sm:      0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.03);
   --shadow-md:      0 6px 20px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(15, 23, 42, 0.04);
@@ -50,7 +51,7 @@
 /* --------------------------------------------------------------------------
    Global Reset & Base
    -------------------------------------------------------------------------- */
-html, body {
+html, body, [class*="css"], [data-testid="stAppViewContainer"] {
   font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
   color: var(--text-primary) !important;
   background-color: var(--bg-base) !important;
@@ -64,16 +65,21 @@ html, body {
   color: var(--text-primary) !important;
 }
 
+/* Text general override */
+p, span, div, h1, h2, h3, h4, h5, h6, label {
+  color: var(--text-primary);
+}
+
 /* --------------------------------------------------------------------------
    Scrollbar
    -------------------------------------------------------------------------- */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.20); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.40); }
+::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.25); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.45); }
 
 /* --------------------------------------------------------------------------
-   Sidebar
+   Sidebar Base
    -------------------------------------------------------------------------- */
 [data-testid="stSidebar"] {
   background: var(--bg-sidebar) !important;
@@ -90,7 +96,7 @@ html, body {
 
 /* Brand */
 .sl-brand {
-  padding: 0.25rem 0.25rem 0.75rem 0.25rem;
+  padding: 0.25rem 0.25rem 0.5rem 0.25rem;
 }
 .sl-brand-name {
   font-size: 1.45rem;
@@ -103,8 +109,8 @@ html, body {
   line-height: 1.2;
 }
 .sl-brand-tagline {
-  font-size: 0.80rem;
-  color: var(--text-muted);
+  font-size: 0.82rem;
+  color: var(--text-muted) !important;
   margin-top: 3px;
   font-style: italic;
   font-weight: 400;
@@ -115,12 +121,12 @@ html, body {
   gap: 6px;
   margin-top: 0.6rem;
   padding: 3px 10px;
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: rgba(16, 185, 129, 0.09);
+  border: 1px solid rgba(16, 185, 129, 0.28);
   border-radius: 20px;
   font-size: 0.72rem;
-  font-weight: 600;
-  color: #059669;
+  font-weight: 700;
+  color: #047857 !important;
 }
 .sl-status-dot {
   width: 6px;
@@ -130,70 +136,89 @@ html, body {
   box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
 }
 
-/* Active Nav item */
-.sl-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0.6rem 1rem;
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin: 3px 0;
-  border: 1px solid transparent;
-}
-.sl-nav-item.active {
-  background: linear-gradient(135deg, #6366F1, #8B5CF6);
-  color: #ffffff !important;
-  border-color: rgba(99, 102, 241, 0.4);
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.28), inset 0 1px 0 rgba(255,255,255,0.2);
-  font-weight: 600;
-}
-.sl-nav-icon {
-  width: 18px;
-  text-align: center;
-  font-size: 0.95rem;
-  flex-shrink: 0;
-}
-
-/* Sidebar button styling */
-[data-testid="stSidebar"] div[data-testid="stButton"] > button {
-  background: transparent !important;
-  border: 1px solid transparent !important;
-  border-radius: var(--radius-sm) !important;
-  color: var(--text-secondary) !important;
-  font-size: 0.9rem !important;
+/* --------------------------------------------------------------------------
+   Sidebar Search Input — High Contrast
+   -------------------------------------------------------------------------- */
+[data-testid="stSidebar"] [data-testid="stTextInput"] input {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1.5px solid rgba(99, 102, 241, 0.22) !important;
+  border-radius: 12px !important;
+  padding: 0.65rem 1rem !important;
+  font-size: 0.88rem !important;
   font-weight: 500 !important;
-  padding: 0.55rem 0.9rem !important;
-  width: 100% !important;
-  text-align: left !important;
-  transition: all 0.18s ease !important;
-  box-shadow: none !important;
-  justify-content: flex-start !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
 }
-[data-testid="stSidebar"] div[data-testid="stButton"] > button:hover {
-  background: rgba(99, 102, 241, 0.08) !important;
-  color: var(--accent-blue) !important;
-  border-color: rgba(99, 102, 241, 0.14) !important;
+[data-testid="stSidebar"] [data-testid="stTextInput"] input::placeholder {
+  color: #64748B !important;
+  opacity: 1 !important;
+  font-weight: 500 !important;
+}
+[data-testid="stSidebar"] [data-testid="stTextInput"] input:focus {
+  border-color: #6366F1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
 }
 
-/* Sidebar Radio (if radio is used) */
-[data-testid="stSidebar"] div[data-testid="stRadio"] > div {
-  gap: 0.25rem;
+/* --------------------------------------------------------------------------
+   Sidebar Navigation Radio — Beautiful Floating Pill System
+   -------------------------------------------------------------------------- */
+[data-testid="stSidebar"] [data-testid="stRadio"] > div {
+  gap: 6px !important;
 }
-[data-testid="stSidebar"] div[data-testid="stRadio"] label {
-  padding: 0.5rem 0.85rem !important;
-  border-radius: var(--radius-sm) !important;
-  color: var(--text-secondary) !important;
+
+/* Base Radio Option (Inactive) */
+[data-testid="stSidebar"] [data-testid="stRadio"] label {
+  display: flex !important;
+  align-items: center !important;
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  border-radius: 12px !important;
+  padding: 0.65rem 1rem !important;
+  margin: 2px 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03) !important;
+}
+
+/* Force dark readable text inside inactive radio options */
+[data-testid="stSidebar"] [data-testid="stRadio"] label *,
+[data-testid="stSidebar"] [data-testid="stRadio"] label p,
+[data-testid="stSidebar"] [data-testid="stRadio"] label span,
+[data-testid="stSidebar"] [data-testid="stRadio"] label div {
+  color: #1E293B !important;
   font-size: 0.92rem !important;
-  font-weight: 500 !important;
-  transition: all 0.18s ease !important;
-  border: 1px solid transparent !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
 }
-[data-testid="stSidebar"] div[data-testid="stRadio"] label:hover {
-  background: rgba(99, 102, 241, 0.07) !important;
-  color: var(--accent-blue) !important;
+
+/* Hide Streamlit default circular radio button input dot */
+[data-testid="stSidebar"] [data-testid="stRadio"] label > div:first-child {
+  display: none !important;
+}
+
+/* Hover state on inactive items */
+[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+  background: rgba(99, 102, 241, 0.09) !important;
+  border-color: rgba(99, 102, 241, 0.32) !important;
+  transform: translateX(3px) !important;
+}
+[data-testid="stSidebar"] [data-testid="stRadio"] label:hover * {
+  color: #4F46E5 !important;
+}
+
+/* ACTIVE Selected Item: Floating Blue-Violet Gradient with Pure White Text */
+[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%) !important;
+  border-color: rgba(99, 102, 241, 0.5) !important;
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  transform: none !important;
+}
+[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) *,
+[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) p,
+[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) span,
+[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) div {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -232,24 +257,24 @@ html, body {
 .sl-card-hero {
   border-radius: var(--radius-xl);
   padding: 2rem 2.25rem;
-  background: linear-gradient(145deg, rgba(255,255,255,0.92) 0%, rgba(243,244,255,0.82) 100%);
+  background: linear-gradient(145deg, rgba(255,255,255,0.94) 0%, rgba(243,244,255,0.85) 100%);
   border: 1px solid rgba(99, 102, 241, 0.15);
   box-shadow: var(--shadow-xl);
 }
 .sl-card-blue {
-  background: linear-gradient(145deg, rgba(241,244,255,0.92) 0%, rgba(230,233,255,0.78) 100%);
+  background: linear-gradient(145deg, rgba(241,244,255,0.94) 0%, rgba(230,233,255,0.80) 100%);
   border-color: rgba(99, 102, 241, 0.18);
 }
 .sl-card-green {
-  background: linear-gradient(145deg, rgba(240,255,248,0.92) 0%, rgba(220,252,231,0.78) 100%);
+  background: linear-gradient(145deg, rgba(240,255,248,0.94) 0%, rgba(220,252,231,0.80) 100%);
   border-color: rgba(16, 185, 129, 0.18);
 }
 .sl-card-violet {
-  background: linear-gradient(145deg, rgba(248,245,255,0.92) 0%, rgba(237,233,254,0.78) 100%);
+  background: linear-gradient(145deg, rgba(248,245,255,0.94) 0%, rgba(237,233,254,0.80) 100%);
   border-color: rgba(139, 92, 246, 0.18);
 }
 .sl-card-cyan {
-  background: linear-gradient(145deg, rgba(240,254,254,0.92) 0%, rgba(207,250,254,0.78) 100%);
+  background: linear-gradient(145deg, rgba(240,254,254,0.94) 0%, rgba(207,250,254,0.80) 100%);
   border-color: rgba(6, 182, 212, 0.18);
 }
 
@@ -275,7 +300,7 @@ html, body {
 .sl-metric-label {
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text-muted) !important;
   text-transform: uppercase;
   letter-spacing: 0.07em;
   margin-bottom: 0.35rem;
@@ -283,13 +308,13 @@ html, body {
 .sl-metric-value {
   font-size: 1.75rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   letter-spacing: -0.03em;
   line-height: 1.1;
 }
 .sl-metric-sub {
   font-size: 0.78rem;
-  color: var(--text-faint);
+  color: var(--text-faint) !important;
   margin-top: 0.35rem;
 }
 
@@ -330,17 +355,17 @@ div[data-testid="stMetricValue"] {
 }
 .sl-badge-positive {
   background: var(--pos-bg);
-  color: var(--pos-text);
+  color: var(--pos-text) !important;
   border: 1.5px solid var(--pos-border);
 }
 .sl-badge-negative {
   background: var(--neg-bg);
-  color: var(--neg-text);
+  color: var(--neg-text) !important;
   border: 1.5px solid var(--neg-border);
 }
 .sl-badge-neutral {
   background: var(--neu-bg);
-  color: var(--neu-text);
+  color: var(--neu-text) !important;
   border: 1.5px solid var(--neu-border);
 }
 .sl-badge-lg {
@@ -362,11 +387,11 @@ div[data-testid="stMetricValue"] {
   gap: 6px;
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--accent-blue);
+  color: var(--accent-blue) !important;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   background: rgba(99, 102, 241, 0.08);
-  border: 1px solid rgba(99, 102, 241, 0.18);
+  border: 1px solid rgba(99, 102, 241, 0.20);
   border-radius: 20px;
   padding: 3px 12px;
   margin-bottom: 0.65rem;
@@ -375,13 +400,13 @@ div[data-testid="stMetricValue"] {
   font-size: 2rem;
   font-weight: 800;
   letter-spacing: -0.04em;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0;
   line-height: 1.15;
 }
 .sl-page-subtitle {
   font-size: 0.98rem;
-  color: var(--text-muted);
+  color: var(--text-muted) !important;
   margin-top: 0.35rem;
   font-weight: 400;
   line-height: 1.5;
@@ -390,7 +415,7 @@ div[data-testid="stMetricValue"] {
 .sl-section-label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text-muted) !important;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 0.75rem;
@@ -398,7 +423,7 @@ div[data-testid="stMetricValue"] {
 .sl-section-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   letter-spacing: -0.02em;
   margin-bottom: 0.4rem;
 }
@@ -465,9 +490,9 @@ div[data-testid="stMetricValue"] {
   justify-content: center;
   align-items: center;
   height: 28px;
-  color: var(--accent-blue);
+  color: var(--accent-blue) !important;
   font-size: 1.1rem;
-  opacity: 0.5;
+  opacity: 0.6;
 }
 .sl-pipeline-step-num {
   display: inline-flex;
@@ -477,7 +502,7 @@ div[data-testid="stMetricValue"] {
   height: 22px;
   border-radius: 50%;
   background: linear-gradient(135deg, #6366F1, #8B5CF6);
-  color: white;
+  color: white !important;
   font-size: 0.7rem;
   font-weight: 700;
   margin-right: 8px;
@@ -486,24 +511,24 @@ div[data-testid="stMetricValue"] {
 .sl-pipeline-step-label {
   font-size: 0.82rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 .sl-pipeline-step-desc {
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: var(--text-muted) !important;
   margin-top: 4px;
   line-height: 1.45;
 }
 .sl-pipeline-output {
   margin-top: 8px;
   padding: 0.5rem 0.75rem;
-  background: rgba(99, 102, 241, 0.05);
-  border: 1px solid rgba(99, 102, 241, 0.12);
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.15);
   border-radius: 8px;
   font-size: 0.82rem;
-  color: var(--text-secondary);
+  color: #1E293B !important;
   font-family: "JetBrains Mono", monospace;
   word-break: break-all;
 }
@@ -529,9 +554,9 @@ div[data-testid="stMetricValue"] {
 }
 
 .stButton > button:not([kind="primary"]) {
-  background: rgba(255,255,255,0.85) !important;
+  background: #FFFFFF !important;
   backdrop-filter: blur(12px) !important;
-  color: var(--text-secondary) !important;
+  color: #1E293B !important;
   border: 1px solid var(--border-subtle) !important;
   border-radius: var(--radius-sm) !important;
   font-weight: 600 !important;
@@ -540,7 +565,7 @@ div[data-testid="stMetricValue"] {
 }
 .stButton > button:not([kind="primary"]):hover {
   color: var(--accent-blue) !important;
-  border-color: rgba(99,102,241,0.30) !important;
+  border-color: rgba(99,102,241,0.35) !important;
   background: rgba(99,102,241,0.06) !important;
   box-shadow: var(--shadow-md) !important;
 }
@@ -549,9 +574,9 @@ div[data-testid="stMetricValue"] {
    Inputs & Textareas
    -------------------------------------------------------------------------- */
 .stTextArea textarea {
-  background: rgba(255,255,255,0.90) !important;
+  background: #FFFFFF !important;
   backdrop-filter: blur(12px) !important;
-  color: var(--text-primary) !important;
+  color: #0F172A !important;
   border: 1.5px solid var(--border-subtle) !important;
   border-radius: var(--radius-md) !important;
   font-size: 0.96rem !important;
@@ -562,10 +587,14 @@ div[data-testid="stMetricValue"] {
   border-color: var(--accent-blue) !important;
   box-shadow: 0 0 0 3px rgba(99,102,241,0.12), var(--shadow-sm) !important;
 }
+.stTextArea textarea::placeholder {
+  color: #64748B !important;
+  opacity: 1 !important;
+}
 
 .stTextInput input {
-  background: rgba(255,255,255,0.90) !important;
-  color: var(--text-primary) !important;
+  background: #FFFFFF !important;
+  color: #0F172A !important;
   border: 1.5px solid var(--border-subtle) !important;
   border-radius: var(--radius-sm) !important;
   padding: 0.6rem 0.9rem !important;
@@ -575,13 +604,17 @@ div[data-testid="stMetricValue"] {
   border-color: var(--accent-blue) !important;
   box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
 }
+.stTextInput input::placeholder {
+  color: #64748B !important;
+  opacity: 1 !important;
+}
 
 /* --------------------------------------------------------------------------
    Tabs
    -------------------------------------------------------------------------- */
 .stTabs [data-baseweb="tab-list"] {
   gap: 4px;
-  background: rgba(255,255,255,0.70);
+  background: rgba(255,255,255,0.80);
   border: 1px solid var(--border-subtle);
   padding: 5px 6px;
   border-radius: var(--radius-sm);
@@ -589,7 +622,7 @@ div[data-testid="stMetricValue"] {
 }
 .stTabs [data-baseweb="tab"] {
   border-radius: 7px;
-  color: var(--text-muted);
+  color: var(--text-muted) !important;
   font-weight: 600;
   font-size: 0.88rem;
   padding: 0.45rem 1rem;
@@ -615,7 +648,7 @@ div[data-testid="stMetricValue"] {
   height: 125px;
   border-radius: 50%;
   background: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.18), rgba(6,182,212,0.10));
-  border: 2px solid rgba(99,102,241,0.22);
+  border: 2px solid rgba(99,102,241,0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -637,20 +670,20 @@ div[data-testid="stMetricValue"] {
 }
 .sl-orbit-pos {
   top: 14%; right: 8%;
-  background: rgba(240,255,248,0.95);
-  color: var(--pos-text);
+  background: rgba(240,255,248,0.96);
+  color: var(--pos-text) !important;
   border: 1.5px solid var(--pos-border);
 }
 .sl-orbit-neg {
   bottom: 14%; right: 8%;
-  background: rgba(255,240,240,0.95);
-  color: var(--neg-text);
+  background: rgba(255,240,240,0.96);
+  color: var(--neg-text) !important;
   border: 1.5px solid var(--neg-border);
 }
 .sl-orbit-neu {
   top: 40%; left: 4%;
-  background: rgba(241,240,255,0.95);
-  color: var(--neu-text);
+  background: rgba(241,240,255,0.96);
+  color: var(--neu-text) !important;
   border: 1.5px solid var(--neu-border);
 }
 
@@ -666,18 +699,18 @@ div[data-testid="stMetricValue"] {
   align-items: center;
   gap: 5px;
   padding: 4px 12px;
-  background: rgba(255,255,255,0.80);
+  background: #FFFFFF;
   border: 1px solid var(--border-subtle);
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   box-shadow: var(--shadow-sm);
 }
 .sl-flow-arrow {
-  color: var(--accent-blue);
+  color: var(--accent-blue) !important;
   font-size: 0.9rem;
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .sl-pred-row {
@@ -690,9 +723,9 @@ div[data-testid="stMetricValue"] {
 }
 .sl-pred-row:last-child { border-bottom: none; }
 .sl-pred-row:hover { background: rgba(99,102,241,0.04); border-radius: 8px; }
-.sl-pred-time { font-size: 0.72rem; color: var(--text-faint); min-width: 75px; }
-.sl-pred-text { flex: 1; font-size: 0.85rem; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sl-pred-conf { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); min-width: 50px; text-align: right; }
+.sl-pred-time { font-size: 0.72rem; color: var(--text-faint) !important; min-width: 75px; }
+.sl-pred-text { flex: 1; font-size: 0.85rem; color: var(--text-secondary) !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sl-pred-conf { font-size: 0.78rem; font-weight: 600; color: var(--text-muted) !important; min-width: 50px; text-align: right; }
 
 .sl-divider {
   height: 1px;
@@ -703,18 +736,18 @@ div[data-testid="stMetricValue"] {
 .sl-spacer-sm { height: 0.75rem; }
 .sl-spacer-md { height: 1.5rem; }
 .sl-spacer-lg { height: 2.5rem; }
-.sl-text-muted { color: var(--text-muted); font-size: 0.85rem; }
+.sl-text-muted { color: var(--text-muted) !important; font-size: 0.85rem; }
 .sl-text-label {
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--text-muted);
+  color: var(--text-muted) !important;
   margin-bottom: 0.35rem;
 }
 
 .sl-quick-analyze-card {
-  background: linear-gradient(145deg, rgba(241,244,255,0.92), rgba(230,233,255,0.78));
+  background: linear-gradient(145deg, rgba(241,244,255,0.94), rgba(230,233,255,0.80));
   border: 1px solid rgba(99,102,241,0.18);
   border-radius: var(--radius-lg);
   padding: 1.4rem 1.5rem;
@@ -735,9 +768,9 @@ div[data-testid="stMetricValue"] {
   letter-spacing: 0.04em;
 }
 .sl-health-online {
-  background: rgba(16,185,129,0.10);
-  color: #059669;
-  border: 1px solid rgba(16,185,129,0.28);
+  background: rgba(16,185,129,0.12);
+  color: #047857 !important;
+  border: 1px solid rgba(16,185,129,0.30);
 }
 .sl-health-dot {
   width: 6px;
@@ -749,7 +782,7 @@ div[data-testid="stMetricValue"] {
 .sl-sidebar-footer {
   padding: 0.75rem 0.75rem;
   font-size: 0.72rem;
-  color: var(--text-faint);
+  color: var(--text-faint) !important;
   border-top: 1px solid var(--border-subtle);
   line-height: 1.6;
 }
