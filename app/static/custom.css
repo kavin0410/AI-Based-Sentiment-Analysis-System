@@ -8,12 +8,12 @@
 
 :root {
   --bg-base:        #F4F6FB;
-  --bg-card:        rgba(255, 255, 255, 0.85);
-  --bg-card-hover:  rgba(255, 255, 255, 0.96);
-  --bg-sidebar:     rgba(255, 255, 255, 0.94);
+  --bg-card:        rgba(255, 255, 255, 0.88);
+  --bg-card-hover:  rgba(255, 255, 255, 0.98);
+  --bg-sidebar:     rgba(255, 255, 255, 0.95);
 
   --border-card:    rgba(99, 102, 241, 0.14);
-  --border-subtle:  rgba(148, 163, 184, 0.22);
+  --border-subtle:  rgba(148, 163, 184, 0.24);
 
   --text-primary:   #0F172A;
   --text-secondary: #1E293B;
@@ -65,7 +65,6 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] {
   color: var(--text-primary) !important;
 }
 
-/* Text general override */
 p, span, div, h1, h2, h3, h4, h5, h6, label {
   color: var(--text-primary);
 }
@@ -137,7 +136,7 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
 }
 
 /* --------------------------------------------------------------------------
-   Sidebar Search Input — High Contrast
+   Sidebar Search Input
    -------------------------------------------------------------------------- */
 [data-testid="stSidebar"] [data-testid="stTextInput"] input {
   background: #FFFFFF !important;
@@ -160,17 +159,16 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
 }
 
 /* --------------------------------------------------------------------------
-   Sidebar Navigation Radio — Beautiful Floating Pill System
+   Sidebar Navigation Radio — Floating Pills
    -------------------------------------------------------------------------- */
 [data-testid="stSidebar"] [data-testid="stRadio"] > div {
   gap: 6px !important;
 }
 
-/* Base Radio Option (Inactive) */
 [data-testid="stSidebar"] [data-testid="stRadio"] label {
   display: flex !important;
   align-items: center !important;
-  background: rgba(255, 255, 255, 0.75) !important;
+  background: rgba(255, 255, 255, 0.80) !important;
   border: 1px solid rgba(148, 163, 184, 0.22) !important;
   border-radius: 12px !important;
   padding: 0.65rem 1rem !important;
@@ -180,7 +178,6 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03) !important;
 }
 
-/* Force dark readable text inside inactive radio options */
 [data-testid="stSidebar"] [data-testid="stRadio"] label *,
 [data-testid="stSidebar"] [data-testid="stRadio"] label p,
 [data-testid="stSidebar"] [data-testid="stRadio"] label span,
@@ -191,12 +188,10 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
   letter-spacing: -0.01em !important;
 }
 
-/* Hide Streamlit default circular radio button input dot */
 [data-testid="stSidebar"] [data-testid="stRadio"] label > div:first-child {
   display: none !important;
 }
 
-/* Hover state on inactive items */
 [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
   background: rgba(99, 102, 241, 0.09) !important;
   border-color: rgba(99, 102, 241, 0.32) !important;
@@ -206,7 +201,6 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
   color: #4F46E5 !important;
 }
 
-/* ACTIVE Selected Item: Floating Blue-Violet Gradient with Pure White Text */
 [data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {
   background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%) !important;
   border-color: rgba(99, 102, 241, 0.5) !important;
@@ -222,6 +216,92 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
 }
 
 /* --------------------------------------------------------------------------
+   DATAFRAME & TABLE STYLES — PURE WHITE THEME
+   -------------------------------------------------------------------------- */
+[data-testid="stDataFrame"],
+.stDataFrame,
+[data-testid="stDataFrame"] > div,
+[data-testid="stDataFrame"] [data-testid="glide-data-grid"],
+.dvn-scroller,
+.glideDataGrid {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-radius: 14px !important;
+  border: 1.5px solid rgba(148, 163, 184, 0.24) !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
+  overflow: hidden !important;
+}
+
+/* Force light cells in Glide Data Grid */
+[data-testid="stDataFrame"] canvas {
+  background: #FFFFFF !important;
+}
+
+/* Tables fallback */
+table, [data-testid="stTable"] table {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: 1.5px solid rgba(148, 163, 184, 0.24) !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  width: 100% !important;
+}
+table th, [data-testid="stTable"] th {
+  background: #F8FAFC !important;
+  color: #334155 !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 0.8rem 1rem !important;
+  border-bottom: 2px solid rgba(99, 102, 241, 0.16) !important;
+}
+table td, [data-testid="stTable"] td {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  font-size: 0.88rem !important;
+  padding: 0.75rem 1rem !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15) !important;
+}
+table tr:last-child td {
+  border-bottom: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   DOWNLOAD BUTTONS — PURE WHITE GLASS STYLE
+   -------------------------------------------------------------------------- */
+[data-testid="stDownloadButton"] > button,
+.stDownloadButton > button {
+  background: #FFFFFF !important;
+  color: #1E293B !important;
+  border: 1.5px solid rgba(99, 102, 241, 0.32) !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  font-size: 0.92rem !important;
+  padding: 0.7rem 1.5rem !important;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04) !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+[data-testid="stDownloadButton"] > button:hover,
+.stDownloadButton > button:hover {
+  background: rgba(99, 102, 241, 0.08) !important;
+  color: #4F46E5 !important;
+  border-color: #6366F1 !important;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.20) !important;
+  transform: translateY(-2px) !important;
+}
+[data-testid="stDownloadButton"] > button * {
+  color: inherit !important;
+}
+
+/* --------------------------------------------------------------------------
    Glass Cards
    -------------------------------------------------------------------------- */
 .sl-card {
@@ -229,7 +309,7 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
   background: var(--bg-card);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.94);
   border-radius: var(--radius-lg);
   padding: 1.4rem 1.5rem;
   box-shadow: var(--shadow-lg);
@@ -257,24 +337,24 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
 .sl-card-hero {
   border-radius: var(--radius-xl);
   padding: 2rem 2.25rem;
-  background: linear-gradient(145deg, rgba(255,255,255,0.94) 0%, rgba(243,244,255,0.85) 100%);
+  background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(243,244,255,0.88) 100%);
   border: 1px solid rgba(99, 102, 241, 0.15);
   box-shadow: var(--shadow-xl);
 }
 .sl-card-blue {
-  background: linear-gradient(145deg, rgba(241,244,255,0.94) 0%, rgba(230,233,255,0.80) 100%);
+  background: linear-gradient(145deg, rgba(241,244,255,0.95) 0%, rgba(230,233,255,0.82) 100%);
   border-color: rgba(99, 102, 241, 0.18);
 }
 .sl-card-green {
-  background: linear-gradient(145deg, rgba(240,255,248,0.94) 0%, rgba(220,252,231,0.80) 100%);
+  background: linear-gradient(145deg, rgba(240,255,248,0.95) 0%, rgba(220,252,231,0.82) 100%);
   border-color: rgba(16, 185, 129, 0.18);
 }
 .sl-card-violet {
-  background: linear-gradient(145deg, rgba(248,245,255,0.94) 0%, rgba(237,233,254,0.80) 100%);
+  background: linear-gradient(145deg, rgba(248,245,255,0.95) 0%, rgba(237,233,254,0.82) 100%);
   border-color: rgba(139, 92, 246, 0.18);
 }
 .sl-card-cyan {
-  background: linear-gradient(145deg, rgba(240,254,254,0.94) 0%, rgba(207,250,254,0.80) 100%);
+  background: linear-gradient(145deg, rgba(240,254,254,0.95) 0%, rgba(207,250,254,0.82) 100%);
   border-color: rgba(6, 182, 212, 0.18);
 }
 
@@ -286,7 +366,7 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
   background: var(--bg-card);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255,255,255,0.90);
+  border: 1px solid rgba(255,255,255,0.92);
   border-radius: var(--radius-md);
   padding: 1.15rem 1.3rem;
   box-shadow: var(--shadow-md);
@@ -318,11 +398,10 @@ p, span, div, h1, h2, h3, h4, h5, h6, label {
   margin-top: 0.35rem;
 }
 
-/* Streamlit native st.metric override */
 div[data-testid="stMetric"] {
   background: var(--bg-card) !important;
   backdrop-filter: blur(18px) !important;
-  border: 1px solid rgba(255,255,255,0.90) !important;
+  border: 1px solid rgba(255,255,255,0.92) !important;
   border-radius: var(--radius-md) !important;
   padding: 1.1rem 1.3rem !important;
   box-shadow: var(--shadow-md) !important;
@@ -474,7 +553,7 @@ div[data-testid="stMetricValue"] {
    -------------------------------------------------------------------------- */
 .sl-pipeline-node {
   background: var(--bg-card);
-  border: 1px solid rgba(255,255,255,0.90);
+  border: 1px solid rgba(255,255,255,0.92);
   border-radius: var(--radius-md);
   padding: 1rem 1.25rem;
   box-shadow: var(--shadow-sm);
@@ -524,8 +603,8 @@ div[data-testid="stMetricValue"] {
 .sl-pipeline-output {
   margin-top: 8px;
   padding: 0.5rem 0.75rem;
-  background: rgba(99, 102, 241, 0.06);
-  border: 1px solid rgba(99, 102, 241, 0.15);
+  background: #F8FAFC;
+  border: 1px solid rgba(99, 102, 241, 0.18);
   border-radius: 8px;
   font-size: 0.82rem;
   color: #1E293B !important;
@@ -557,7 +636,7 @@ div[data-testid="stMetricValue"] {
   background: #FFFFFF !important;
   backdrop-filter: blur(12px) !important;
   color: #1E293B !important;
-  border: 1px solid var(--border-subtle) !important;
+  border: 1.5px solid var(--border-subtle) !important;
   border-radius: var(--radius-sm) !important;
   font-weight: 600 !important;
   transition: all 0.15s ease !important;
@@ -614,7 +693,7 @@ div[data-testid="stMetricValue"] {
    -------------------------------------------------------------------------- */
 .stTabs [data-baseweb="tab-list"] {
   gap: 4px;
-  background: rgba(255,255,255,0.80);
+  background: rgba(255,255,255,0.85);
   border: 1px solid var(--border-subtle);
   padding: 5px 6px;
   border-radius: var(--radius-sm);
@@ -631,6 +710,28 @@ div[data-testid="stMetricValue"] {
   background: linear-gradient(135deg, #6366F1, #8B5CF6) !important;
   color: #ffffff !important;
   box-shadow: 0 2px 10px rgba(99,102,241,0.25) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Code Blocks & Expanders
+   -------------------------------------------------------------------------- */
+.stCodeBlock, [data-testid="stCodeBlock"], pre, code {
+  background: #F8FAFC !important;
+  color: #0F172A !important;
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+  border-radius: 10px !important;
+}
+
+[data-testid="stExpander"] {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border: 1.5px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-sm) !important;
+  margin-bottom: 0.75rem !important;
+}
+[data-testid="stExpander"] details summary p {
+  color: #1E293B !important;
+  font-weight: 700 !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -747,7 +848,7 @@ div[data-testid="stMetricValue"] {
 }
 
 .sl-quick-analyze-card {
-  background: linear-gradient(145deg, rgba(241,244,255,0.94), rgba(230,233,255,0.80));
+  background: linear-gradient(145deg, rgba(241,244,255,0.95), rgba(230,233,255,0.82));
   border: 1px solid rgba(99,102,241,0.18);
   border-radius: var(--radius-lg);
   padding: 1.4rem 1.5rem;
