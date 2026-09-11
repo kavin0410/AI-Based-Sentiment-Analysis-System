@@ -125,24 +125,7 @@ def render_sidebar() -> str:
             unsafe_allow_html=True,
         )
 
-        st.markdown("<div style='height:0.25rem'></div>", unsafe_allow_html=True)
-        st.divider()
-        st.markdown("<div style='height:0.25rem'></div>", unsafe_allow_html=True)
-
-        # Search bar
-        search_val = st.text_input(
-            "Search",
-            placeholder="Search SentimentLab... (Ctrl+K)",
-            key="global_search",
-            label_visibility="collapsed",
-        )
-        if search_val.strip():
-            matched = [o for o in NAV_OPTIONS if search_val.strip().lower() in o.lower()]
-            if matched and matched[0] != st.session_state.get("active_page"):
-                st.session_state["active_page"] = matched[0]
-                st.rerun()
-
-        st.markdown("<div style='height:0.35rem'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
 
         # Determine current index
         current_page = st.session_state.get("active_page", "Overview")
@@ -152,7 +135,7 @@ def render_sidebar() -> str:
             st.session_state["active_page"] = st.session_state["_sidebar_radio"]
 
         selected = st.radio(
-            label="Navigation",
+            label="nav_menu",
             options=NAV_OPTIONS,
             index=current_index,
             key="_sidebar_radio",
