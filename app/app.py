@@ -119,8 +119,8 @@ def init_session_state():
         st.session_state["history_manager"] = PredictionHistoryManager(
             max_limit=config.PREDICTION_HISTORY_LIMIT
         )
-    if "sentimentlab_nav" not in st.session_state:
-        st.session_state["sentimentlab_nav"] = "Overview"
+    if "active_page" not in st.session_state:
+        st.session_state["active_page"] = "Overview"
 
 
 def render_sidebar():
@@ -136,6 +136,10 @@ def render_sidebar():
         "Reports",
         "Settings",
     ]
+
+    # Process any pending page navigation request
+    if "target_page" in st.session_state and st.session_state["target_page"] in nav_options:
+        st.session_state["active_page"] = st.session_state.pop("target_page")
 
     with st.sidebar:
         # Branding Header
@@ -166,21 +170,33 @@ def render_sidebar():
             label_visibility="collapsed",
         )
 
-        # Jump to section if search matches
+        # Handle search bar selection if matched
         if search_cmd.strip():
             matched = [opt for opt in nav_options if search_cmd.strip().lower() in opt.lower()]
-            if matched and matched[0] != st.session_state.get("sentimentlab_nav"):
-                st.session_state["sentimentlab_nav"] = matched[0]
+            if matched and matched[0] != st.session_state.get("active_page"):
+                st.session_state["active_page"] = matched[0]
 
         st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+
+        # Determine current index
+        current_page = st.session_state.get("active_page", "Overview")
+        current_index = nav_options.index(current_page) if current_page in nav_options else 0
+
+        # Callback function for widget selection
+        def on_nav_change():
+            st.session_state["active_page"] = st.session_state["_sidebar_radio"]
 
         # Single continuous navigation list
         selected = st.radio(
             label="Navigation Menu",
             options=nav_options,
-            key="sentimentlab_nav",
+            index=current_index,
+            key="_sidebar_radio",
+            on_change=on_nav_change,
             label_visibility="collapsed",
         )
+
+        st.session_state["active_page"] = selected
 
         st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
         st.markdown(
@@ -193,7 +209,7 @@ def render_sidebar():
             unsafe_allow_html=True,
         )
 
-    return selected
+    return st.session_state["active_page"]
 
 
 def render_top_header():

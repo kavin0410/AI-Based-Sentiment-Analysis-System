@@ -55,15 +55,15 @@ def render_overview_page():
         unsafe_allow_html=True,
     )
 
-    # Hero Action CTAs
+    # Hero Action CTAs (safely request navigation via target_page)
     col_cta1, col_cta2, _ = st.columns([2, 2, 4])
     with col_cta1:
         if st.button("✦ Analyze Text", type="primary", use_container_width=True, key="btn_hero_analyze"):
-            st.session_state["sentimentlab_nav"] = "✦ Analyze"
+            st.session_state["target_page"] = "Analyze"
             st.rerun()
     with col_cta2:
         if st.button("◉ Explore Intelligence", use_container_width=True, key="btn_hero_intelligence"):
-            st.session_state["sentimentlab_nav"] = "◉ Model Intelligence"
+            st.session_state["target_page"] = "Model Intelligence"
             st.rerun()
 
     st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
@@ -90,7 +90,6 @@ def render_overview_page():
         prob_rows = h_df[h_df["score_type"] == "probability"]
         avg_conf = (prob_rows["score"].mean() * 100) if not prob_rows.empty else 0.0
     else:
-        # Default baseline distributions from training corpus
         pos_pct = 33.3
         neg_pct = 33.3
         neu_pct = 33.3
