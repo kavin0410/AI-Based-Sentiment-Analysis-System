@@ -20,20 +20,24 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-# Add project root to sys.path
+# Add project root to sys.path so src.*, config, etc. resolve correctly
 BASE_DIR = Path(__file__).resolve().parent.parent
+APP_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
+# Add app/ dir so `components.*` imports resolve when run via `streamlit run app/app.py`
+if str(APP_DIR) not in sys.path:
+    sys.path.insert(0, str(APP_DIR))
 
 import config
-from app.components.architecture import render_architecture_page
-from app.components.analyze import render_analyze_page
-from app.components.data_quality import render_data_quality_page
-from app.components.intelligence import render_intelligence_page
-from app.components.model_lab import render_model_lab_page
-from app.components.nlp_engine import render_nlp_engine_page
-from app.components.overview import render_overview_page
-from app.components.reports import render_reports_page
+from components.architecture import render_architecture_page
+from components.analyze import render_analyze_page
+from components.data_quality import render_data_quality_page
+from components.intelligence import render_intelligence_page
+from components.model_lab import render_model_lab_page
+from components.nlp_engine import render_nlp_engine_page
+from components.overview import render_overview_page
+from components.reports import render_reports_page
 from src.model_loader import validate_model_artifacts
 from src.predict import PredictionHistoryManager
 
