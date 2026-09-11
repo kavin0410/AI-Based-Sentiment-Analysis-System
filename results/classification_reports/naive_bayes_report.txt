@@ -1,0 +1,12 @@
+Classification Report: Multinomial Naive Bayes
+============================================================
+
+              precision    recall  f1-score   support
+
+    Negative       0.25      0.50      0.33         4
+     Neutral       0.50      0.25      0.33         4
+    Positive       0.00      0.00      0.00         4
+
+    accuracy                           0.25        12
+   macro avg       0.25      0.25      0.22        12
+weighted avg       0.25      0.25      0.22        12

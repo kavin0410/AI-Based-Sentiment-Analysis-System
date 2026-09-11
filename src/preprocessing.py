@@ -21,6 +21,26 @@ try:
 except ImportError:
     NLTK_AVAILABLE = False
 
+
+def ensure_nltk_resources():
+    """Ensure required NLTK corpus and tokenizer data packages are available locally."""
+    if not NLTK_AVAILABLE:
+        return
+    for resource_path, package_name in [
+        ("tokenizers/punkt", "punkt"),
+        ("corpora/stopwords", "stopwords"),
+        ("corpora/wordnet", "wordnet"),
+        ("corpora/omw-1.4", "omw-1.4"),
+    ]:
+        try:
+            nltk.data.find(resource_path)
+        except LookupError:
+            try:
+                nltk.download(package_name, quiet=True)
+            except Exception:
+                pass
+
+
 # Import project configuration constants
 try:
     from config import CLEAN_TEXT_COLUMN, PRESERVED_WORDS, SENTIMENT_COLUMN, TEXT_COLUMN

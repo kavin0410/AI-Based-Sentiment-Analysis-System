@@ -1,0 +1,26 @@
+text,clean_text,actual_sentiment,predicted_sentiment,model
+"Save your money and avoid this brand, there is no value here whatsoever.",save money avoid brand no value whatsoever,Negative,Neutral,Logistic Regression
+This is by far the best investment I have made for my daily workflow.,far best investment make daily workflow,Positive,Negative,Logistic Regression
+The device comes with a standard USB-C charging cable inside the box.,device come standard usb c charge cable inside box,Neutral,Negative,Logistic Regression
+The package contains two AA batteries and an instructional booklet.,package contain two aa battery instructional booklet,Neutral,Negative,Logistic Regression
+"An absolute masterpiece of software engineering, runs like a dream!",absolute masterpiece software engineer run like dream,Positive,Negative,Logistic Regression
+The website is full of spam ads and navigation is an absolute nightmare.,website full spam ad navigation absolute nightmare,Negative,Neutral,Logistic Regression
+Your support ticket number has been generated and queued for review.,support ticket number generate queue review,Neutral,Positive,Logistic Regression
+I couldn't be happier with this purchase; it's absolutely fantastic!,could not happier purchase absolutely fantastic,Positive,Negative,Logistic Regression
+"Save your money and avoid this brand, there is no value here whatsoever.",save money avoid brand no value whatsoever,Negative,Neutral,Multinomial Naive Bayes
+This is by far the best investment I have made for my daily workflow.,far best investment make daily workflow,Positive,Negative,Multinomial Naive Bayes
+The device comes with a standard USB-C charging cable inside the box.,device come standard usb c charge cable inside box,Neutral,Negative,Multinomial Naive Bayes
+The package contains two AA batteries and an instructional booklet.,package contain two aa battery instructional booklet,Neutral,Negative,Multinomial Naive Bayes
+This laptop has great battery life and delivers outstanding performance.,laptop great battery life deliver outstanding performance,Positive,Negative,Multinomial Naive Bayes
+"An absolute masterpiece of software engineering, runs like a dream!",absolute masterpiece software engineer run like dream,Positive,Negative,Multinomial Naive Bayes
+Your support ticket number has been generated and queued for review.,support ticket number generate queue review,Neutral,Positive,Multinomial Naive Bayes
+I couldn't be happier with this purchase; it's absolutely fantastic!,could not happier purchase absolutely fantastic,Positive,Negative,Multinomial Naive Bayes
+I don't recommend this service to anyone; they won't issue refunds.,not recommend service anyone not issue refund,Negative,Positive,Multinomial Naive Bayes
+"Save your money and avoid this brand, there is no value here whatsoever.",save money avoid brand no value whatsoever,Negative,Neutral,Linear SVM
+This is by far the best investment I have made for my daily workflow.,far best investment make daily workflow,Positive,Negative,Linear SVM
+The device comes with a standard USB-C charging cable inside the box.,device come standard usb c charge cable inside box,Neutral,Negative,Linear SVM
+The package contains two AA batteries and an instructional booklet.,package contain two aa battery instructional booklet,Neutral,Negative,Linear SVM
+"An absolute masterpiece of software engineering, runs like a dream!",absolute masterpiece software engineer run like dream,Positive,Negative,Linear SVM
+The website is full of spam ads and navigation is an absolute nightmare.,website full spam ad navigation absolute nightmare,Negative,Neutral,Linear SVM
+Your support ticket number has been generated and queued for review.,support ticket number generate queue review,Neutral,Positive,Linear SVM
+I couldn't be happier with this purchase; it's absolutely fantastic!,could not happier purchase absolutely fantastic,Positive,Negative,Linear SVM

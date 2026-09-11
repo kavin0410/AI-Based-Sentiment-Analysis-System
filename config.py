@@ -92,6 +92,44 @@ NGRAM_RANGE: tuple = (1, 2)
 SUBLINEAR_TF: bool = True
 MIN_DF: int = 1
 
+# ==============================================================================
+# Stage 4: Evaluation Artifact File Paths
+# ==============================================================================
+# Classification reports
+CLASSIFICATION_REPORTS_DIR: Path = RESULTS_PATH / "classification_reports"
+
+# Model comparison
+MODEL_COMPARISON_CSV: Path = RESULTS_PATH / "model_comparison.csv"
+BEST_MODEL_JSON: Path = RESULTS_PATH / "best_model.json"
+
+# Confusion matrices
+CONFUSION_MATRICES_DIR: Path = RESULTS_PATH / "confusion_matrices"
+CONFUSION_MATRICES_JSON: Path = RESULTS_PATH / "confusion_matrices" / "confusion_matrices.json"
+
+# Performance visualizations
+MODEL_PERFORMANCE_PLOT: Path = RESULTS_PATH / "model_performance_comparison.png"
+BEST_MODEL_CM_PLOT: Path = RESULTS_PATH / "best_model_confusion_matrix.png"
+
+# Per-class and error analysis
+PER_CLASS_METRICS_CSV: Path = RESULTS_PATH / "per_class_metrics.csv"
+ERROR_ANALYSIS_CSV: Path = RESULTS_PATH / "error_analysis.csv"
+
+# Evaluation results
+EVALUATION_RESULTS_JSON: Path = RESULTS_PATH / "evaluation_results.json"
+EVALUATION_RESULTS_CSV: Path = RESULTS_PATH / "evaluation_results.csv"
+
+# Confusion matrix label ordering (consistent across all evaluations)
+CM_LABEL_ORDER: List[str] = ["Negative", "Neutral", "Positive"]
+
+# ==============================================================================
+# Stage 5: Prediction Engine Configuration
+# ==============================================================================
+# Maximum input text length in characters
+MAX_INPUT_LENGTH: int = 5000
+
+# Session prediction history limit
+PREDICTION_HISTORY_LIMIT: int = 50
+
 
 # ==============================================================================
 # Directory Management Helper
@@ -114,6 +152,8 @@ def ensure_directories() -> None:
         RESULTS_PATH,
         DOCS_PATH,
         SCREENSHOTS_PATH,
+        CLASSIFICATION_REPORTS_DIR,
+        CONFUSION_MATRICES_DIR,
     ]
     for directory in directories:
         directory.mkdir(parents=True, exist_ok=True)

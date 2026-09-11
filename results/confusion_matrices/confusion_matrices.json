@@ -1,0 +1,74 @@
+{
+  "Logistic Regression": {
+    "matrix": [
+      [
+        2,
+        2,
+        0
+      ],
+      [
+        2,
+        1,
+        1
+      ],
+      [
+        3,
+        0,
+        1
+      ]
+    ],
+    "labels": [
+      "Negative",
+      "Neutral",
+      "Positive"
+    ]
+  },
+  "Multinomial Naive Bayes": {
+    "matrix": [
+      [
+        2,
+        1,
+        1
+      ],
+      [
+        2,
+        1,
+        1
+      ],
+      [
+        4,
+        0,
+        0
+      ]
+    ],
+    "labels": [
+      "Negative",
+      "Neutral",
+      "Positive"
+    ]
+  },
+  "Linear SVM": {
+    "matrix": [
+      [
+        2,
+        2,
+        0
+      ],
+      [
+        2,
+        1,
+        1
+      ],
+      [
+        3,
+        0,
+        1
+      ]
+    ],
+    "labels": [
+      "Negative",
+      "Neutral",
+      "Positive"
+    ]
+  }
+}

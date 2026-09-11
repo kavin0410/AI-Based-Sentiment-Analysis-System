@@ -16,6 +16,9 @@ seaborn>=0.12.0
 # Interactive Web Application
 streamlit>=1.28.0
 
+# Automated Testing
+pytest>=7.4.0
+
 # Interactive Computing & Notebooks
 jupyter>=1.0.0
 notebook>=7.0.0
