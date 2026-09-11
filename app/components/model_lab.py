@@ -4,7 +4,8 @@ ML laboratory:
 1. Model Leaderboard & Benchmarking
 2. Architecture Specification Cards
 3. Confusion Matrix Visualizer
-4. Model Playground
+4. Per-Class Performance Table
+5. Model Playground
 """
 
 import json
@@ -74,20 +75,33 @@ def render_model_lab_page():
         if HAS_PLOTLY and config.EVALUATION_RESULTS_CSV.exists():
             try:
                 eval_df = pd.read_csv(config.EVALUATION_RESULTS_CSV)
-                metric_cols = [c for c in eval_df.columns if c in ["accuracy", "precision", "recall", "f1_score"]]
-                if metric_cols and "model" in eval_df.columns:
+                model_col = next((c for c in eval_df.columns if c.lower() == "model"), None)
+                
+                # Check metrics columns
+                metric_mapping = {
+                    "accuracy": "Accuracy",
+                    "precision_weighted": "Precision",
+                    "precision": "Precision",
+                    "recall_weighted": "Recall",
+                    "recall": "Recall",
+                    "f1_weighted": "F1 Score",
+                    "f1_score": "F1 Score",
+                }
+                
+                avail_metrics = [c for c in eval_df.columns if c.lower() in metric_mapping]
+                
+                if avail_metrics and model_col:
                     fig_g = go.Figure()
-                    colors = {"accuracy": "#6366F1", "precision": "#8B5CF6",
-                              "recall": "#A855F7", "f1_score": "#06B6D4"}
-                    for mc in metric_cols:
+                    colors = ["#6366F1", "#8B5CF6", "#A855F7", "#06B6D4"]
+                    for idx, mc in enumerate(avail_metrics):
                         vals = eval_df[mc].values
-                        vals = [v * 100 if v <= 1 else v for v in vals]
+                        vals_pct = [float(v) * 100 if float(v) <= 1.0 else float(v) for v in vals]
                         fig_g.add_trace(go.Bar(
-                            name=mc.replace("_", " ").title(),
-                            x=eval_df["model"].values,
-                            y=vals,
-                            marker_color=colors.get(mc, "#6366F1"),
-                            text=[f"{v:.1f}" for v in vals],
+                            name=metric_mapping.get(mc.lower(), mc.title()),
+                            x=eval_df[model_col].values,
+                            y=vals_pct,
+                            marker_color=colors[idx % len(colors)],
+                            text=[f"{v:.1f}%" for v in vals_pct],
                             textposition="outside",
                             textfont=dict(family="Inter", size=10, color="#334155"),
                         ))
@@ -96,6 +110,7 @@ def render_model_lab_page():
                         xaxis=dict(tickfont=dict(family="Inter", size=11, color="#64748B"),
                                    gridcolor="rgba(0,0,0,0)"),
                         yaxis=dict(ticksuffix="%", tickformat=".0f",
+                                   range=[0, 60],
                                    gridcolor="rgba(99,102,241,0.08)",
                                    tickfont=dict(family="Inter", size=11, color="#94A3B8")),
                         paper_bgcolor="rgba(0,0,0,0)",
@@ -107,7 +122,7 @@ def render_model_lab_page():
                                     font=dict(family="Inter", size=11)),
                     )
                     st.plotly_chart(fig_g, use_container_width=True, config={"displayModeBar": False})
-            except Exception:
+            except Exception as e:
                 pass
 
         st.markdown("</div>", unsafe_allow_html=True)
@@ -157,9 +172,9 @@ def render_model_lab_page():
 
         st.markdown("<div class='sl-spacer-md'></div>", unsafe_allow_html=True)
 
-        # Confusion Matrices
+        # Confusion Matrices & Per-Class Metrics
         st.markdown(
-            '<div class="sl-section-label">Confusion Matrix</div>',
+            '<div class="sl-section-label">Confusion Matrix & Per-Class Performance</div>',
             unsafe_allow_html=True,
         )
 
@@ -192,14 +207,18 @@ def render_model_lab_page():
             )
             if config.PER_CLASS_METRICS_CSV.exists():
                 pc_df = pd.read_csv(config.PER_CLASS_METRICS_CSV)
-                filtered_pc = pc_df[pc_df["model"] == sel_matrix]
-                if not filtered_pc.empty:
-                    st.dataframe(
-                        filtered_pc[["class", "precision", "recall", "f1_score", "support"]],
-                        use_container_width=True,
-                    )
+                # Find the model column safely (case-insensitive)
+                model_col = next((c for c in pc_df.columns if c.lower() == "model"), None)
+                if model_col:
+                    filtered_pc = pc_df[pc_df[model_col].astype(str).str.lower() == sel_matrix.lower()]
+                    if not filtered_pc.empty:
+                        st.dataframe(filtered_pc, use_container_width=True)
+                    else:
+                        st.dataframe(pc_df, use_container_width=True)
                 else:
                     st.dataframe(pc_df, use_container_width=True)
+            else:
+                st.info("Per-class metrics not available.")
             st.markdown("</div>", unsafe_allow_html=True)
 
     # ------------------------------------------------------------------

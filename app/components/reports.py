@@ -92,9 +92,13 @@ def render_reports_page():
         )
         if config.ERROR_ANALYSIS_CSV.exists():
             err_df = pd.read_csv(config.ERROR_ANALYSIS_CSV)
-            models = ["All"] + sorted(err_df["model"].unique().tolist())
-            chosen_m = st.selectbox("Filter by Model:", models, key="err_model_sel")
-            filtered_err = err_df if chosen_m == "All" else err_df[err_df["model"] == chosen_m]
+            model_col = next((c for c in err_df.columns if c.lower() == "model"), None)
+            if model_col:
+                models = ["All"] + sorted(err_df[model_col].dropna().unique().tolist())
+                chosen_m = st.selectbox("Filter by Model:", models, key="err_model_sel")
+                filtered_err = err_df if chosen_m == "All" else err_df[err_df[model_col] == chosen_m]
+            else:
+                filtered_err = err_df
 
             st.caption(f"Showing **{len(filtered_err)}** misclassified records.")
             st.dataframe(filtered_err, use_container_width=True)
