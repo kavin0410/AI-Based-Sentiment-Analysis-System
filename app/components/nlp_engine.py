@@ -98,7 +98,7 @@ def render_nlp_engine_page():
     s1_contractions = expand_contractions(raw_str)
     s2_cleaned = clean_text_basic(s1_contractions)
     s3_tokens = tokenize_text(s2_cleaned)
-    s4_no_stops = remove_stopwords(s3_tokens, preserve_negations=True)
+    s4_no_stops = remove_stopwords(s3_tokens)
     s5_lemmatized = lemmatize_tokens(s4_no_stops)
     s6_final = " ".join(s5_lemmatized)
 

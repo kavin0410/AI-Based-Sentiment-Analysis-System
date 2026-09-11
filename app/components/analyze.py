@@ -267,7 +267,7 @@ def _render_single(model, model_name, vectorizer):
             s1_exp   = expand_contractions(raw_t)
             s2_clean = clean_text_basic(s1_exp)
             s3_tok   = tokenize_text(s2_clean)
-            s4_stop  = remove_stopwords(s3_tok, preserve_negations=True)
+            s4_stop  = remove_stopwords(s3_tok)
             s5_lem   = lemmatize_tokens(s4_stop)
             s6_final = result.get("processed_text", " ".join(s5_lem))
 
