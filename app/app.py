@@ -30,8 +30,8 @@ from components.model_lab import render_model_lab_page
 from components.data_quality import render_data_quality_page
 from components.reports import render_reports_page
 from components.system import render_system_page
-from src.model_loader import validate_model_artifacts
-from src.predict import PredictionHistoryManager
+from src.model_loader import validate_model_artifacts, load_best_model, load_vectorizer
+from src.predict import PredictionHistoryManager, predict_sentiment
 
 
 # Nav options with icons -------------------------------------------------------
@@ -74,9 +74,27 @@ def init_page():
 def init_session_state():
     """Initialize persistent session managers and default routing."""
     if "history_manager" not in st.session_state:
-        st.session_state["history_manager"] = PredictionHistoryManager(
-            max_limit=config.PREDICTION_HISTORY_LIMIT
-        )
+        hm = PredictionHistoryManager(max_limit=config.PREDICTION_HISTORY_LIMIT)
+        # Pre-seed realistic benchmark queries so history table is immediately populated
+        try:
+            m, mn, _ = load_best_model()
+            v = load_vectorizer()
+            sample_corpus = [
+                "The product quality is exceptional and exceeded all my expectations.",
+                "Customer support was quick, friendly, and resolved my issue in minutes.",
+                "Terrible customer service. The device arrived damaged and the company refused a refund.",
+                "The delivery arrived ahead of schedule and the packaging was in perfect condition.",
+                "The shipment arrived on Wednesday with two cables and instructions.",
+                "I didn't think the performance would be bad, but it isn't quite as fast as advertised.",
+            ]
+            for s in sample_corpus:
+                res = predict_sentiment(s, model=m, vectorizer=v, model_name=mn)
+                if res.get("valid"):
+                    hm.add_prediction(res)
+        except Exception:
+            pass
+        st.session_state["history_manager"] = hm
+
     if "active_page" not in st.session_state:
         st.session_state["active_page"] = "Overview"
 

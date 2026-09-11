@@ -4,12 +4,38 @@ Prediction history center:
 - Search, Sentiment Filter, Clear History, CSV Export
 - Styled table with sentiment pills
 - Detailed entry inspection
+- 1-click sample query loader
 """
 
 from datetime import datetime
 import pandas as pd
 import streamlit as st
 import config
+from src.model_loader import load_best_model, load_vectorizer
+from src.predict import predict_sentiment
+
+
+def _seed_samples(history_mgr):
+    """Seed benchmark queries into history manager."""
+    try:
+        m, mn, _ = load_best_model()
+        v = load_vectorizer()
+        sample_corpus = [
+            "The product quality is exceptional and exceeded all my expectations.",
+            "Customer support was quick, friendly, and resolved my issue in minutes.",
+            "Terrible customer service. The device arrived damaged and the company refused a refund.",
+            "The delivery arrived ahead of schedule and the packaging was in perfect condition.",
+            "The shipment arrived on Wednesday with two cables and instructions.",
+            "I didn't think the performance would be bad, but it isn't quite as fast as advertised.",
+            "Great battery life, fantastic display, and very lightweight to carry!",
+            "I am neither satisfied nor dissatisfied; it performs exactly as an average device.",
+        ]
+        for s in sample_corpus:
+            res = predict_sentiment(s, model=m, vectorizer=v, model_name=mn)
+            if res.get("valid"):
+                history_mgr.add_prediction(res)
+    except Exception:
+        pass
 
 
 def render_history_page():
@@ -28,14 +54,30 @@ def render_history_page():
     )
 
     history_mgr = st.session_state.get("history_manager")
-    if not history_mgr or not history_mgr.get_history():
+    if not history_mgr:
+        from src.predict import PredictionHistoryManager
+        history_mgr = PredictionHistoryManager(max_limit=config.PREDICTION_HISTORY_LIMIT)
+        st.session_state["history_manager"] = history_mgr
+
+    # If empty, auto-seed or show options
+    if not history_mgr.get_history():
         st.markdown(
-            '<div class="sl-card" style="text-align:center;padding:2.5rem;">'
-            '<div style="font-size:2rem;margin-bottom:0.75rem;">No predictions yet</div>'
-            '<div class="sl-text-muted">Navigate to <strong>Analyze</strong> to start classifying text.</div>'
-            '</div>',
+            """
+            <div class="sl-card" style="text-align:center;padding:2.5rem 1.5rem;">
+                <div style="font-size:1.3rem;font-weight:700;color:#0F172A;margin-bottom:0.5rem;">
+                    No predictions logged yet
+                </div>
+                <div class="sl-text-muted" style="margin-bottom:1.25rem;">
+                    Run custom queries in <strong>Analyze</strong> or populate the table with benchmark test cases.
+                </div>
+            </div>
+            """,
             unsafe_allow_html=True,
         )
+        if st.button("Load Benchmark Queries \u2192", type="primary", key="btn_load_samples"):
+            _seed_samples(history_mgr)
+            st.toast("Loaded 8 benchmark predictions!", icon="\U0001f4e5")
+            st.rerun()
         return
 
     history_df = history_mgr.to_dataframe()
@@ -79,7 +121,7 @@ def render_history_page():
             axis=1,
         )
         disp_df["Text Preview"] = disp_df["text"].apply(
-            lambda t: t[:80] + "..." if len(t) > 80 else t
+            lambda t: t[:85] + "..." if len(t) > 85 else t
         )
         disp_df = disp_df.rename(columns={
             "timestamp": "Timestamp",
@@ -125,7 +167,7 @@ def render_history_page():
                     unsafe_allow_html=True,
                 )
             with col_d2:
-                st.markdown("**Processed Text:**")
+                st.markdown("**Processed Text (Vectorized Input):**")
                 st.code(sel_row["processed_text"], language="text")
                 st.markdown(f"**Confidence:** `{sel_row['score']}` ({sel_row['score_type']})")
                 st.markdown(f"**Model:** `{sel_row['model']}` | **Time:** `{str(sel_row['timestamp'])[:19]}`")
@@ -135,7 +177,7 @@ def render_history_page():
     # Actions
     # ------------------------------------------------------------------
     st.markdown("<div class='sl-spacer-sm'></div>", unsafe_allow_html=True)
-    col_a1, col_a2 = st.columns([3, 1])
+    col_a1, col_a2, col_a3 = st.columns([2, 1, 1])
     with col_a1:
         csv_bytes = history_mgr.to_csv()
         st.download_button(
@@ -144,8 +186,14 @@ def render_history_page():
             file_name=f"sentimentlab_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
             mime="text/csv",
             key="btn_dl_hist",
+            use_container_width=True,
         )
     with col_a2:
+        if st.button("Reload Samples", use_container_width=True, key="btn_reload_samples"):
+            _seed_samples(history_mgr)
+            st.toast("Reloaded sample benchmark queries!", icon="\U0001f4e5")
+            st.rerun()
+    with col_a3:
         if st.button("Clear History", use_container_width=True, key="btn_clear_hist"):
             history_mgr.clear()
             st.toast("History cleared!", icon="\U0001f9f9")
