@@ -135,7 +135,7 @@ def render_sidebar() -> str:
             st.session_state["active_page"] = st.session_state["_sidebar_radio"]
 
         selected = st.radio(
-            label="nav_menu",
+            label="",
             options=NAV_OPTIONS,
             index=current_index,
             key="_sidebar_radio",
